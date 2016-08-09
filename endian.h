@@ -18,9 +18,6 @@
  * If you improve this, *please* contribute your change back to us.
  */
 
-/* TODO: don't require this on old versions of MSVC */
-#include <stdint.h>
-
 #if !defined(PSNIP_ENDIAN_H)
 #define PSNIP_ENDIAN_H
 
