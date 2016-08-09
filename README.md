@@ -7,7 +7,7 @@ need.  Everything is CC0 licensed (public domain).
 
 This repository currently contains:
 
- * endian.h — endianness detection and swapping
+ * endian — endianness detection and swapping
 
 Please don't be shy about filing issues about these; if you have
 problems it's likely others will, as well, so we would like to fix
