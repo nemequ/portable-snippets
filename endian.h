@@ -1,19 +1,23 @@
-/* Portable Snippets - https://gitub.com/nemequ/portable-snippets
+/* Endianness detection and swapping (v1)
+ * Portable Snippets - https://gitub.com/nemequ/portable-snippets
  * Created by Evan Nemerson <evan@nemerson.com>
  *
- * To the extent possible under law, the authors have waived all
- * copyright and related or neighboring rights to Hedley.  For
- * details, see the Creative Commons Zero 1.0 Universal license at
- * https://creativecommons.org/publicdomain/zero/1.0/
- ******************************************************************
- * Endianness detection and swapping
- * v1
+ *   To the extent possible under law, the authors have waived all
+ *   copyright and related or neighboring rights to this code.  For
+ *   details, see the Creative Commons Zero 1.0 Universal license at
+ *   https://creativecommons.org/publicdomain/zero/1.0/
  *
  * This is probably a bit overkill; you may want to simplify things a
  * bit (i.e., remove unused macros) if you copy this into your
- * project.
+ * project.  If you just grab a small section, we would still
+ * appreciate a link back to the project if only so people know where
+ * they can contribute any enhancements to or import big fixes from.
  *
- * Support for PDP endian is incomplete.
+ * Scroll down to the "Swapping" section for an explanation of the
+ * macros you'll probably want to use.
+ *
+ * Support for PDP endian is incomplete.  Patches are welcome, but I
+ * don't think anyone actually uses PDP endian anymore…
  *
  * If you improve this, *please* contribute your change back to us.
  */
