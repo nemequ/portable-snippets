@@ -4,9 +4,15 @@ project(portable-snippet-tests)
 
 enable_testing()
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
 add_library(munit SHARED munit/munit.c)
-set_property(TARGET munit
-  APPEND PROPERTY COMPILE_DEFINITIONS MUNIT_ALLOW_CLOCK_GETTIME)
+find_package(ClockGettime)
+if(ClockGettime_FOUND)
+	set_property(TARGET munit
+		APPEND PROPERTY COMPILE_DEFINITIONS MUNIT_ALLOW_CLOCK_GETTIME)
+  target_link_libraries(munit ${ClockGettime_LIBRARIES})
+endif()
 
 function(psnip_add_tests)
   set(options)
@@ -35,3 +41,9 @@ psnip_add_tests(TARGET endian
     "/endian/swap"
     "/endian/from-le"
     "/endian/from-be")
+
+psnip_add_tests(TARGET atomic
+  SOURCES
+    atomic.c
+  TESTS
+    "/atomic")
