@@ -6,7 +6,7 @@ enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-add_library(munit SHARED munit/munit.c)
+add_library(munit munit/munit.c)
 find_package(ClockGettime)
 if(ClockGettime_FOUND)
 	set_property(TARGET munit
