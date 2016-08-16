@@ -207,7 +207,7 @@ psnip_atomic_int64_store(psnip_atomic_int64* object, psnip_nonatomic_int64 desir
 #endif
 }
 
-static inline
+static __inline
 psnip_nonatomic_int32
 psnip_atomic_int32_load_(psnip_atomic_int32* object) {
 #if defined(__amd64) || defined(__i386) || defined(_M_X64) || defined(_M_IX86)
@@ -218,7 +218,7 @@ psnip_atomic_int32_load_(psnip_atomic_int32* object) {
   return (psnip_nonatomic_int32) *object;
 }
 
-static inline
+static __inline
 void
 psnip_atomic_int32_store_(psnip_atomic_int32* object, psnip_nonatomic_int32 desired) {
   *object = desired;
