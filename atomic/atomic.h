@@ -114,8 +114,13 @@ typedef _Atomic psnip_nonatomic_int32 psnip_atomic_int32;
 #elif defined(PSNIP_USE_GCC_ATOMICS)
 
 #include <stdint.h>
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 9)
 typedef _Atomic int_fast64_t psnip_atomic_int64;
 typedef _Atomic int_fast32_t psnip_atomic_int32;
+#else
+typedef int_fast64_t psnip_atomic_int64;
+typedef int_fast32_t psnip_atomic_int32;
+#endif
 
 #define psnip_atomic_int64_load(object) \
   __atomic_load_n(object, __ATOMIC_SEQ_CST)
