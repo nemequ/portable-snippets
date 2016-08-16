@@ -123,10 +123,16 @@
 #endif
 
 /* Runtime detection. */
-#define PSNIP_RT_BYTE_ORDER_IS_LE \
-  ((((union { unsigned char bytes[4]; PSNIP_ENDIAN_UINT32_T value; }) { { 1, 2, 3, 4 } }).value) == UINT32_C(0x04030201))
-#define PSNIP_RT_BYTE_ORDER_IS_BE \
-  ((((union { unsigned char bytes[4]; PSNIP_ENDIAN_UINT32_T value; }) { { 1, 2, 3, 4 } }).value) == UINT32_C(0x01020304))
+
+static const union {
+	unsigned char bytes[4];
+	PSNIP_ENDIAN_UINT32_T value;
+} psnip_endian_rt_data = {
+	{ 1, 2, 3, 4 }
+};
+
+#define PSNIP_RT_BYTE_ORDER_IS_LE (psnip_endian_rt_data.value == 0x04030201)
+#define PSNIP_RT_BYTE_ORDER_IS_BE (psnip_endian_rt_data.value == 0x01020304)
 #define PSNIP_RT_BYTE_ORDER \
   (PSNIP_RT_BYTE_ORDER_IS_LE ? PSNIP_LITTLE_ENDIAN : (PSNIP_RT_BYTE_ORDER_IS_BE ? PSNIP_BIG_ENDIAN : PSNIP_PDP_ENDIAN))
 
@@ -220,15 +226,25 @@
    ((((PSNIP_ENDIAN_UINT64_T) (v)) & (0x00000000ff000000ULL)) <<  8) | \
    ((((PSNIP_ENDIAN_UINT64_T) (v)) & (0x0000000000ff0000ULL)) << 24) | \
    ((((PSNIP_ENDIAN_UINT64_T) (v)) & (0x000000000000ff00ULL)) << 40) | \
-   ((((PSNIP_ENDIAN_UINT64_T) (v)) & (0x00000000000000ffULL)) << 56));
+   ((((PSNIP_ENDIAN_UINT64_T) (v)) & (0x00000000000000ffULL)) << 56))
 #endif
 
-static inline PSNIP_ENDIAN_UINT16_T psnip_io_le16(PSNIP_ENDIAN_UINT16_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_LITTLE_ENDIAN ? (v) : PSNIP_BSWAP16(v)); }
-static inline PSNIP_ENDIAN_UINT32_T psnip_io_le32(PSNIP_ENDIAN_UINT32_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_LITTLE_ENDIAN ? (v) : PSNIP_BSWAP32(v)); }
-static inline PSNIP_ENDIAN_UINT64_T psnip_io_le64(PSNIP_ENDIAN_UINT64_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_LITTLE_ENDIAN ? (v) : PSNIP_BSWAP64(v)); }
-static inline PSNIP_ENDIAN_UINT16_T psnip_io_be16(PSNIP_ENDIAN_UINT16_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_BIG_ENDIAN    ? (v) : PSNIP_BSWAP16(v)); }
-static inline PSNIP_ENDIAN_UINT32_T psnip_io_be32(PSNIP_ENDIAN_UINT32_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_BIG_ENDIAN    ? (v) : PSNIP_BSWAP32(v)); }
-static inline PSNIP_ENDIAN_UINT64_T psnip_io_be64(PSNIP_ENDIAN_UINT64_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_BIG_ENDIAN    ? (v) : PSNIP_BSWAP64(v)); }
+#if defined(HEDLEY_INLINE)
+#  define PSNIP_ENDIAN_INLINE HEDLEY_INLINE
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#  define PSNIP_ENDIAN_INLINE inline
+#elif defined(__GNUC__) || defined(_MSC_VER)
+#  define PSNIP_ENDIAN_INLINE __inline
+#else
+#  define PSNIP_ENDIAN_INLINE
+#endif
+
+static PSNIP_ENDIAN_INLINE PSNIP_ENDIAN_UINT16_T psnip_io_le16(PSNIP_ENDIAN_UINT16_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_LITTLE_ENDIAN ? (v) : PSNIP_BSWAP16(v)); }
+static PSNIP_ENDIAN_INLINE PSNIP_ENDIAN_UINT32_T psnip_io_le32(PSNIP_ENDIAN_UINT32_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_LITTLE_ENDIAN ? (v) : PSNIP_BSWAP32(v)); }
+static PSNIP_ENDIAN_INLINE PSNIP_ENDIAN_UINT64_T psnip_io_le64(PSNIP_ENDIAN_UINT64_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_LITTLE_ENDIAN ? (v) : PSNIP_BSWAP64(v)); }
+static PSNIP_ENDIAN_INLINE PSNIP_ENDIAN_UINT16_T psnip_io_be16(PSNIP_ENDIAN_UINT16_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_BIG_ENDIAN    ? (v) : PSNIP_BSWAP16(v)); }
+static PSNIP_ENDIAN_INLINE PSNIP_ENDIAN_UINT32_T psnip_io_be32(PSNIP_ENDIAN_UINT32_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_BIG_ENDIAN    ? (v) : PSNIP_BSWAP32(v)); }
+static PSNIP_ENDIAN_INLINE PSNIP_ENDIAN_UINT64_T psnip_io_be64(PSNIP_ENDIAN_UINT64_T v) { return (PSNIP_RT_BYTE_ORDER == PSNIP_BIG_ENDIAN    ? (v) : PSNIP_BSWAP64(v)); }
 
 #define PSNIP_READ_RT_LE16(v) psnip_io_le16(v)
 #define PSNIP_READ_RT_LE32(v) psnip_io_le32(v)
