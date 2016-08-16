@@ -67,6 +67,7 @@
 #endif
 
 #if defined(_MSC_VER)
+#include <windows.h>
 typedef LONGLONG psnip_nonatomic_int64;
 typedef LONG psnip_nonatomic_int32;
 #else
@@ -181,11 +182,10 @@ psnip_atomic_int32_store_(psnip_atomic_int32* object, psnip_nonatomic_int32 desi
 
 #elif defined(PSNIP_USE_MS_ATOMICS)
 
-#include <windows.h>
 typedef LONGLONG volatile psnip_atomic_int64;
 typedef LONG volatile psnip_atomic_int32;
 
-static inline
+static __inline
 psnip_nonatomic_int64
 psnip_atomic_int64_load(psnip_atomic_int64* object) {
 #if defined(__amd64) || defined(__i386) || defined(_M_X64) || defined(_M_IX86)
@@ -196,7 +196,7 @@ psnip_atomic_int64_load(psnip_atomic_int64* object) {
   return (psnip_nonatomic_int64) *object;
 }
 
-static inline
+static __inline
 void
 psnip_atomic_int64_store(psnip_atomic_int64* object, psnip_nonatomic_int64 desired) {
   *object = desired;
