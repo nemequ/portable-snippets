@@ -13,6 +13,7 @@ if(ClockGettime_FOUND)
 		APPEND PROPERTY COMPILE_DEFINITIONS MUNIT_ALLOW_CLOCK_GETTIME)
   target_link_libraries(munit ${ClockGettime_LIBRARIES})
 endif()
+set_property (TARGET munit PROPERTY C_STANDARD "99")
 
 function(psnip_add_tests)
   set(options)
