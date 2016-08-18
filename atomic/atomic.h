@@ -105,6 +105,8 @@ typedef atomic_int_fast32_t psnip_atomic_int32;
   atomic_fetch_add(object, operand)
 #define psnip_atomic_int64_sub(object, operand) \
   atomic_fetch_sub(object, operand)
+#define psnip_atomic_fence() \
+  atomic_thread_fence(memory_order_seq_cst)
 
 #elif defined(PSNIP_USE_CLANG_ATOMICS)
 
@@ -122,6 +124,8 @@ typedef _Atomic psnip_nonatomic_int32 psnip_atomic_int32;
   __c11_atomic_fetch_add(object, operand, __ATOMIC_SEQ_CST)
 #define psnip_atomic_int64_sub(object, operand) \
   __c11_atomic_fetch_sub(object, operand, __ATOMIC_SEQ_CST)
+#define psnip_atomic_fence() \
+  __c11_atomic_thread_fence(__ATOMIC_SEQ_CST)
 
 #elif defined(PSNIP_USE_GCC_ATOMICS)
 
@@ -144,6 +148,8 @@ typedef int_fast32_t psnip_atomic_int32;
   __atomic_add_fetch(object, operand, __ATOMIC_SEQ_CST)
 #define psnip_atomic_int64_sub(object, operand) \
   __atomic_sub_fetch(object, operand, __ATOMIC_SEQ_CST)
+#define psnip_atomic_fence() \
+  __atomic_thread_fence(__ATOMIC_SEQ_CST)
 
 #elif defined(PSNIP_USE_GCC_SYNC_ATOMICS)
 
@@ -190,6 +196,9 @@ psnip_atomic_int32_store_(psnip_atomic_int32* object, psnip_nonatomic_int32 desi
   psnip_atomic_int32_load_(object)
 #define psnip_atomic_int32_store(object, desired) \
   psnip_atomic_int32_store_(object, desired)
+
+#define psnip_atomic_fence() \
+  __sync_synchronize()
 
 #elif defined(PSNIP_USE_MS_ATOMICS)
 
@@ -242,6 +251,9 @@ psnip_atomic_int32_store_(psnip_atomic_int32* object, psnip_nonatomic_int32 desi
   psnip_atomic_int32_load_(object)
 #define psnip_atomic_int32_store(object, desired) \
   psnip_atomic_int32_store_(object, desired)
+
+#define psnip_atomic_fence() \
+  MemoryBarrier()
 
 #endif
 
