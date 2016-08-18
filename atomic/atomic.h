@@ -52,14 +52,25 @@
 #  define __has_feature(feature) 0
 #endif
 
-#if defined(_MSC_VER)
+#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 9))
+/* For GCC >= 4.9 we can use C11 atomics even when we're not in C11 mode. */
+#  define PSNIP_USE_C11_ATOMICS
+#elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && !defined(__STDC_NO_ATOMICS__)
+/* GCC 4.7 and 4.8 sets __STDC_VERSION__ to C11 (if compiling in C11
+ * mode) and didn't have stdatomic.h, but failed to set
+ * __STDC_NO_ATOMICS__.  Verions prior to 4.7 didn't set
+ * __STDC_VERSION__ to C11. */
+#  if defined(__GNUC__) && (__GNUC__ == 4) && (__GNUC_MINOR__ < 9)
+#    define PSNIP_USE_GCC_ATOMICS
+#  else
+#    define PSNIP_USE_C11_ATOMICS
+#  endif
+#elif defined(_MSC_VER)
 #  define PSNIP_USE_MS_ATOMICS
 #elif defined(__GNUC__) && ((__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7))
 #  define PSNIP_USE_GCC_ATOMICS
 #elif defined(__clang__) && __has_feature(c_atomic)
 #  define PSNIP_USE_CLANG_ATOMICS
-#elif defined(__STDC_VERSION__) && ((__STDC_VERSION__ >= 201112L) && !defined(__STDC_NO_ATOMICS__))
-#  define PSNIP_USE_C11_ATOMICS
 #elif defined(__GNUC__) && ((__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1))
 #  define PSNIP_USE_GCC_SYNC_ATOMICS
 #else
