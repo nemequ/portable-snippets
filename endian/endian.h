@@ -56,7 +56,7 @@
 #  if defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
 #    define PSNIP_BYTE_ORDER PSNIP_LITTLE_ENDIAN
 #  elif defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-#    define PSNIP_BYTE_ORDER PSNIP_LITTLE_ENDIAN
+#    define PSNIP_BYTE_ORDER PSNIP_BIG_ENDIAN
 #  elif defined(__BYTE_ORDER__) && defined(__ORDER_PDP_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_PDP_ENDIAN__)
 #    define PSNIP_BYTE_ORDER PSNIP_PDP_ENDIAN
 /* We know the endianness of some common architectures.  Common
