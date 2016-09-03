@@ -52,10 +52,10 @@
 #  define __has_feature(feature) 0
 #endif
 
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 9))
+#if defined(__GNUC__) && !defined(__INTEL_COMPILER) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 9))
 /* For GCC >= 4.9 we can use C11 atomics even when we're not in C11 mode. */
 #  define PSNIP_USE_C11_ATOMICS
-#elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && !defined(__STDC_NO_ATOMICS__)
+#elif !defined(__INTEL_COMPILER) && defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && !defined(__STDC_NO_ATOMICS__)
 /* GCC 4.7 and 4.8 sets __STDC_VERSION__ to C11 (if compiling in C11
  * mode) and didn't have stdatomic.h, but failed to set
  * __STDC_NO_ATOMICS__.  Verions prior to 4.7 didn't set
@@ -130,7 +130,7 @@ typedef _Atomic psnip_nonatomic_int32 psnip_atomic_int32;
 #elif defined(PSNIP_USE_GCC_ATOMICS)
 
 #include <stdint.h>
-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 9)
+#if !defined(__INTEL_COMPILER) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 9))
 typedef _Atomic int_fast64_t psnip_atomic_int64;
 typedef _Atomic int_fast32_t psnip_atomic_int32;
 #else
