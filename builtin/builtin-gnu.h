@@ -244,4 +244,44 @@ PSNIP_BUILTIN_CTZ_DEFINE(ctzl, unsigned long)
 PSNIP_BUILTIN_CTZ_DEFINE(ctzll, unsigned long long)
 #endif
 
+#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_parity, 3, 4)
+#  define psnip_builtin_parity(x) __builtin_parity(x)
+#  define psnip_builtin_parityl(x) __builtin_parityl(x)
+#  define psnip_builtin_parityll(x) __builtin_parityll(x)
+#else
+static const char psnip_builtin_parity_lookup[256] = {
+	0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+	1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+	1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+	0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+	1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+	0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+	0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+	1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+	1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+	0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+	0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+	1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+	0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+	1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+	1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
+	0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0
+};
+
+#define PSNIP_BUILTIN_PARITY_DEFINE(f_n, T) \
+  PSNIP_BUILTIN_STATIC_INLINE	\
+  int psnip_builtin_##f_n(T x) { \
+    int s; \
+    \
+    for (s = (sizeof(T) / 2) * 8 ; s != 4 ; s /= 2) { \
+      x ^= x >> s; \
+    } \
+    return psnip_builtin_parity_lookup[x & 0xff]; \
+  }
+
+PSNIP_BUILTIN_PARITY_DEFINE(parity, unsigned int)
+PSNIP_BUILTIN_PARITY_DEFINE(parityl, unsigned long)
+PSNIP_BUILTIN_PARITY_DEFINE(parityll, unsigned long long)
+#endif
+
 #endif /* defined(PSNIP_BUILTIN_GNU_H) */

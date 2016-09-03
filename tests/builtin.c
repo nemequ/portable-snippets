@@ -334,6 +334,90 @@ test_gnu_ctzll_native(const MunitParameter params[], void* data) {
 }
 #endif
 
+static MunitResult
+test_gnu_parity(const MunitParameter params[], void* data) {
+	unsigned int v = ~0U;
+	int expected = 0;
+
+	do {
+		munit_assert_int(psnip_builtin_parity(v), ==, expected);
+
+		v <<= 1;
+		expected ^= 1;
+	} while (v != 0);
+
+	return MUNIT_OK;
+}
+
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
+static MunitResult
+test_gnu_parity_native(const MunitParameter params[], void* data) {
+	unsigned int v;
+
+	munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+	munit_assert_int(psnip_builtin_parity(v), ==, __builtin_parity(v));
+
+  return MUNIT_OK;
+}
+#endif
+
+static MunitResult
+test_gnu_parityl(const MunitParameter params[], void* data) {
+	unsigned long v = ~0UL;
+	int expected = 0;
+
+	do {
+		munit_assert_int(psnip_builtin_parityl(v), ==, expected);
+
+		v <<= 1;
+		expected ^= 1;
+	} while (v != 0);
+
+	return MUNIT_OK;
+}
+
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
+static MunitResult
+test_gnu_parityl_native(const MunitParameter params[], void* data) {
+	unsigned long v;
+
+	munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+	munit_assert_int(psnip_builtin_parityl(v), ==, __builtin_parityl(v));
+
+  return MUNIT_OK;
+}
+#endif
+
+static MunitResult
+test_gnu_parityll(const MunitParameter params[], void* data) {
+	unsigned long long v = ~0ULL;
+	int expected = 0;
+
+	do {
+		munit_assert_int(psnip_builtin_parityll(v), ==, expected);
+
+		v <<= 1;
+		expected ^= 1;
+	} while (v != 0);
+
+	return MUNIT_OK;
+}
+
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
+static MunitResult
+test_gnu_parityll_native(const MunitParameter params[], void* data) {
+	unsigned long long v;
+
+	munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+	munit_assert_int(psnip_builtin_parityll(v), ==, __builtin_parityll(v));
+
+  return MUNIT_OK;
+}
+#endif
+
 static MunitTest test_suite_tests[] = {
 #if defined(__GNUC__)
 #  if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3))
@@ -342,23 +426,29 @@ static MunitTest test_suite_tests[] = {
   { (char*) "/builtin/ffsll/native", test_gnu_ffsll_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 #  endif
 #  if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
-  { (char*) "/builtin/clz/native",   test_gnu_clz_native,   NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/builtin/clzl/native",  test_gnu_clzl_native,  NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/builtin/clzll/native", test_gnu_clzll_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/builtin/ctz/native",   test_gnu_ctz_native,   NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/builtin/ctzl/native",  test_gnu_ctzl_native,  NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/builtin/ctzll/native", test_gnu_ctzll_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/clz/native",      test_gnu_clz_native,      NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/clzl/native",     test_gnu_clzl_native,     NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/clzll/native",    test_gnu_clzll_native,    NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/ctz/native",      test_gnu_ctz_native,      NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/ctzl/native",     test_gnu_ctzl_native,     NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/ctzll/native",    test_gnu_ctzll_native,    NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/parity/native",   test_gnu_parity_native,   NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/parityl/native",  test_gnu_parityl_native,  NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/parityll/native", test_gnu_parityll_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 #  endif
 #endif
-  { (char*) "/builtin/ffs",   test_gnu_ffs,   NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ffsl",  test_gnu_ffsl,  NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ffsll", test_gnu_ffsll, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/clz",   test_gnu_clz,   NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/clzl",  test_gnu_clzl,  NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/clzll", test_gnu_clzll, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ctz",   test_gnu_ctz,   NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ctzl",  test_gnu_ctzl,  NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ctzll", test_gnu_ctzll, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/ffs",      test_gnu_ffs,      NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/ffsl",     test_gnu_ffsl,     NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/ffsll",    test_gnu_ffsll,    NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/clz",      test_gnu_clz,      NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/clzl",     test_gnu_clzl,     NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/clzll",    test_gnu_clzll,    NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/ctz",      test_gnu_ctz,      NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/ctzl",     test_gnu_ctzl,     NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/ctzll",    test_gnu_ctzll,    NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/parity",   test_gnu_parity,   NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/parityl",  test_gnu_parityl,  NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/parityll", test_gnu_parityll, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
 
