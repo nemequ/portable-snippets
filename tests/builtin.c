@@ -42,7 +42,7 @@ test_gnu_ffs_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_ffsl(const MunitParameter params[], void* data) {
-	long int v = (int)(~0UL);
+	long int v = (long int)(~0UL);
 	int expected = 1;
 
 	do {
@@ -75,7 +75,7 @@ test_gnu_ffsl_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_ffsll(const MunitParameter params[], void* data) {
-	long long int v = (int)(~0ULL);
+	long long int v = (long long int)(~0ULL);
 	int expected = 1;
 
 	do {

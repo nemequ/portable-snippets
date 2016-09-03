@@ -31,7 +31,7 @@ the variants.
 
 | GCC built-in | MSVC fallback | Portable fallback |
 | ------------ | ------------- | ----------------- |
-| ffs          |               | ✓                 |
+| ffs          | ✓             | ✓                 |
 | clz          | ✓             | ✓                 |
 | ctz          |               |                   |
 | clrsb        |               |                   |

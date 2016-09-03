@@ -43,6 +43,39 @@
 #  define psnip_builtin_ffs(x) __builtin_ffs(x)
 #  define psnip_builtin_ffsl(x) __builtin_ffsl(x)
 #  define psnip_builtin_ffsll(x) __builtin_ffsll(x)
+#elif defined(_MSC_VER) && (_MSC_VER >= 1400)
+#include <intrin.h>
+
+PSNIP_BUILTIN_STATIC_INLINE
+int psnip_builtin_ffsll(long long int v) {
+	unsigned long r;
+#if defined(_M_AMD64) || defined(_M_ARM)
+	if (_BitScanForward64(&r, (unsigned long long) v)) {
+		return (int) (r + 1);
+	}
+#else
+	if (_BitScanForward(&r, (unsigned long)(v))) {
+		return (int) (r + 1);
+	} else if (_BitScanForward(&r, (unsigned long) (v >> 32))) {
+		return (int) (r + 33);
+	}
+#endif
+	return 0;
+}
+
+PSNIP_BUILTIN_STATIC_INLINE
+int psnip_builtin_ffsl(long int v) {
+	unsigned long r;
+	if (_BitScanForward(&r, (unsigned long) v)) {
+		return (int) (r + 1);
+	}
+	return 0;
+}
+
+PSNIP_BUILTIN_STATIC_INLINE
+int psnip_builtin_ffs(int v) {
+	return psnip_builtin_ffsl(v);
+}
 #else
 static const char psnip_builtin_ffs_lookup[256] = {
   0, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
@@ -90,6 +123,8 @@ PSNIP_BUILTIN_FFS_DEFINE(ffsll, long long int)
 #  define psnip_builtin_clzl(x) __builtin_clzl(x)
 #  define psnip_builtin_clzll(x) __builtin_clzll(x)
 #elif defined(_MSC_VER) && (_MSC_VER >= 1400)
+#include <intrin.h>
+
 PSNIP_BUILTIN_STATIC_INLINE
 int psnip_builtin_clzll(unsigned long long int v) {
 	unsigned long r = 0;
