@@ -24,4 +24,4 @@ build_script:
 
 test_script:
   - ps: |
-      ctest --output-on-failure --interactive-debug-mode 0 -C Debug
+      ctest --output-on-failure --interactive-debug-mode 0 -C Debug -V

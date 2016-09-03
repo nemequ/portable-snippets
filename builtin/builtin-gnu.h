@@ -89,6 +89,37 @@ PSNIP_BUILTIN_FFS_DEFINE(ffsll, long long int)
 #  define psnip_builtin_clz(x) __builtin_clz(x)
 #  define psnip_builtin_clzl(x) __builtin_clzl(x)
 #  define psnip_builtin_clzll(x) __builtin_clzll(x)
+#elif defined(_MSC_VER) && (_MSC_VER >= 1400)
+PSNIP_BUILTIN_STATIC_INLINE
+int psnip_builtin_clzll(unsigned long long int v) {
+	unsigned long r = 0;
+#if defined(_M_AMD64) || defined(_M_ARM)
+	if (_BitScanReverse64(&r, v)) {
+		return 63 - r;
+	}
+#else
+	if (_BitScanReverse(&r, (unsigned long) (v >> 32))) {
+		return 31 - r;
+	} else if (_BitScanReverse(&r, (unsigned long) v)) {
+		return 63 - r;
+	}
+#endif
+	return 63;
+}
+
+PSNIP_BUILTIN_STATIC_INLINE
+int psnip_builtin_clzl(unsigned long int v) {
+	unsigned long r = 0;
+	if (_BitScanReverse(&r, v)) {
+		return 31 - r;
+	}
+	return 31;
+}
+
+PSNIP_BUILTIN_STATIC_INLINE
+int psnip_builtin_clz(unsigned int v) {
+	return psnip_builtin_clzl(v);
+}
 #else
 static const char psnip_builtin_clz_lookup[256] = {
   7, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,
@@ -131,7 +162,7 @@ static const char psnip_builtin_clz_lookup[256] = {
 
 PSNIP_BUILTIN_CLZ_DEFINE(clz, unsigned int)
 PSNIP_BUILTIN_CLZ_DEFINE(clzl, unsigned long int)
-PSNIP_BUILTIN_CLZ_DEFINE(clzll, unsigned long int)
+PSNIP_BUILTIN_CLZ_DEFINE(clzll, unsigned long long int)
 #endif
 
 #endif /* defined(PSNIP_BUILTIN_GNU_H) */
