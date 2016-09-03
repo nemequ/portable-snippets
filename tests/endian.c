@@ -26,6 +26,9 @@ const union {
 
 static MunitResult
 test_endian_swap_known(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   munit_assert_uint16(PSNIP_BSWAP16(UINT16_C(0xefbe)), ==, UINT16_C(0xbeef));
   munit_assert_uint32(PSNIP_BSWAP32(UINT32_C(0xefbeadde)), ==, UINT32_C(0xdeadbeef));
   munit_assert_uint64(PSNIP_BSWAP64(UINT64_C(0x0df0dde0fe0fdcba)), ==, UINT64_C(0xbadc0ffee0ddf00d));
@@ -35,6 +38,9 @@ test_endian_swap_known(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_endian_swap_random(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   munit_assert_uint16(PSNIP_BSWAP16(UINT16_C(0xefbe)), ==, UINT16_C(0xbeef));
   {
     const uint16_t input = (uint16_t) munit_rand_uint32();
@@ -67,6 +73,9 @@ test_endian_swap_random(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_endian_from_be(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   munit_assert_uint16(PSNIP_READ_BE16(test_data_16.value), ==, UINT16_C(0x0102));
   munit_assert_uint32(PSNIP_READ_BE32(test_data_32.value), ==, UINT32_C(0x01020304));
   munit_assert_uint64(PSNIP_READ_BE64(test_data_64.value), ==, UINT64_C(0x0102030405060708));
@@ -76,6 +85,9 @@ test_endian_from_be(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_endian_from_le(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   munit_assert_uint16(PSNIP_READ_LE16(test_data_16.value), ==, UINT16_C(0x0201));
   munit_assert_uint32(PSNIP_READ_LE32(test_data_32.value), ==, UINT32_C(0x04030201));
   munit_assert_uint64(PSNIP_READ_LE64(test_data_64.value), ==, UINT64_C(0x0807060504030201));

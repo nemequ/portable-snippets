@@ -8,6 +8,9 @@ static psnip_atomic_int32 value32 = PSNIP_ATOMIC_VAR_INIT(9);
 
 static MunitResult
 test_atomic_int64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
 	psnip_nonatomic_int64 v, expected;
 
 	v = psnip_atomic_int64_load(&value64);
@@ -38,6 +41,9 @@ test_atomic_int64(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_atomic_int32(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
 	psnip_nonatomic_int32 v, expected;
 
 	v = psnip_atomic_int32_load(&value32);

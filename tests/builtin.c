@@ -9,6 +9,9 @@
 
 static MunitResult
 test_gnu_ffs(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   int v = (int) (~0U);
   int expected = 1;
 
@@ -25,6 +28,9 @@ test_gnu_ffs(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ffs_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   int v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
@@ -41,6 +47,9 @@ test_gnu_ffs_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_ffsl(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   long v = (long) (~0UL);
   int expected = 1;
 
@@ -57,6 +66,9 @@ test_gnu_ffsl(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ffsl_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   long v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
@@ -73,6 +85,9 @@ test_gnu_ffsl_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_ffsll(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   long long v = (long long) (~0ULL);
   int expected = 1;
 
@@ -89,6 +104,9 @@ test_gnu_ffsll(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ffsll_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   long long v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
@@ -105,6 +123,9 @@ test_gnu_ffsll_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_clz(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned int v = ~0U;
   int expected = 0;
 
@@ -121,6 +142,9 @@ test_gnu_clz(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_clz_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned int v;
 
   /* __builtin_clz(0) is undefined, so make sure we don't test it.
@@ -143,6 +167,9 @@ test_gnu_clz_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_clzl(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long v = ~0UL;
   int expected = 0;
 
@@ -159,6 +186,9 @@ test_gnu_clzl(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_clzl_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long v;
 
   /* __builtin_clzl(0) is undefined, so make sure we don't test it.
@@ -181,6 +211,9 @@ test_gnu_clzl_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_clzll(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long long v = ~0ULL;
   int expected = 0;
 
@@ -197,6 +230,9 @@ test_gnu_clzll(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_clzll_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long long v;
 
   /* __builtin_clzll(0) is undefined, so make sure we don't test it.
@@ -219,6 +255,9 @@ test_gnu_clzll_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_ctz(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned int v = ~0U;
   int expected = 0;
 
@@ -235,6 +274,9 @@ test_gnu_ctz(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ctz_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned int v;
 
   /* __builtin_ctz(0) is undefined, so make sure we don't test it.
@@ -257,6 +299,9 @@ test_gnu_ctz_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_ctzl(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long v = ~0U;
   int expected = 0;
 
@@ -273,6 +318,9 @@ test_gnu_ctzl(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ctzl_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long v;
 
   /* __builtin_ctzl(0) is undefined, so make sure we don't test it.
@@ -295,6 +343,9 @@ test_gnu_ctzl_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_ctzll(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long long v = ~0U;
   int expected = 0;
 
@@ -311,6 +362,9 @@ test_gnu_ctzll(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ctzll_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long long v;
 
   /* __builtin_ctzll(0) is undefined, so make sure we don't test it.
@@ -333,6 +387,9 @@ test_gnu_ctzll_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_parity(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned int v = ~0U;
   int expected = 0;
 
@@ -349,6 +406,9 @@ test_gnu_parity(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_parity_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned int v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
@@ -361,6 +421,9 @@ test_gnu_parity_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_parityl(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long v = ~0UL;
   int expected = 0;
 
@@ -377,6 +440,9 @@ test_gnu_parityl(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_parityl_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
@@ -389,6 +455,9 @@ test_gnu_parityl_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_parityll(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long long v = ~0ULL;
   int expected = 0;
 
@@ -405,6 +474,9 @@ test_gnu_parityll(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_parityll_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long long v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
@@ -417,6 +489,9 @@ test_gnu_parityll_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_popcount(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned int v = ~0U;
   int expected = sizeof(v) * 8;
 
@@ -433,6 +508,9 @@ test_gnu_popcount(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_popcount_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long long v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
@@ -445,6 +523,9 @@ test_gnu_popcount_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_popcountl(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned int v = ~0U;
   int expected = sizeof(v) * 8;
 
@@ -461,6 +542,9 @@ test_gnu_popcountl(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_popcountl_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long long v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
@@ -473,6 +557,9 @@ test_gnu_popcountl_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_popcountll(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned int v = ~0U;
   int expected = sizeof(v) * 8;
 
@@ -489,6 +576,9 @@ test_gnu_popcountll(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_popcountll_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
   unsigned long long v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
