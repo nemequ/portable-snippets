@@ -47,14 +47,14 @@
 #include <intrin.h>
 
 PSNIP_BUILTIN_STATIC_INLINE
-int psnip_builtin_ffsll(unsigned long long v) {
+int psnip_builtin_ffsll(long long v) {
   unsigned long r;
 #if defined(_M_AMD64) || defined(_M_ARM)
   if (_BitScanForward64(&r, (unsigned long long) v)) {
     return (int) (r + 1);
   }
 #else
-  if (_BitScanForward(&r, (unsigned long)(v))) {
+  if (_BitScanForward(&r, (unsigned long) (v))) {
     return (int) (r + 1);
   } else if (_BitScanForward(&r, (unsigned long) (v >> 32))) {
     return (int) (r + 33);
@@ -64,7 +64,7 @@ int psnip_builtin_ffsll(unsigned long long v) {
 }
 
 PSNIP_BUILTIN_STATIC_INLINE
-int psnip_builtin_ffsl(unsigned long v) {
+int psnip_builtin_ffsl(long v) {
   unsigned long r;
   if (_BitScanForward(&r, (unsigned long) v)) {
     return (int) (r + 1);
@@ -73,7 +73,7 @@ int psnip_builtin_ffsl(unsigned long v) {
 }
 
 PSNIP_BUILTIN_STATIC_INLINE
-int psnip_builtin_ffs(unsigned int v) {
+int psnip_builtin_ffs(int v) {
   return psnip_builtin_ffsl(v);
 }
 #else
@@ -99,8 +99,8 @@ static const char psnip_builtin_ffs_lookup[256] = {
 #define PSNIP_BUILTIN_FFS_DEFINE(f_n, T)        \
   PSNIP_BUILTIN_STATIC_INLINE                   \
   int psnip_builtin_##f_n(T x) {                \
-    T t = x;                                    \
-    int s = 0;                                  \
+    unsigned T t = (unsigned T) x;              \
+    size_t s = 0;                               \
                                                 \
     while (s < (sizeof(T) * 8)) {               \
       t = (x >> s) & 0xff;                      \
@@ -113,9 +113,9 @@ static const char psnip_builtin_ffs_lookup[256] = {
     return 0;                                   \
   }
 
-PSNIP_BUILTIN_FFS_DEFINE(ffs, unsigned int)
-PSNIP_BUILTIN_FFS_DEFINE(ffsl, unsigned long)
-PSNIP_BUILTIN_FFS_DEFINE(ffsll, unsigned long long)
+PSNIP_BUILTIN_FFS_DEFINE(ffs, int)
+PSNIP_BUILTIN_FFS_DEFINE(ffsl, long)
+PSNIP_BUILTIN_FFS_DEFINE(ffsll, long long)
 #endif
 
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_clz, 3, 4)

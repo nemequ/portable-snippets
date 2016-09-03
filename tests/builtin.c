@@ -9,7 +9,7 @@
 
 static MunitResult
 test_gnu_ffs(const MunitParameter params[], void* data) {
-  unsigned int v = ~0U;
+  int v = (int) (~0U);
   int expected = 1;
 
   do {
@@ -25,14 +25,13 @@ test_gnu_ffs(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ffs_native(const MunitParameter params[], void* data) {
-  unsigned int v;
+  int v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
   /* Unset a random number of the least significant bits, otherwise
      we're heavily biased towards low results. */
-  const int m = ((int) ~0U) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
-  v &= m;
+  v &= (int) (~0U << munit_rand_int_range(0, (sizeof(v) * 8) - 1));
 
   munit_assert_int(psnip_builtin_ffs(v), ==, __builtin_ffs(v));
 
@@ -42,7 +41,7 @@ test_gnu_ffs_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_ffsl(const MunitParameter params[], void* data) {
-  unsigned long v = ~0UL;
+  long v = (long) (~0UL);
   int expected = 1;
 
   do {
@@ -58,14 +57,13 @@ test_gnu_ffsl(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ffsl_native(const MunitParameter params[], void* data) {
-  unsigned long v;
+  long v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
   /* Unset a random number of the least significant bits, otherwise
      we're heavily biased towards low results. */
-  const int m = ((int) ~0U) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
-  v &= m;
+  v &= (long) (~0UL << munit_rand_int_range(0, (sizeof(v) * 8) - 1));
 
   munit_assert_int(psnip_builtin_ffsl(v), ==, __builtin_ffsl(v));
 
@@ -75,7 +73,7 @@ test_gnu_ffsl_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_ffsll(const MunitParameter params[], void* data) {
-  unsigned long long v = ~0ULL;
+  long long v = (long long) (~0ULL);
   int expected = 1;
 
   do {
@@ -91,14 +89,13 @@ test_gnu_ffsll(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ffsll_native(const MunitParameter params[], void* data) {
-  unsigned long long v;
+  long long v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
   /* Unset a random number of the least significant bits, otherwise
      we're heavily biased towards low results. */
-  const int m = ((int) ~0U) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
-  v &= m;
+  v &= (long long) (~0ULL << munit_rand_int_range(0, (sizeof(v) * 8) - 1));
 
   munit_assert_int(psnip_builtin_ffsll(v), ==, __builtin_ffsll(v));
 
