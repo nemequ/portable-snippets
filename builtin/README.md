@@ -35,6 +35,6 @@ the variants.
 | clz          | ✓             | ✓                 |
 | ctz          |               | ✓                 |
 | clrsb        |               |                   |
-| popcount     |               |                   |
+| popcount     |               | ✓                 |
 | parity       |               | ✓                 |
 | bswap*       |               |                   |
