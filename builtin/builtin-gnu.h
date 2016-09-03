@@ -39,7 +39,7 @@
 #  endif
 #endif
 
-#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ffs, 3, 4)
+#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ffs, 3, 3)
 #  define psnip_builtin_ffs(x) __builtin_ffs(x)
 #  define psnip_builtin_ffsl(x) __builtin_ffsl(x)
 #  define psnip_builtin_ffsll(x) __builtin_ffsll(x)
@@ -47,7 +47,7 @@
 #include <intrin.h>
 
 PSNIP_BUILTIN_STATIC_INLINE
-int psnip_builtin_ffsll(long long int v) {
+int psnip_builtin_ffsll(unsigned long long v) {
 	unsigned long r;
 #if defined(_M_AMD64) || defined(_M_ARM)
 	if (_BitScanForward64(&r, (unsigned long long) v)) {
@@ -64,7 +64,7 @@ int psnip_builtin_ffsll(long long int v) {
 }
 
 PSNIP_BUILTIN_STATIC_INLINE
-int psnip_builtin_ffsl(long int v) {
+int psnip_builtin_ffsl(unsigned long v) {
 	unsigned long r;
 	if (_BitScanForward(&r, (unsigned long) v)) {
 		return (int) (r + 1);
@@ -73,7 +73,7 @@ int psnip_builtin_ffsl(long int v) {
 }
 
 PSNIP_BUILTIN_STATIC_INLINE
-int psnip_builtin_ffs(int v) {
+int psnip_builtin_ffs(unsigned int v) {
 	return psnip_builtin_ffsl(v);
 }
 #else
@@ -99,26 +99,26 @@ static const char psnip_builtin_ffs_lookup[256] = {
 #define PSNIP_BUILTIN_FFS_DEFINE(f_n, T)         \
   PSNIP_BUILTIN_STATIC_INLINE                    \
   int psnip_builtin_##f_n(T x) {                 \
-    unsigned T t = x;                           \
-    unsigned int s = 0;                         \
-                                                \
-    while (s < (sizeof(T) * 8)) {               \
-      t = (x >> s) & 0xff;                      \
-      if (t)                                    \
+    T t = x;                                     \
+    int s = 0;                                   \
+                                                 \
+    while (s < (sizeof(T) * 8)) {                \
+      t = (x >> s) & 0xff;                       \
+      if (t)                                     \
         return psnip_builtin_ffs_lookup[t] + s;  \
-                                                \
-      s += 8;                                   \
-    }                                           \
-                                                \
-    return 0;                                   \
+                                                 \
+      s += 8;                                    \
+    }                                            \
+                                                 \
+    return 0;                                    \
   }
 
-PSNIP_BUILTIN_FFS_DEFINE(ffs, int)
-PSNIP_BUILTIN_FFS_DEFINE(ffsl, long int)
-PSNIP_BUILTIN_FFS_DEFINE(ffsll, long long int)
+PSNIP_BUILTIN_FFS_DEFINE(ffs, unsigned int)
+PSNIP_BUILTIN_FFS_DEFINE(ffsl, unsigned long)
+PSNIP_BUILTIN_FFS_DEFINE(ffsll, unsigned long long)
 #endif
 
-#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_clz, 4, 7)
+#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_clz, 3, 4)
 #  define psnip_builtin_clz(x) __builtin_clz(x)
 #  define psnip_builtin_clzl(x) __builtin_clzl(x)
 #  define psnip_builtin_clzll(x) __builtin_clzll(x)
@@ -126,7 +126,7 @@ PSNIP_BUILTIN_FFS_DEFINE(ffsll, long long int)
 #include <intrin.h>
 
 PSNIP_BUILTIN_STATIC_INLINE
-int psnip_builtin_clzll(unsigned long long int v) {
+int psnip_builtin_clzll(unsigned long long v) {
 	unsigned long r = 0;
 #if defined(_M_AMD64) || defined(_M_ARM)
 	if (_BitScanReverse64(&r, v)) {
@@ -143,7 +143,7 @@ int psnip_builtin_clzll(unsigned long long int v) {
 }
 
 PSNIP_BUILTIN_STATIC_INLINE
-int psnip_builtin_clzl(unsigned long int v) {
+int psnip_builtin_clzl(unsigned long v) {
 	unsigned long r = 0;
 	if (_BitScanReverse(&r, v)) {
 		return 31 - r;
@@ -175,29 +175,73 @@ static const char psnip_builtin_clz_lookup[256] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-#define PSNIP_BUILTIN_CLZ_DEFINE(f_n, T)         \
-  PSNIP_BUILTIN_STATIC_INLINE                    \
-  int psnip_builtin_##f_n(T x) {                 \
+#define PSNIP_BUILTIN_CLZ_DEFINE(f_n, T)        \
+  PSNIP_BUILTIN_STATIC_INLINE                   \
+  int psnip_builtin_##f_n(T x) {                \
     size_t s = sizeof(T) * 8;                   \
     T r;                                        \
                                                 \
     while ((s -= 8) != 0) {                     \
       r = x >> s;                               \
       if (r != 0)                               \
-        return psnip_builtin_clz_lookup[r] +     \
+        return psnip_builtin_clz_lookup[r] +    \
           (((sizeof(T) - 1) * 8) - s);          \
     }                                           \
                                                 \
     if (x == 0)                                 \
       return (int) ((sizeof(T) * 8) - 1);       \
     else                                        \
-      return psnip_builtin_clz_lookup[x] +       \
+      return psnip_builtin_clz_lookup[x] +      \
         ((sizeof(T) - 1) * 8);                  \
   }
 
 PSNIP_BUILTIN_CLZ_DEFINE(clz, unsigned int)
-PSNIP_BUILTIN_CLZ_DEFINE(clzl, unsigned long int)
-PSNIP_BUILTIN_CLZ_DEFINE(clzll, unsigned long long int)
+PSNIP_BUILTIN_CLZ_DEFINE(clzl, unsigned long)
+PSNIP_BUILTIN_CLZ_DEFINE(clzll, unsigned long long)
+#endif
+
+#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ctz, 3, 4)
+#  define psnip_builtin_ctz(x) __builtin_ctz(x)
+#  define psnip_builtin_ctzl(x) __builtin_ctzl(x)
+#  define psnip_builtin_ctzll(x) __builtin_ctzll(x)
+#else
+static const char psnip_builtin_ctz_lookup[256] = {
+	0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
+	4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0
+};
+
+#define PSNIP_BUILTIN_CTZ_DEFINE(f_n, T)				\
+  PSNIP_BUILTIN_STATIC_INLINE										\
+  int psnip_builtin_##f_n(T x) {								\
+    size_t s = 0;                               \
+    T r;                                        \
+                                                \
+    do {                                        \
+      r = (x >> s) & 0xff;                      \
+      if (r != 0)                               \
+        return psnip_builtin_ctz_lookup[r] + s; \
+    } while ((s += 8) < (sizeof(T) * 8));       \
+                                                \
+    return sizeof(T) - 1;                       \
+  }
+
+PSNIP_BUILTIN_CTZ_DEFINE(ctz, unsigned int)
+PSNIP_BUILTIN_CTZ_DEFINE(ctzl, unsigned long)
+PSNIP_BUILTIN_CTZ_DEFINE(ctzll, unsigned long long)
 #endif
 
 #endif /* defined(PSNIP_BUILTIN_GNU_H) */

@@ -9,7 +9,7 @@
 
 static MunitResult
 test_gnu_ffs(const MunitParameter params[], void* data) {
-	int v = (int)(~0U);
+	unsigned int v = ~0U;
 	int expected = 1;
 
 	do {
@@ -25,7 +25,7 @@ test_gnu_ffs(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ffs_native(const MunitParameter params[], void* data) {
-	int v;
+	unsigned int v;
 
 	munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
@@ -42,7 +42,7 @@ test_gnu_ffs_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_ffsl(const MunitParameter params[], void* data) {
-	long int v = (long int)(~0UL);
+	unsigned long v = ~0UL;
 	int expected = 1;
 
 	do {
@@ -58,7 +58,7 @@ test_gnu_ffsl(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ffsl_native(const MunitParameter params[], void* data) {
-	long int v;
+	unsigned long v;
 
 	munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
@@ -75,7 +75,7 @@ test_gnu_ffsl_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_ffsll(const MunitParameter params[], void* data) {
-	long long int v = (long long int)(~0ULL);
+	unsigned long long v = ~0ULL;
 	int expected = 1;
 
 	do {
@@ -91,7 +91,7 @@ test_gnu_ffsll(const MunitParameter params[], void* data) {
 #if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_ffsll_native(const MunitParameter params[], void* data) {
-	long long int v;
+	unsigned long long v;
 
 	munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
@@ -121,7 +121,7 @@ test_gnu_clz(const MunitParameter params[], void* data) {
 	return MUNIT_OK;
 }
 
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7))
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_clz_native(const MunitParameter params[], void* data) {
 	unsigned int v;
@@ -146,7 +146,7 @@ test_gnu_clz_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_clzl(const MunitParameter params[], void* data) {
-	unsigned long int v = ~0UL;
+	unsigned long v = ~0UL;
 	int expected = 0;
 
 	do {
@@ -159,10 +159,10 @@ test_gnu_clzl(const MunitParameter params[], void* data) {
 	return MUNIT_OK;
 }
 
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7))
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_clzl_native(const MunitParameter params[], void* data) {
-	unsigned long int v;
+	unsigned long v;
 
 	/* __builtin_clzl(0) is undefined, so make sure we don't test it.
 	 * That said, here it returns 1 less than the number of bits in the
@@ -184,7 +184,7 @@ test_gnu_clzl_native(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_gnu_clzll(const MunitParameter params[], void* data) {
-	unsigned long long int v = ~0ULL;
+	unsigned long long v = ~0ULL;
 	int expected = 0;
 
 	do {
@@ -197,10 +197,10 @@ test_gnu_clzll(const MunitParameter params[], void* data) {
 	return MUNIT_OK;
 }
 
-#if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7))
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
 static MunitResult
 test_gnu_clzll_native(const MunitParameter params[], void* data) {
-	unsigned long long int v;
+	unsigned long long v;
 
 	/* __builtin_clzll(0) is undefined, so make sure we don't test it.
 	 * That said, here it returns 1 less than the number of bits in the
@@ -220,25 +220,145 @@ test_gnu_clzll_native(const MunitParameter params[], void* data) {
 }
 #endif
 
+static MunitResult
+test_gnu_ctz(const MunitParameter params[], void* data) {
+	unsigned int v = ~0U;
+	int expected = 0;
+
+	do {
+		munit_assert_int(psnip_builtin_ctz(v), ==, expected);
+
+		v <<= 1;
+		expected += 1;
+	} while (v != 0);
+
+	return MUNIT_OK;
+}
+
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
+static MunitResult
+test_gnu_ctz_native(const MunitParameter params[], void* data) {
+	unsigned int v;
+
+	/* __builtin_ctz(0) is undefined, so make sure we don't test it.
+	 * That said, here it returns 1 less than the number of bits in the
+	 * number. */
+	do {
+		munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+		/* Unset a random number of the most significant bits, otherwise
+			 we're heavily biased towards low results. */
+		const unsigned int m = (~0U) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
+		v &= m;
+	} while (v == 0);
+
+	munit_assert_int(psnip_builtin_ctz(v), ==, __builtin_ctz(v));
+
+  return MUNIT_OK;
+}
+#endif
+
+static MunitResult
+test_gnu_ctzl(const MunitParameter params[], void* data) {
+	unsigned long v = ~0U;
+	int expected = 0;
+
+	do {
+		munit_assert_int(psnip_builtin_ctzl(v), ==, expected);
+
+		v <<= 1;
+		expected += 1;
+	} while (v != 0);
+
+	return MUNIT_OK;
+}
+
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
+static MunitResult
+test_gnu_ctzl_native(const MunitParameter params[], void* data) {
+	unsigned long v;
+
+	/* __builtin_ctzl(0) is undefined, so make sure we don't test it.
+	 * That said, here it returns 1 less than the number of bits in the
+	 * number. */
+	do {
+		munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+		/* Unset a random number of the most significant bits, otherwise
+			 we're heavily biased towards low results. */
+		const unsigned int m = (~0U) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
+		v &= m;
+	} while (v == 0);
+
+	munit_assert_int(psnip_builtin_ctzl(v), ==, __builtin_ctzl(v));
+
+  return MUNIT_OK;
+}
+#endif
+
+static MunitResult
+test_gnu_ctzll(const MunitParameter params[], void* data) {
+	unsigned long long v = ~0U;
+	int expected = 0;
+
+	do {
+		munit_assert_int(psnip_builtin_ctzll(v), ==, expected);
+
+		v <<= 1;
+		expected += 1;
+	} while (v != 0);
+
+	return MUNIT_OK;
+}
+
+#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
+static MunitResult
+test_gnu_ctzll_native(const MunitParameter params[], void* data) {
+	unsigned long long v;
+
+	/* __builtin_ctzll(0) is undefined, so make sure we don't test it.
+	 * That said, here it returns 1 less than the number of bits in the
+	 * number. */
+	do {
+		munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+		/* Unset a random number of the most significant bits, otherwise
+			 we're heavily biased towards low results. */
+		const unsigned int m = (~0U) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
+		v &= m;
+	} while (v == 0);
+
+	munit_assert_int(psnip_builtin_ctzll(v), ==, __builtin_ctzll(v));
+
+  return MUNIT_OK;
+}
+#endif
+
 static MunitTest test_suite_tests[] = {
 #if defined(__GNUC__)
-#  if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
-  { (char*) "/builtin/ffs/native", test_gnu_ffs_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/builtin/ffsl/native", test_gnu_ffsl_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+#  if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3))
+  { (char*) "/builtin/ffs/native",   test_gnu_ffs_native,   NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/ffsl/native",  test_gnu_ffsl_native,  NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   { (char*) "/builtin/ffsll/native", test_gnu_ffsll_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 #  endif
-#  if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7))
-  { (char*) "/builtin/clz/native", test_gnu_clz_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/builtin/clzl/native", test_gnu_clzl_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+#  if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
+  { (char*) "/builtin/clz/native",   test_gnu_clz_native,   NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/clzl/native",  test_gnu_clzl_native,  NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   { (char*) "/builtin/clzll/native", test_gnu_clzll_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/ctz/native",   test_gnu_ctz_native,   NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/ctzl/native",  test_gnu_ctzl_native,  NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/builtin/ctzll/native", test_gnu_ctzll_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 #  endif
 #endif
-  { (char*) "/builtin/ffs", test_gnu_ffs, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ffsl", test_gnu_ffsl, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/ffs",   test_gnu_ffs,   NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/ffsl",  test_gnu_ffsl,  NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
   { (char*) "/builtin/ffsll", test_gnu_ffsll, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/clz", test_gnu_clz, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/clzl", test_gnu_clzl, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/clz",   test_gnu_clz,   NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/clzl",  test_gnu_clzl,  NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
   { (char*) "/builtin/clzll", test_gnu_clzll, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/ctz",   test_gnu_ctz,   NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/ctzl",  test_gnu_ctzl,  NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/builtin/ctzll", test_gnu_ctzll, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
 

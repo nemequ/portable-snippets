@@ -33,7 +33,7 @@ the variants.
 | ------------ | ------------- | ----------------- |
 | ffs          | ✓             | ✓                 |
 | clz          | ✓             | ✓                 |
-| ctz          |               |                   |
+| ctz          |               | ✓                 |
 | clrsb        |               |                   |
 | popcount     |               |                   |
 | parity       |               |                   |

@@ -49,7 +49,7 @@ psnip_add_tests(TARGET atomic
   TESTS
     "/atomic")
 
-psnip_add_tests(TARGET intrin
+psnip_add_tests(TARGET builtin
   SOURCES
     builtin.c
   TESTS
