@@ -73,6 +73,8 @@
 #  define PSNIP_USE_CLANG_ATOMICS
 #elif defined(__GNUC__) && ((__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1))
 #  define PSNIP_USE_GCC_SYNC_ATOMICS
+#elif (defined(__SUNPRO_C) && (__SUNPRO_C >= 0x5140)) || (defined(__SUNPRO_CC) && (__SUNPRO_CC >= 0x5140))
+#  define PSNIP_USE_GCC_ATOMICS
 #else
 #  error No atomic implementation found
 #endif
