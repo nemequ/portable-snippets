@@ -90,10 +90,17 @@ Functions without a portable version have not been implemented at all
 | bittestandset          |          |      |
 | bittestandset64        |          |      |
 
-For bswap/byteswap functions, you should really use endian.h.
-
 Note that it may not be possible to implement built-ins from one
 compiler using the built-ins from another.
 
 If we are missing a function you feel should be included, please [file
 an issue](https://github.com/nemequ/portable-snippets/issues).
+
+## Alternatives & Supplements
+
+For bswap/byteswap functions, you should really use endian.h which
+also handles endianness detection as well as providing easier to use
+APIs.
+
+For overflow-safe integer operations (i.e., `__builtin_*_overflow`),
+use safe-math.h.

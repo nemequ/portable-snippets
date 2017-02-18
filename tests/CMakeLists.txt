@@ -55,3 +55,9 @@ psnip_add_tests(TARGET builtin
   TESTS
     "/builtin"
     "/intrin")
+
+psnip_add_tests(TARGET safe-math
+  SOURCES
+    safe-math.c
+  TESTS
+    "/safe-math")

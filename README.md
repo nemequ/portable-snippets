@@ -14,6 +14,7 @@ This repository currently contains:
  * endian — endianness detection and swapping
  * atomic — common atomic synchronization operations
  * builtin — use compiler built-ins/intrinsics, or fall back on standard C
+ * safe-math — overflow-safe integer functions
 
 Please don't be shy about filing issues about these; if you have
 problems it's likely others will, as well, so we would like to fix
@@ -36,8 +37,6 @@ projects for doing things portably which you may be interested in:
  * [pstdint.h](http://www.azillionmonkeys.com/qed/pstdint.h) —
    stdint.h/cstdint for platforms which don't have it.  3-clause BSD
    license.
- * [safe-math](https://github.com/nemequ/safe-math) — portable
-   overflow-safe path functions.  MIT license.
 
 If there is a project you'd like to see added to the list, please file
 an issue.
