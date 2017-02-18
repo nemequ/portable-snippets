@@ -950,6 +950,77 @@ test_msvc_BitScanForward64_native(const MunitParameter params[], void* data) {
   return MUNIT_OK;
 }
 
+static MunitResult
+test_msvc_bittest(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  /* Yes, I know this only looks at 31 bits.  I'm trying to match
+   * Microsoft's example on
+   * https://msdn.microsoft.com/en-us/library/h65k4tze.aspx */
+
+  int num = 78002;
+  const char bits[] = "0100110100001100100000000000000";
+
+  int nBit;
+  for (nBit = 0 ; nBit < 31 ; nBit++)
+    munit_assert_uint8(bits[nBit] == '1', ==, psnip_intrin_bittest(&num, nBit));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittest_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  int nBit;
+  long num;
+  munit_rand_memory(sizeof(num), (uint8_t*) &num);
+
+  for (nBit = 0 ; nBit < (sizeof(num) * CHAR_BIT) ; nBit++)
+    munit_assert_uint8(_bittest(&num, nBit), ==,
+		       psnip_intrin_bittest(&num, nBit));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittest64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  int64_t num = UINT64_C(0x7273c4752334168f);
+  const uint8_t bits[] = {
+    1, 1, 1, 1, 0, 0, 0, 1,   0, 1, 1, 0, 1, 0, 0, 0,
+    0, 0, 1, 0, 1, 1, 0, 0,   1, 1, 0, 0, 0, 1, 0, 0,
+    1, 0, 1, 0, 1, 1, 1, 0,   0, 0, 1, 0, 0, 0, 1, 1,
+    1, 1, 0, 0, 1, 1, 1, 0,   0, 1, 0, 0, 1, 1, 1, 0
+  };
+
+  int i;
+  for (i = 0 ; i < 64 ; i++)
+    munit_assert_uint8(bits[i], ==, psnip_intrin_bittest64(&num, i));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittest64_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  int nBit;
+  int64_t num;
+  munit_rand_memory(sizeof(num), (uint8_t*) &num);
+
+  for (nBit = 0 ; nBit < (sizeof(num) * CHAR_BIT) ; nBit++)
+    munit_assert_uint8(_bittest64(&num, nBit), ==,
+		       psnip_intrin_bittest64(&num, nBit));
+
+  return MUNIT_OK;
+}
+
 #define PSNIP_TEST_BUILTIN(name) \
   { (char*) "/builtin/"#name, test_gnu_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }, \
   { (char*) "/builtin/"#name"/native", test_gnu_##name##_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
@@ -980,6 +1051,8 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_INTRIN(rotl64),
   PSNIP_TEST_INTRIN(BitScanForward),
   PSNIP_TEST_INTRIN(BitScanForward64),
+  PSNIP_TEST_INTRIN(bittest),
+  PSNIP_TEST_INTRIN(bittest64),
 
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

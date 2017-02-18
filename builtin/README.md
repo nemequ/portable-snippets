@@ -58,29 +58,37 @@ Functions without a portable version have not been implemented at all
 | bswap32          |          |      |
 | bswap64          |          |      |
 
-| MSVC intrinsic   | Portable | GCC  |
-| ---------------- | -------- | ---- |
-| rotl8            | ✓        |      |
-| rotl16           | ✓        |      |
-| rotl             | ✓        |      |
-| rotl64           | ✓        |      |
-| rotr8            | ✓        |      |
-| rotr16           | ✓        |      |
-| rotr             | ✓        |      |
-| rotr64           | ✓        |      |
-| BitScanForward   | ✓        |      |
-| BitScanForward64 | ✓        |      |
-| BitScanReverse   |          |      |
-| BitScanReverse64 |          |      |
-| mul128           |          |      |
-| umul128          |          |      |
-| shiftleft128     |          |      |
-| shiftright128    |          |      |
-| mulh             |          |      |
-| umulh            |          |      |
-| byteswap_uint64  |          |      |
-| byteswap_ulong   |          |      |
-| byteswap_ushort  |          |      |
+| MSVC intrinsic         | Portable | GCC  |
+| ---------------------- | -------- | ---- |
+| rotl8                  | ✓        |      |
+| rotl16                 | ✓        |      |
+| rotl                   | ✓        |      |
+| rotl64                 | ✓        |      |
+| rotr8                  | ✓        |      |
+| rotr16                 | ✓        |      |
+| rotr                   | ✓        |      |
+| rotr64                 | ✓        |      |
+| BitScanForward         | ✓        |      |
+| BitScanForward64       | ✓        |      |
+| BitScanReverse         |          |      |
+| BitScanReverse64       |          |      |
+| mul128                 |          |      |
+| umul128                |          |      |
+| shiftleft128           |          |      |
+| shiftright128          |          |      |
+| mulh                   |          |      |
+| umulh                  |          |      |
+| byteswap_uint64        |          |      |
+| byteswap_ulong         |          |      |
+| byteswap_ushort        |          |      |
+| bittest                | ✓        |      |
+| bittest64              | ✓        |      |
+| bittestandcomplement   |          |      |
+| bittestandcomplement64 |          |      |
+| bittestandreset        |          |      |
+| bittestandreset64      |          |      |
+| bittestandset          |          |      |
+| bittestandset64        |          |      |
 
 For bswap/byteswap functions, you should really use endian.h.
 

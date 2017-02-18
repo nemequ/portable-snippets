@@ -82,7 +82,7 @@
 #  define psnip_builtin_ffsl(x)  __builtin_ffsl(x)
 #  define psnip_builtin_ffsll(x) __builtin_ffsll(x)
 #else
-#  if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward64, 14, 0) && (defined(__amd64) || defined(_M_AMD64) || defined(__aarch64__) || defined(_WIN64))
+#  if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward, 14, 0)
 PSNIP_BUILTIN_STATIC_INLINE
 int psnip_builtin_ffsll(long long v) {
   unsigned long r;
@@ -496,7 +496,7 @@ unsigned char psnip_intrin_BitScanForward(unsigned long* Index, unsigned long Ma
 #  endif
 #endif
 
-#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward, 14, 0) && (defined(__amd64) || defined(_M_AMD64) || defined(__aarch64__) || defined(_WIN64))
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward, 14, 0) && (defined(_M_AMD64) || defined(_M_AMD64))
 #  define psnip_intrin_BitScanForward64(Index, Mask) _BitScanForward64(Index, Mask)
 #else
 PSNIP_BUILTIN_STATIC_INLINE
@@ -506,6 +506,26 @@ unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_builtin_
 
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _BitScanForward64(Index, Mask) psnip_intrin_BitScanForward64(Index, Mask)
+#  endif
+#endif
+
+/*** bittest ***/
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittest, 14, 0)
+#  define psnip_intrin_bittest(a, b) _bittest(a, b)
+#else
+#  define psnip_intrin_bittest(a, b) (((*(a)) >> (b)) & 1)
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _bittest(a, b) psnip_intrin_bittest(a, b)
+#  endif
+#endif
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittest64, 14, 0) && (defined(_M_AMD64) || defined(_M_AMD64))
+#  define psnip_intrin_bittest64(a, b) _bittest64(a, b)
+#else
+#  define psnip_intrin_bittest64(a, b) (((*(a)) >> (b)) & 1)
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _bittest64(a, b) psnip_intrin_bittest64(a, b)
 #  endif
 #endif
 
