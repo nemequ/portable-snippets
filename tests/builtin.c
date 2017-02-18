@@ -874,53 +874,113 @@ test_msvc_rotr64_native(const MunitParameter params[], void* data) {
   return MUNIT_OK;
 }
 
+static MunitResult
+test_msvc_BitScanForward(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long index;
+  unsigned char isNonzero;
+
+  munit_assert_uint8(psnip_intrin_BitScanForward(&index, 0), ==, 0);
+
+  int i;
+  for (i = 0 ; i < 32 ; i++) {
+    isNonzero = psnip_intrin_BitScanForward(&index, ULONG_MAX << i);
+    munit_assert_uint8(isNonzero, ==, 1);
+    munit_assert_ulong(index, ==, i);
+  }
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_BitScanForward_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long mask;
+  unsigned long i1, i2;
+  unsigned char z1, z2;
+  munit_rand_memory(sizeof(mask), (unsigned char*) &mask);
+
+  z1 = _BitScanForward(&i1, mask);
+  z2 = psnip_intrin_BitScanForward(&i2, mask);
+  munit_assert_uint8(z1, ==, z2);
+  munit_assert_ulong(i1, ==, i2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_BitScanForward64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long index;
+  unsigned char isNonzero;
+
+  munit_assert_uint8(psnip_intrin_BitScanForward64(&index, 0), ==, 0);
+
+  int i;
+  for (i = 0 ; i < 64 ; i++) {
+    isNonzero = psnip_intrin_BitScanForward64(&index, ULLONG_MAX << i);
+    munit_assert_uint8(isNonzero, ==, 1);
+    munit_assert_ulong(index, ==, i);
+  }
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_BitScanForward64_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long mask;
+  unsigned long i1, i2;
+  unsigned char z1, z2;
+  munit_rand_memory(sizeof(mask), (unsigned char*) &mask);
+
+  z1 = _BitScanForward64(&i1, mask);
+  z2 = psnip_intrin_BitScanForward64(&i2, mask);
+  munit_assert_uint8(z1, ==, z2);
+  munit_assert_ulong(i1, ==, i2);
+
+  return MUNIT_OK;
+}
+
+#define PSNIP_TEST_BUILTIN(name) \
+  { (char*) "/builtin/"#name, test_gnu_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }, \
+  { (char*) "/builtin/"#name"/native", test_gnu_##name##_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
+#define PSNIP_TEST_INTRIN(name) \
+  { (char*) "/intrin/"#name, test_msvc_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }, \
+  { (char*) "/intrin/"#name"/native", test_msvc_##name##_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
+
 static MunitTest test_suite_tests[] = {
-  { (char*) "/builtin/ffs",               test_gnu_ffs,               NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ffs/native",        test_gnu_ffs_native,        NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/ffsl",              test_gnu_ffsl,              NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ffsl/native",       test_gnu_ffsl_native,       NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/ffsll",             test_gnu_ffsll,             NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ffsll/native",      test_gnu_ffsll_native,      NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/clz",               test_gnu_clz,               NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/clz/native",        test_gnu_clz_native,        NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/clzl",              test_gnu_clzl,              NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/clzl/native",       test_gnu_clzl_native,       NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/clzll",             test_gnu_clzll,             NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/clzll/native",      test_gnu_clzll_native,      NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/ctz",               test_gnu_ctz,               NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ctz/native",        test_gnu_ctz_native,        NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/ctzl",              test_gnu_ctzl,              NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ctzl/native",       test_gnu_ctzl_native,       NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/ctzll",             test_gnu_ctzll,             NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/ctzll/native",      test_gnu_ctzll_native,      NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/parity",            test_gnu_parity,            NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/parity/native",     test_gnu_parity_native,     NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/parityl",           test_gnu_parityl,           NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/parityl/native",    test_gnu_parityl_native,    NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/parityll",          test_gnu_parityll,          NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/parityll/native",   test_gnu_parityll_native,   NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/popcount",          test_gnu_popcount,          NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/popcount/native",   test_gnu_popcount_native,   NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/popcountl",         test_gnu_popcountl,         NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/popcountl/native",  test_gnu_popcountl_native,  NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/builtin/popcountll",        test_gnu_popcountll,        NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/builtin/popcountll/native", test_gnu_popcountll_native, NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/intrin/rotl8",              test_msvc_rotl8,            NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/intrin/rotl8/native",       test_msvc_rotl8_native,     NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/intrin/rotl16",             test_msvc_rotl16,           NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/intrin/rotl16/native",      test_msvc_rotl16_native,    NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/intrin/rotl",               test_msvc_rotl,             NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/intrin/rotl/native",        test_msvc_rotl_native,      NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/intrin/rotl64",             test_msvc_rotl64,           NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/intrin/rotl64/native",      test_msvc_rotl64_native,    NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/intrin/rotr8",              test_msvc_rotr8,            NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/intrin/rotr8/native",       test_msvc_rotr8_native,     NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/intrin/rotr16",             test_msvc_rotr16,           NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/intrin/rotr16/native",      test_msvc_rotr16_native,    NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/intrin/rotr",               test_msvc_rotr,             NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/intrin/rotr/native",        test_msvc_rotr_native,      NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
-  { (char*) "/intrin/rotr64",             test_msvc_rotr64,           NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
-  { (char*) "/intrin/rotr64/native",      test_msvc_rotr64_native,    NULL, NULL, MUNIT_TEST_OPTION_NONE,             NULL },
+  PSNIP_TEST_BUILTIN(ffs),
+  PSNIP_TEST_BUILTIN(ffsl),
+  PSNIP_TEST_BUILTIN(ffsll),
+  PSNIP_TEST_BUILTIN(clz),
+  PSNIP_TEST_BUILTIN(clzl),
+  PSNIP_TEST_BUILTIN(clzll),
+  PSNIP_TEST_BUILTIN(ctz),
+  PSNIP_TEST_BUILTIN(ctzl),
+  PSNIP_TEST_BUILTIN(ctzll),
+  PSNIP_TEST_BUILTIN(parity),
+  PSNIP_TEST_BUILTIN(parityl),
+  PSNIP_TEST_BUILTIN(parityll),
+  PSNIP_TEST_BUILTIN(popcount),
+  PSNIP_TEST_BUILTIN(popcountl),
+  PSNIP_TEST_BUILTIN(popcountll),
+
+  PSNIP_TEST_INTRIN(rotl8),
+  PSNIP_TEST_INTRIN(rotl16),
+  PSNIP_TEST_INTRIN(rotl),
+  PSNIP_TEST_INTRIN(rotl64),
+  PSNIP_TEST_INTRIN(BitScanForward),
+  PSNIP_TEST_INTRIN(BitScanForward64),
+
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
 

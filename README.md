@@ -13,6 +13,7 @@ This repository currently contains:
 
  * endian — endianness detection and swapping
  * atomic — common atomic synchronization operations
+ * builtin — use compiler built-ins/intrinsics, or fall back on standard C
 
 Please don't be shy about filing issues about these; if you have
 problems it's likely others will, as well, so we would like to fix

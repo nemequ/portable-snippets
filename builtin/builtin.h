@@ -39,6 +39,22 @@
 
 #if defined(_MSC_VER)
 #  include <intrin.h>
+#  define psnip_builtin_int64 __int64
+#  define psnip_builtin_uint64 unsigned __int64
+#else
+#  define psnip_builtin_int64 int64_t
+#  define psnip_builtin_uint64 uint64_t
+#endif
+
+#if defined(HEDLEY_LIKELY) && defined(HEDLEY_UNLIKELY)
+#  define PSNIP_BUILTIN_LIKELY(expr) HEDLEY_LIKELY(expr)
+#  define PSNIP_BUILTIN_UNLIKELY(expr) HEDLEY_UNLIKELY(expr)
+#elif PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_expect,3,0)
+#  define PSNIP_BUILTIN_LIKELY(expr) __builtin_expect(!!(expr), 1)
+#  define PSNIP_BUILTIN_UNLIKELY(expr) __builtin_expect(!!(expr), 0)
+#else
+#  define PSNIP_BUILTIN_LIKELY(expr) (!!(expr))
+#  define PSNIP_BUILTIN_UNLIKELY(expr) (!!(expr))
 #endif
 
 #if !defined(PSNIP_BUILTIN_STATIC_INLINE)
@@ -66,7 +82,7 @@
 #  define psnip_builtin_ffsl(x)  __builtin_ffsl(x)
 #  define psnip_builtin_ffsll(x) __builtin_ffsll(x)
 #else
-#  if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward64,14,0)
+#  if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward64, 14, 0) && (defined(__amd64) || defined(_M_AMD64) || defined(__aarch64__) || defined(_WIN64))
 PSNIP_BUILTIN_STATIC_INLINE
 int psnip_builtin_ffsll(long long v) {
   unsigned long r;
@@ -462,6 +478,34 @@ PSNIP_BUILTIN_ROTR_DEFINE(rotr64, uint64_t)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _rotr(value, shift)   psnip_intrin_rotr(value, shift)
 #    define _rotr64(value, shift) psnip_intrin_rotr64(value, shift)
+#  endif
+#endif
+
+/*** _BitScanForward ***/
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward, 14, 0)
+#  define psnip_intrin_BitScanForward(Index, Mask) _BitScanForward(Index, Mask)
+#else
+PSNIP_BUILTIN_STATIC_INLINE
+unsigned char psnip_intrin_BitScanForward(unsigned long* Index, unsigned long Mask) {
+  return PSNIP_BUILTIN_UNLIKELY(Mask == 0) ? 0 : ((*Index = psnip_builtin_ctzl (Mask)), 1);
+}
+
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _BitScanForward(Index, Mask) psnip_intrin_BitScanForward(Index, Mask)
+#  endif
+#endif
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward, 14, 0) && (defined(__amd64) || defined(_M_AMD64) || defined(__aarch64__) || defined(_WIN64))
+#  define psnip_intrin_BitScanForward64(Index, Mask) _BitScanForward64(Index, Mask)
+#else
+PSNIP_BUILTIN_STATIC_INLINE
+unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_builtin_uint64 Mask) {
+  return PSNIP_BUILTIN_UNLIKELY(Mask == 0) ? 0 : ((*Index = psnip_builtin_ctzll (Mask)), 1);
+}
+
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _BitScanForward64(Index, Mask) psnip_intrin_BitScanForward64(Index, Mask)
 #  endif
 #endif
 

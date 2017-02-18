@@ -68,8 +68,8 @@ Functions without a portable version have not been implemented at all
 | rotr16           | ✓        |      |
 | rotr             | ✓        |      |
 | rotr64           | ✓        |      |
-| BitScanForward   |          |      |
-| BitScanForward64 |          |      |
+| BitScanForward   | ✓        |      |
+| BitScanForward64 | ✓        |      |
 | BitScanReverse   |          |      |
 | BitScanReverse64 |          |      |
 | mul128           |          |      |
