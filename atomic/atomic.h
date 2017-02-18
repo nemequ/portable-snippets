@@ -76,8 +76,11 @@
 #elif (defined(__SUNPRO_C) && (__SUNPRO_C >= 0x5140)) || (defined(__SUNPRO_CC) && (__SUNPRO_CC >= 0x5140))
 #  define PSNIP_USE_GCC_ATOMICS
 #else
-#  error No atomic implementation found
+#  define PSNIP_ATOMICS_NOT_FOUND
+#  warning No atomic implementation found
 #endif
+
+#if !defined(PSNIP_ATOMCS_NOT_FOUND)
 
 #if defined(_MSC_VER)
 #include <windows.h>
@@ -284,5 +287,7 @@ psnip_atomic_int32_store_(psnip_atomic_int32* object, psnip_nonatomic_int32 desi
 #define psnip_atomic_int32_sub(object, operand) \
   psnip_atomic_int64_sub(object, operand)
 #endif
+
+#endif /* !defined(PSNIP_ATOMICS_NOT_FOUND) */
 
 #endif /* defined(PSNIP_ATOMIC_H) */
