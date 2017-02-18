@@ -157,6 +157,15 @@ matrix:
           - clang-3.5
           - cmake
           - cmake-data
+    - os: linux
+      env: C_COMPILER=pgcc
+      addons:
+        apt:
+          sources:
+          - george-edison55-precise-backports
+          packages:
+          - cmake
+          - cmake-data
 
 before_install:
 ###
@@ -164,6 +173,7 @@ before_install:
 ## so instead we use C/CXX_COMPILER, then copy the values to CC/CXX
 ## here (after Travis has set CC/CXX).
 ###
+- if [ "${C_COMPILER}" = "pgcc" ]; then wget -q -O /dev/stdout 'https://raw.githubusercontent.com/nemequ/pgi-travis/master/install-pgi.sh' | /bin/sh; fi
 - if [ -n "${C_COMPILER}" ]; then export CC="${C_COMPILER}"; fi
 - mkdir tests/build
 - cd tests/build
