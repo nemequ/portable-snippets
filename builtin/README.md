@@ -3,8 +3,14 @@
 These snippets are intended to provide portable versions of many of
 GCC's built-ins and MSVC's intrinsics.  In general, the plan is to
 provide `psnip_builtin_*` functions which correspond to `__builtin_*`
-in GCC.  `psnip_intrin_*` which correspond to the `_*` intrinsics
-in MSVC will be provided in the intrin/ directory of psnip.
+in GCC, and `psnip_intrin_*` which correspond to the `_*` intrinsics
+in MSVC.
+
+If PSNIP_BUILTIN_EMULATE_NATIVE is defined *before* `builtin.h` is
+included, this header will also define any missing native-style
+built-ins, allowing you to use the native names without regard for
+which compiler is actually in use (i.e., you can use `__builtin_ffs`
+directly in MSVC, or any other compiler).
 
 If the compiler already has the builtin, the psnip function will
 simply be defined to that builtin, meaning there should be no
@@ -13,28 +19,73 @@ it will be implemented using either a built-in/intrinsic the compiler
 *does* support (i.e., using an MSVC intrinsic to implement a GCC
 built-in), or a fully-portable pure C implementation.
 
-This is very much a work in progress.  Eventually I plan to include
-implementations of all built-ins/intrinsics which make sense.
-Built-ins/intrinsics which are really there to implement standard
-functionality (e.g., `__builtin_huge_val`) will not be implemented;
-use the standard versions.
-
-I haven't really focused on optimizing the portable versions;
-they're really just there as fallbacks.  However, patches are
-certainly welcome.
-
 ## Implementation Status
 
-Note that this table doesn't include variants (i.e., there is ffs but
-no ffsl or ffsll), but where the main function is implemented so are
-the variants.
+This is very much a work in progress.  Eventually I plan to include
+implementations of all built-ins/intrinsics which make sense.  That
+specifically does **not** include built-ins which are really there to
+implement standard functionality (e.g., `__builtin_huge_val`) will not
+be implemented; use the standard versions.
 
-| GCC built-in | MSVC fallback | Portable fallback |
-| ------------ | ------------- | ----------------- |
-| ffs          | ✓             | ✓                 |
-| clz          | ✓             | ✓                 |
-| ctz          |               | ✓                 |
-| clrsb        |               |                   |
-| popcount     |               | ✓                 |
-| parity       |               | ✓                 |
-| bswap*       |               |                   |
+Architecture-specific builtins which do not have a generic version in
+either GCC or MSVC may receive an implementation, but probably not
+until people specifically request (or, better yet, provide) one.
+
+Functions without a portable version have not been implemented at all
+(i.e., there is no psnip_* function yet).
+
+| GCC built-in     | Portable | MSVC |
+| ---------------- | -------- | ---- |
+| ffs              | ✓        | ✓    |
+| ffsl             | ✓        | ✓    |
+| ffsll            | ✓        | ✓    |
+| clz              | ✓        | ✓    |
+| clzl             | ✓        | ✓    |
+| clzll            | ✓        | ✓    |
+| ctz              | ✓        |      |
+| ctzl             | ✓        |      |
+| ctzll            | ✓        |      |
+| clrsb            |          |      |
+| clrsbl           |          |      |
+| clrsbll          |          |      |
+| popcount         | ✓        |      |
+| popcountl        | ✓        |      |
+| popcountll       | ✓        |      |
+| parity           | ✓        |      |
+| parityl          | ✓        |      |
+| parityll         | ✓        |      |
+| bswap16          |          |      |
+| bswap32          |          |      |
+| bswap64          |          |      |
+
+| MSVC intrinsic   | Portable | GCC  |
+| ---------------- | -------- | ---- |
+| rotl8            | ✓        |      |
+| rotl16           | ✓        |      |
+| rotl             | ✓        |      |
+| rotl64           | ✓        |      |
+| rotr8            | ✓        |      |
+| rotr16           | ✓        |      |
+| rotr             | ✓        |      |
+| rotr64           | ✓        |      |
+| BitScanForward   |          |      |
+| BitScanForward64 |          |      |
+| BitScanReverse   |          |      |
+| BitScanReverse64 |          |      |
+| mul128           |          |      |
+| umul128          |          |      |
+| shiftleft128     |          |      |
+| shiftright128    |          |      |
+| mulh             |          |      |
+| umulh            |          |      |
+| byteswap_uint64  |          |      |
+| byteswap_ulong   |          |      |
+| byteswap_ushort  |          |      |
+
+For bswap/byteswap functions, you should really use endian.h.
+
+Note that it may not be possible to implement built-ins from one
+compiler using the built-ins from another.
+
+If we are missing a function you feel should be included, please [file
+an issue](https://github.com/nemequ/portable-snippets/issues).

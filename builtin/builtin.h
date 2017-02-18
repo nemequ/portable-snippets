@@ -1,4 +1,4 @@
-/* Atomic operations (v1)
+/* Builtins and Intrinsics
  * Portable Snippets - https://gitub.com/nemequ/portable-snippets
  * Created by Evan Nemerson <evan@nemerson.com>
  *
@@ -12,17 +12,33 @@
  * public domain (and a fantastic web site).
  */
 
-#if !defined(PSNIP_BUILTIN_GNU_H)
-#define PSNIP_BUILTIN_GNU_H
+#if !defined(PSNIP_BUILTIN_H)
+#define PSNIP_BUILTIN_H
 
-#if defined(PSNIP_BUILTIN_ALWAYS_FALLBACK)
-#  define PSNIP_BUILTIN_GNU_HAS_BUILTIN(builtin,major,minor) (0)
+#if defined(HEDLEY_GCC_HAS_BUILTIN)
+#  define PSNIP_BUILTIN_GNU_HAS_BUILTIN(builtin,major,minor) HEDLEY_GCC_HAS_BUILTIN(builtin,major,minor,0)
 #elif defined(__clang__) && defined(__has_builtin)
-#  define PSNIP_INTIRN_GNU_HAS_BUILTIN(builtin,major,minor) __has_builtin(builtin)
+#  define PSNIP_BUILTIN_GNU_HAS_BUILTIN(builtin,major,minor) __has_builtin(builtin)
 #elif defined(__GNUC__)
 #  define PSNIP_BUILTIN_GNU_HAS_BUILTIN(builtin,major,minor) (__GNUC__ > major || (major == __GNUC__ && __GNUC_MINOR__ >= minor))
 #else
 #  define PSNIP_BUILTIN_GNU_HAS_BUILTIN(builtin,major,minor) (0)
+#endif
+
+#if defined(HEDLEY_MSVC_VERSION_CHECK)
+#  define PSNIP_BUILTIN_MSVC_HAS_INTRIN(intrin,major,minor) HEDLEY_MSVC_VERSION_CHECK(major,minor,0)
+#elif !defined(_MSC_VER)
+#  define PSNIP_BUILTIN_MSVC_HAS_INTRIN(intrin,major,minor) (0)
+#elif _MSC_VER >= 1400
+#  define PSNIP_BUILTIN_MSVC_HAS_INTRIN(intrin,major,minor) (_MSC_FULL_VER >= ((major * 1000000) + (minor * 10000)))
+#elif _MSC_VER >= 1200
+#  define PSNIP_BUILTIN_MSVC_HAS_INTRIN(intrin,major,minor) (_MSC_FULL_VER >= ((major * 100000) + (minor * 1000)))
+#else
+#  define PSNIP_BUILTIN_MSVC_HAS_INTRIN(intrin,major,minor) (_MSC_VER >= ((major * 100) + (minor)))
+#endif
+
+#if defined(_MSC_VER)
+#  include <intrin.h>
 #endif
 
 #if !defined(PSNIP_BUILTIN_STATIC_INLINE)
@@ -39,27 +55,32 @@
 #  endif
 #endif
 
-#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ffs, 3, 3)
-#  define psnip_builtin_ffs(x) __builtin_ffs(x)
-#  define psnip_builtin_ffsl(x) __builtin_ffsl(x)
-#  define psnip_builtin_ffsll(x) __builtin_ffsll(x)
-#elif defined(_MSC_VER) && (_MSC_VER >= 1400)
-#include <intrin.h>
+/******
+ *** GCC-style built-ins
+ ******/
 
+/*** __builtin_ffs ***/
+
+#if (!defined(__SUNPRO_C) && !defined(__SUNPRO_CC)) && PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ffs, 3, 3)
+#  define psnip_builtin_ffs(x)   __builtin_ffs(x)
+#  define psnip_builtin_ffsl(x)  __builtin_ffsl(x)
+#  define psnip_builtin_ffsll(x) __builtin_ffsll(x)
+#else
+#  if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward64,14,0)
 PSNIP_BUILTIN_STATIC_INLINE
 int psnip_builtin_ffsll(long long v) {
   unsigned long r;
-#if defined(_M_AMD64) || defined(_M_ARM)
+#    if defined(_M_AMD64) || defined(_M_ARM)
   if (_BitScanForward64(&r, (unsigned long long) v)) {
     return (int) (r + 1);
   }
-#else
+#    else
   if (_BitScanForward(&r, (unsigned long) (v))) {
     return (int) (r + 1);
   } else if (_BitScanForward(&r, (unsigned long) (v >> 32))) {
     return (int) (r + 33);
   }
-#endif
+#    endif
   return 0;
 }
 
@@ -76,7 +97,7 @@ PSNIP_BUILTIN_STATIC_INLINE
 int psnip_builtin_ffs(int v) {
   return psnip_builtin_ffsl(v);
 }
-#else
+#  else
 static const char psnip_builtin_ffs_lookup[256] = {
   0, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
   5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
@@ -113,18 +134,29 @@ static const char psnip_builtin_ffs_lookup[256] = {
     return 0;                                   \
   }
 
+#if (defined(__SUNPRO_C) || defined(__SUNPRO_CC)) && PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ffs, 3, 3)
+#  define psnip_builtin_ffs(x) __builtin_ffs(x)
+#else
 PSNIP_BUILTIN_FFS_DEFINE(ffs, int)
+#endif
 PSNIP_BUILTIN_FFS_DEFINE(ffsl, long)
 PSNIP_BUILTIN_FFS_DEFINE(ffsll, long long)
+#  endif
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define __builtin_ffsll(v) psnip_builtin_ffsll(v)
+#    define __builtin_ffsl(v)  psnip_builtin_ffsl(v)
+#    define __builtin_ffs(v)   psnip_builtin_ffs(v)
+#  endif
 #endif
 
-#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_clz, 3, 4)
-#  define psnip_builtin_clz(x) __builtin_clz(x)
-#  define psnip_builtin_clzl(x) __builtin_clzl(x)
-#  define psnip_builtin_clzll(x) __builtin_clzll(x)
-#elif defined(_MSC_VER) && (_MSC_VER >= 1400)
-#include <intrin.h>
+/*** __builtin_clz ***/
 
+#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_clz, 3, 4)
+#  define psnip_builtin_clz(x)   __builtin_clz(x)
+#  define psnip_builtin_clzl(x)  __builtin_clzl(x)
+#  define psnip_builtin_clzll(x) __builtin_clzll(x)
+#else
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanReverse64,14,0)
 PSNIP_BUILTIN_STATIC_INLINE
 int psnip_builtin_clzll(unsigned long long v) {
   unsigned long r = 0;
@@ -199,10 +231,18 @@ PSNIP_BUILTIN_CLZ_DEFINE(clz, unsigned int)
 PSNIP_BUILTIN_CLZ_DEFINE(clzl, unsigned long)
 PSNIP_BUILTIN_CLZ_DEFINE(clzll, unsigned long long)
 #endif
+#if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#  define __builtin_clz(x)   psnip_builtin_clz(x)
+#  define __builtin_clzl(x)  psnip_builtin_clzl(x)
+#  define __builtin_clzll(x) psnip_builtin_clzll(x)
+#endif
+#endif
+
+/*** __builtin_ctz ***/
 
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ctz, 3, 4)
-#  define psnip_builtin_ctz(x) __builtin_ctz(x)
-#  define psnip_builtin_ctzl(x) __builtin_ctzl(x)
+#  define psnip_builtin_ctz(x)   __builtin_ctz(x)
+#  define psnip_builtin_ctzl(x)  __builtin_ctzl(x)
 #  define psnip_builtin_ctzll(x) __builtin_ctzll(x)
 #else
 static const char psnip_builtin_ctz_lookup[256] = {
@@ -242,11 +282,19 @@ static const char psnip_builtin_ctz_lookup[256] = {
 PSNIP_BUILTIN_CTZ_DEFINE(ctz, unsigned int)
 PSNIP_BUILTIN_CTZ_DEFINE(ctzl, unsigned long)
 PSNIP_BUILTIN_CTZ_DEFINE(ctzll, unsigned long long)
+
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define __builtin_ctz(x)   psnip_builtin_ctz(x)
+#    define __builtin_ctzl(x)  psnip_builtin_ctzl(x)
+#    define __builtin_ctzll(x) psnip_builtin_ctzll(x)
+#  endif
 #endif
 
+/*** __builtin_parity ***/
+
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_parity, 3, 4)
-#  define psnip_builtin_parity(x) __builtin_parity(x)
-#  define psnip_builtin_parityl(x) __builtin_parityl(x)
+#  define psnip_builtin_parity(x)   __builtin_parity(x)
+#  define psnip_builtin_parityl(x)  __builtin_parityl(x)
 #  define psnip_builtin_parityll(x) __builtin_parityll(x)
 #else
 static const char psnip_builtin_parity_lookup[256] = {
@@ -282,11 +330,19 @@ static const char psnip_builtin_parity_lookup[256] = {
 PSNIP_BUILTIN_PARITY_DEFINE(parity, unsigned int)
 PSNIP_BUILTIN_PARITY_DEFINE(parityl, unsigned long)
 PSNIP_BUILTIN_PARITY_DEFINE(parityll, unsigned long long)
+
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define __builtin_parity(x)   psnip_builtin_parity(x)
+#    define __builtin_parityl(x)  psnip_builtin_parityl(x)
+#    define __builtin_parityll(x) psnip_builtin_parityll(x)
+#  endif
 #endif
 
+/*** __builtin_popcount ***/
+
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_popcount, 3, 4)
-#  define psnip_builtin_popcount(x) __builtin_popcount(x)
-#  define psnip_builtin_popcountl(x) __builtin_popcountl(x)
+#  define psnip_builtin_popcount(x)   __builtin_popcount(x)
+#  define psnip_builtin_popcountl(x)  __builtin_popcountl(x)
 #  define psnip_builtin_popcountll(x) __builtin_popcountll(x)
 #else
 #define PSNIP_BUILTIN_POPCOUNT_DEFINE(f_n, T)               \
@@ -301,6 +357,112 @@ PSNIP_BUILTIN_PARITY_DEFINE(parityll, unsigned long long)
 PSNIP_BUILTIN_POPCOUNT_DEFINE(popcount, unsigned int)
 PSNIP_BUILTIN_POPCOUNT_DEFINE(popcountl, unsigned long)
 PSNIP_BUILTIN_POPCOUNT_DEFINE(popcountll, unsigned long long)
+
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define __builtin_popcount(x)   psnip_builtin_popcount(x)
+#    define __builtin_popcountl(x)  psnip_builtin_popcountl(x)
+#    define __builtin_popcountll(x) psnip_builtin_popcountll(x)
+#  endif
 #endif
 
-#endif /* defined(PSNIP_BUILTIN_GNU_H) */
+/******
+ *** MSVC-style intrinsics
+ ******/
+
+/*** _rotl ***/
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotl8, 14, 0)
+#  define psnip_intrin_rotl8(value, shift) _rotl8(value, shift)
+#  define psnip_intrin_rotl16(value, shift) _rotl16(value, shift)
+#else
+#define PSNIP_BUILTIN_ROTL_DEFINE(f_n, T)               \
+  PSNIP_BUILTIN_STATIC_INLINE				\
+  T psnip_intrin_##f_n(T value, unsigned char shift) {	\
+    return						\
+      (value >> ((sizeof(T) * 8) - shift)) |		\
+      (value << shift);					\
+  }
+
+PSNIP_BUILTIN_ROTL_DEFINE(rotl8, unsigned char)
+PSNIP_BUILTIN_ROTL_DEFINE(rotl16, unsigned short)
+
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _rotl8(value, shift)  psnip_intrin_rotl8(value, shift)
+#    define _rotl16(value, shift) psnip_intrin_rotl16(value, shift)
+#  endif
+#endif
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotl8, 13, 10)
+#  define psnip_intrin_rotl(value, shift) _rotl(value, shift)
+#  define psnip_intrin_rotl64(value, shift) _rotl64(value, shift)
+#else
+#define PSNIP_BUILTIN_ROTL_LARGE_DEFINE(f_n, T)		\
+  PSNIP_BUILTIN_STATIC_INLINE				\
+  T psnip_intrin_##f_n(T value, int shift) {		\
+    return						\
+      (value >> ((sizeof(T) * 8) - shift)) |		\
+      (value << shift);					\
+  }
+
+PSNIP_BUILTIN_ROTL_DEFINE(rotl, unsigned int)
+#if defined(_MSC_VER)
+PSNIP_BUILTIN_ROTL_DEFINE(rotl64, unsigned __int64)
+#else
+PSNIP_BUILTIN_ROTL_DEFINE(rotl64, uint64_t)
+#endif
+
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _rotl(value, shift)   psnip_intrin_rotl(value, shift)
+#    define _rotl64(value, shift) psnip_intrin_rotl64(value, shift)
+#  endif
+#endif
+
+/*** _rotr ***/
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotr8, 14, 0)
+#  define psnip_intrin_rotr8(value, shift) _rotr8(value, shift)
+#  define psnip_intrin_rotr16(value, shift) _rotr16(value, shift)
+#else
+#define PSNIP_BUILTIN_ROTR_DEFINE(f_n, T)               \
+  PSNIP_BUILTIN_STATIC_INLINE				\
+  T psnip_intrin_##f_n(T value, unsigned char shift) {	\
+    return						\
+      (value << ((sizeof(T) * 8) - shift)) |		\
+      (value >> shift);					\
+  }
+
+PSNIP_BUILTIN_ROTR_DEFINE(rotr8, unsigned char)
+PSNIP_BUILTIN_ROTR_DEFINE(rotr16, unsigned short)
+
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _rotr8(value, shift)  psnip_intrin_rotr8(value, shift)
+#    define _rotr16(value, shift) psnip_intrin_rotr16(value, shift)
+#  endif
+#endif
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotr8, 13, 10)
+#  define psnip_intrin_rotr(value, shift) _rotr(value, shift)
+#  define psnip_intrin_rotr64(value, shift) _rotr64(value, shift)
+#else
+#define PSNIP_BUILTIN_ROTR_LARGE_DEFINE(f_n, T)		\
+  PSNIP_BUILTIN_STATIC_INLINE				\
+  T psnip_intrin_##f_n(T value, int shift) {		\
+    return						\
+      (value << ((sizeof(T) * 8) - shift)) |		\
+      (value >> shift);					\
+  }
+
+PSNIP_BUILTIN_ROTR_DEFINE(rotr, unsigned int)
+#if defined(_MSC_VER)
+PSNIP_BUILTIN_ROTR_DEFINE(rotr64, unsigned __int64)
+#else
+PSNIP_BUILTIN_ROTR_DEFINE(rotr64, uint64_t)
+#endif
+
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _rotr(value, shift)   psnip_intrin_rotr(value, shift)
+#    define _rotr64(value, shift) psnip_intrin_rotr64(value, shift)
+#  endif
+#endif
+
+#endif /* defined(PSNIP_BUILTIN_H) */

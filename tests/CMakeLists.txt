@@ -53,4 +53,5 @@ psnip_add_tests(TARGET builtin
   SOURCES
     builtin.c
   TESTS
-    "/builtin")
+    "/builtin"
+    "/intrin")
