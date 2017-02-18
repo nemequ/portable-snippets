@@ -77,7 +77,7 @@
 
 /*** __builtin_ffs ***/
 
-#if (!defined(__SUNPRO_C) && !defined(__SUNPRO_CC)) && PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ffs, 3, 3)
+#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ffs, 3, 3)
 #  define psnip_builtin_ffs(x)   __builtin_ffs(x)
 #  define psnip_builtin_ffsl(x)  __builtin_ffsl(x)
 #  define psnip_builtin_ffsll(x) __builtin_ffsll(x)
@@ -150,11 +150,7 @@ static const char psnip_builtin_ffs_lookup[256] = {
     return 0;                                   \
   }
 
-#if (defined(__SUNPRO_C) || defined(__SUNPRO_CC)) && PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ffs, 3, 3)
-#  define psnip_builtin_ffs(x) __builtin_ffs(x)
-#else
 PSNIP_BUILTIN_FFS_DEFINE(ffs, int)
-#endif
 PSNIP_BUILTIN_FFS_DEFINE(ffsl, long)
 PSNIP_BUILTIN_FFS_DEFINE(ffsll, long long)
 #  endif
