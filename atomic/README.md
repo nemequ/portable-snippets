@@ -8,6 +8,7 @@ most platforms.  Current back-ends include:
  * Old-style GCC sync_* builtins
  * clang-style __c11_atomic_* builtins
  * MSVC-style Interlocked* intrinsics
+ * OpenMP (using critical sections; there is no atomic CAS)
 
 This is sufficient to support most modern, actively developed
 compilers.  The only real exception I'm aware of is [PGI C/C++
