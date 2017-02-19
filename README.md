@@ -4,17 +4,21 @@ This is a curated collection of snippets written in C for doing
 various tasks in a relatively portable manner.  Some of them may be a
 bit overkill for your application; feel free to just take what you
 need.  Everything is CC0 licensed (public domain), and tested with
-various versions of GCC and clang
+various versions of GCC, clang, and PGI
 ([on Travis CI](https://travis-ci.org/nemequ/portable-snippets)), and
 MSVC
 ([on AppVeyor](https://ci.appveyor.com/project/quixdb/portable-snippets)).
 
 This repository currently contains:
 
- * endian — endianness detection and swapping
- * atomic — common atomic synchronization operations
- * builtin — use compiler built-ins/intrinsics, or fall back on standard C
- * safe-math — overflow-safe integer functions
+ * [endian](https://github.com/nemequ/portable-snippets/tree/master/endian) —
+   endianness detection and swapping
+ * [atomic](https://github.com/nemequ/portable-snippets/tree/master/atomic) —
+   common atomic synchronization operations
+ * [builtin](https://github.com/nemequ/portable-snippets/tree/master/builtin) —
+   use compiler built-ins/intrinsics, or fall back on standard C
+ * [safe-math](https://github.com/nemequ/portable-snippets/tree/master/safe-math) —
+   overflow-safe integer functions
 
 Please don't be shy about filing issues about these; if you have
 problems it's likely others will, as well, so we would like to fix
