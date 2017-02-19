@@ -41,7 +41,7 @@ psnip_nonatomic_int64 psnip_atomic_int64_sub(
   psnip_nonatomic_int64 operand);
 ```
 
-If no atomics are supported, `PSNIP_ATOMICS_NOT_FOUND` will be
+If no atomics are supported, `PSNIP_ATOMIC_NOT_FOUND` will be
 defined; you'll probably have to use locks (if you want a portable API
 for that you may be interested in
 [TinyCThread](https://github.com/tinycthread/tinycthread/)).

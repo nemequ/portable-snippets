@@ -54,33 +54,33 @@
 
 #if defined(__GNUC__) && !defined(__INTEL_COMPILER) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 9))
 /* For GCC >= 4.9 we can use C11 atomics even when we're not in C11 mode. */
-#  define PSNIP_USE_C11_ATOMICS
+#  define PSNIP_ATOMIC_USE_C11
 #elif !defined(__INTEL_COMPILER) && defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) && !defined(__STDC_NO_ATOMICS__)
 /* GCC 4.7 and 4.8 sets __STDC_VERSION__ to C11 (if compiling in C11
  * mode) and didn't have stdatomic.h, but failed to set
  * __STDC_NO_ATOMICS__.  Verions prior to 4.7 didn't set
  * __STDC_VERSION__ to C11. */
 #  if defined(__GNUC__) && (__GNUC__ == 4) && (__GNUC_MINOR__ < 9)
-#    define PSNIP_USE_GCC_ATOMICS
+#    define PSNIP_ATOMIC_USE_GCC
 #  else
-#    define PSNIP_USE_C11_ATOMICS
+#    define PSNIP_ATOMIC_USE_C11
 #  endif
 #elif defined(_MSC_VER)
-#  define PSNIP_USE_MS_ATOMICS
+#  define PSNIP_ATOMIC_USE_MS
 #elif defined(__GNUC__) && ((__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7))
-#  define PSNIP_USE_GCC_ATOMICS
+#  define PSNIP_ATOMIC_USE_GCC
 #elif defined(__clang__) && __has_feature(c_atomic)
-#  define PSNIP_USE_CLANG_ATOMICS
+#  define PSNIP_ATOMIC_USE_CLANG
 #elif defined(__GNUC__) && ((__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1))
-#  define PSNIP_USE_GCC_SYNC_ATOMICS
+#  define PSNIP_ATOMIC_USE_GCC_SYNC
 #elif (defined(__SUNPRO_C) && (__SUNPRO_C >= 0x5140)) || (defined(__SUNPRO_CC) && (__SUNPRO_CC >= 0x5140))
-#  define PSNIP_USE_GCC_ATOMICS
+#  define PSNIP_ATOMIC_USE_GCC
 #else
-#  define PSNIP_ATOMICS_NOT_FOUND
+#  define PSNIP_ATOMIC_NOT_FOUND
 #  warning No atomic implementation found
 #endif
 
-#if !defined(PSNIP_ATOMCS_NOT_FOUND)
+#if !defined(PSNIP_ATOMC_NOT_FOUND)
 
 #if defined(_MSC_VER)
 #include <windows.h>
@@ -92,7 +92,7 @@ typedef int_fast64_t psnip_nonatomic_int64;
 typedef int_fast32_t psnip_nonatomic_int32;
 #endif
 
-#if defined(PSNIP_USE_C11_ATOMICS)
+#if defined(PSNIP_ATOMIC_USE_C11)
 
 #include <stdatomic.h>
 typedef atomic_int_fast64_t psnip_atomic_int64;
@@ -113,7 +113,7 @@ typedef atomic_int_fast32_t psnip_atomic_int32;
 #define psnip_atomic_fence() \
   atomic_thread_fence(memory_order_seq_cst)
 
-#elif defined(PSNIP_USE_CLANG_ATOMICS)
+#elif defined(PSNIP_ATOMIC_USE_CLANG)
 
 #include <stdint.h>
 typedef _Atomic psnip_nonatomic_int64 psnip_atomic_int64;
@@ -132,7 +132,7 @@ typedef _Atomic psnip_nonatomic_int32 psnip_atomic_int32;
 #define psnip_atomic_fence() \
   __c11_atomic_thread_fence(__ATOMIC_SEQ_CST)
 
-#elif defined(PSNIP_USE_GCC_ATOMICS)
+#elif defined(PSNIP_ATOMIC_USE_GCC)
 
 #include <stdint.h>
 #if !defined(__INTEL_COMPILER) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 9))
@@ -156,7 +156,7 @@ typedef int_fast32_t psnip_atomic_int32;
 #define psnip_atomic_fence() \
   __atomic_thread_fence(__ATOMIC_SEQ_CST)
 
-#elif defined(PSNIP_USE_GCC_SYNC_ATOMICS)
+#elif defined(PSNIP_ATOMIC_USE_GCC_SYNC)
 
 #include <stdint.h>
 typedef int_fast64_t psnip_atomic_int64;
@@ -205,7 +205,7 @@ psnip_atomic_int32_store_(psnip_atomic_int32* object, psnip_nonatomic_int32 desi
 #define psnip_atomic_fence() \
   __sync_synchronize()
 
-#elif defined(PSNIP_USE_MS_ATOMICS)
+#elif defined(PSNIP_ATOMIC_USE_MS)
 
 typedef LONGLONG volatile psnip_atomic_int64;
 typedef LONG volatile psnip_atomic_int32;
@@ -288,6 +288,6 @@ psnip_atomic_int32_store_(psnip_atomic_int32* object, psnip_nonatomic_int32 desi
   psnip_atomic_int64_sub(object, operand)
 #endif
 
-#endif /* !defined(PSNIP_ATOMICS_NOT_FOUND) */
+#endif /* !defined(PSNIP_ATOMIC_NOT_FOUND) */
 
 #endif /* defined(PSNIP_ATOMIC_H) */

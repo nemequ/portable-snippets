@@ -3,7 +3,7 @@
 #include "../atomic/atomic.h"
 #include "munit/munit.h"
 
-#if !defined(PSNIP_ATOMICS_NOT_FOUND)
+#if !defined(PSNIP_ATOMIC_NOT_FOUND)
 static psnip_atomic_int64 value64 = PSNIP_ATOMIC_VAR_INIT(9);
 static psnip_atomic_int32 value32 = PSNIP_ATOMIC_VAR_INIT(9);
 #endif
@@ -13,7 +13,7 @@ test_atomic_int64(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-#if !defined(PSNIP_ATOMICS_NOT_FOUND)
+#if !defined(PSNIP_ATOMIC_NOT_FOUND)
   psnip_nonatomic_int64 v, expected;
 
   v = psnip_atomic_int64_load(&value64);
@@ -50,7 +50,7 @@ test_atomic_int32(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-#if !defined(PSNIP_ATOMICS_NOT_FOUND)
+#if !defined(PSNIP_ATOMIC_NOT_FOUND)
   psnip_nonatomic_int32 v, expected;
 
   v = psnip_atomic_int32_load(&value32);
