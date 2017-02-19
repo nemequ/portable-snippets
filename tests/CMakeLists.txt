@@ -49,6 +49,11 @@ psnip_add_tests(TARGET atomic
   TESTS
     "/atomic")
 
+if(ENABLE_OPENMP)
+  find_package(OpenMP REQUIRED)
+  target_compile_options(atomic PRIVATE ${OpenMP_C_FLAGS})
+endif()
+
 psnip_add_tests(TARGET builtin
   SOURCES
     builtin.c

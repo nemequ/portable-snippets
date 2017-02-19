@@ -9,8 +9,7 @@ matrix:
     ###
     ## Linux builds using various versions of GCC.
     ###
-    - os: linux
-      env: C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+    - env: C_COMPILER=gcc-6 CXX_COMPILER=g++-6
       addons:
         apt:
           sources:
@@ -21,8 +20,7 @@ matrix:
           - g++-6
           - cmake
           - cmake-data
-    - os: linux
-      env: C_COMPILER=gcc-5 CXX_COMPILER=g++-5
+    - env: C_COMPILER=gcc-5 CXX_COMPILER=g++-5
       addons:
         apt:
           sources:
@@ -33,8 +31,7 @@ matrix:
           - g++-5
           - cmake
           - cmake-data
-    - os: linux
-      env: C_COMPILER=gcc-4.9 CXX_COMPILER=g++-4.9
+    - env: C_COMPILER=gcc-4.9 CXX_COMPILER=g++-4.9
       addons:
         apt:
           sources:
@@ -45,8 +42,7 @@ matrix:
           - g++-4.9
           - cmake
           - cmake-data
-    - os: linux
-      env: C_COMPILER=gcc-4.8 CXX_COMPILER=g++-4.8
+    - env: C_COMPILER=gcc-4.8 CXX_COMPILER=g++-4.8
       addons:
         apt:
           sources:
@@ -57,8 +53,7 @@ matrix:
           - g++-4.8
           - cmake
           - cmake-data
-    - os: linux
-      env: C_COMPILER=gcc-4.7 CXX_COMPILER=g++-4.7
+    - env: C_COMPILER=gcc-4.7 CXX_COMPILER=g++-4.7
       addons:
         apt:
           sources:
@@ -69,8 +64,7 @@ matrix:
           - g++-4.7
           - cmake
           - cmake-data
-    - os: linux
-      env: C_COMPILER=gcc-4.6 CXX_COMPILER=g++-4.6
+    - env: C_COMPILER=gcc-4.6 CXX_COMPILER=g++-4.6
       addons:
         apt:
           sources:
@@ -93,8 +87,7 @@ matrix:
     #       - g++-4.5
     #       - cmake
     #       - cmake-data
-    - os: linux
-      env: C_COMPILER=gcc-4.4 CXX_COMPILER=g++-4.4
+    - env: C_COMPILER=gcc-4.4 CXX_COMPILER=g++-4.4
       addons:
         apt:
           sources:
@@ -107,10 +100,24 @@ matrix:
           - cmake-data
 
     ###
+    ## OpenMP
+    ###
+    - env: ENABLE_OPENMP=y C_COMPILER=gcc-6 CXX_COMPILER=g++-6
+      addons:
+        apt:
+          sources:
+          - ubuntu-toolchain-r-test
+          - george-edison55-precise-backports
+          packages:
+          - gcc-6
+          - g++-6
+          - cmake
+          - cmake-data
+
+    ###
     ## clang on Linux
     ###
-    - os: linux
-      env: C_COMPILER=clang-3.8 CXX_COMPILER=clang++-3.8
+    - env: C_COMPILER=clang-3.8 CXX_COMPILER=clang++-3.8
       addons:
         apt:
           sources:
@@ -121,8 +128,7 @@ matrix:
           - clang-3.8
           - cmake
           - cmake-data
-    - os: linux
-      env: C_COMPILER=clang-3.7 CXX_COMPILER=clang++-3.7
+    - env: C_COMPILER=clang-3.7 CXX_COMPILER=clang++-3.7
       addons:
         apt:
           sources:
@@ -133,8 +139,7 @@ matrix:
           - clang-3.7
           - cmake
           - cmake-data
-    - os: linux
-      env: C_COMPILER=clang-3.6 CXX_COMPILER=clang++-3.6
+    - env: C_COMPILER=clang-3.6 CXX_COMPILER=clang++-3.6
       addons:
         apt:
           sources:
@@ -145,8 +150,7 @@ matrix:
           - clang-3.6
           - cmake
           - cmake-data
-    - os: linux
-      env: C_COMPILER=clang-3.5 CXX_COMPILER=clang++-3.5
+    - env: C_COMPILER=clang-3.5 CXX_COMPILER=clang++-3.5
       addons:
         apt:
           sources:
@@ -157,8 +161,11 @@ matrix:
           - clang-3.5
           - cmake
           - cmake-data
-    - os: linux
-      env: C_COMPILER=pgcc
+
+    ###
+    ## PGI
+    ###
+    - env: C_COMPILER=pgcc
       addons:
         apt:
           sources:
@@ -166,6 +173,11 @@ matrix:
           packages:
           - cmake
           - cmake-data
+
+    ###
+    ## OS X
+    ###
+    - os: osx
 
 before_install:
 ###
@@ -180,6 +192,6 @@ before_install:
 
 script:
 - cmake --version
-- cmake .. -DCMAKE_C_COMPILER="${C_COMPILER}" -DCMAKE_C_FLAGS="${CFLAGS}"
+- cmake .. -DCMAKE_C_COMPILER="${C_COMPILER}" -DCMAKE_C_FLAGS="${CFLAGS}" -DENABLE_OPENMP="${ENABLE_OPENMP}"
 - make VERBOSE=1
 - ctest -V
