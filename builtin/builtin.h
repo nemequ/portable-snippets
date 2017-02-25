@@ -41,7 +41,9 @@
 #  include <intrin.h>
 #endif
 
-#if !defined(psnip_int64_t) || !defined(psnip_uint64_t)
+#if \
+  !defined(psnip_int64_t) || !defined(psnip_uint64_t) || \
+  !defined(psnip_int32_t) || !defined(psnip_uint32_t)
 #  include "../exact-int/exact-int.h"
 #endif
 
@@ -70,11 +72,70 @@
 #  endif
 #endif
 
+/* Many GCC-style builtins exist for int, long, and long long
+   variants, but *not* for exact sizes.  This tries to determine the
+   connect mapping of exact-width sizes to builtin suffixes ("", "l",
+   "ll") so we can provide 32- and 64-bit variants. */
+
+#include <limits.h>
+
+#if INT_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#  define PSNIP_BUILTIN__VARIANT_32(name) name
+#elif LONG_MIN == (-2147483647-1) && LONG_MAX == 2147483647
+#  define PSNIP_BUILTIN__VARIANT_32(name) name##l
+#elif LLONG_MIN == (-2147483647-1) && LLONG_MAX == 2147483647
+#  define PSNIP_BUILTIN__VARIANT_32(name) name##ll
+#endif
+
+#if INT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN__VARIANT_64(name) psnip_builtin_##name
+#elif LONG_MIN == (-9223372036854775807LL-1) && LONG_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN__VARIANT_64(name) psnip_builtin_##name##l
+#elif LLONG_MIN == (-9223372036854775807LL-1) && LLONG_MAX == 922337203685477580LL
+#  define PSNIP_BUILTIN__VARIANT_64(name) psnip_builtin_##name##ll
+#endif
+
 /******
  *** GCC-style built-ins
  ******/
 
 /*** __builtin_ffs ***/
+
+#define PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(f_n, T)	\
+  PSNIP_BUILTIN_STATIC_INLINE				\
+  int psnip_builtin_##f_n(T x) {			\
+    static const char psnip_builtin_ffs_lookup[256] = { \
+      0, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      6, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      7, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      6, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      8, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      6, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      7, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      6, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
+      5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1	\
+    };							\
+							\
+    unsigned char t;					\
+    size_t s = 0;					\
+							\
+    while (s < (sizeof(T) * 8)) {			\
+      t = (unsigned char) ((x >> s) & 0xff);		\
+      if (t)						\
+        return psnip_builtin_ffs_lookup[t] + s;		\
+							\
+      s += 8;						\
+    }							\
+							\
+    return 0;						\
+  }
 
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ffs, 3, 3)
 #  define psnip_builtin_ffs(x)   __builtin_ffs(x)
@@ -113,45 +174,9 @@ int psnip_builtin_ffs(int v) {
   return psnip_builtin_ffsl(v);
 }
 #  else
-static const char psnip_builtin_ffs_lookup[256] = {
-  0, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  6, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  7, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  6, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  8, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  6, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  7, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  6, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,
-  5, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1
-};
-
-#define PSNIP_BUILTIN_FFS_DEFINE(f_n, T)        \
-  PSNIP_BUILTIN_STATIC_INLINE                   \
-  int psnip_builtin_##f_n(T x) {                \
-    unsigned T t = (unsigned T) x;              \
-    size_t s = 0;                               \
-                                                \
-    while (s < (sizeof(T) * 8)) {               \
-      t = (x >> s) & 0xff;                      \
-      if (t)                                    \
-        return psnip_builtin_ffs_lookup[t] + s; \
-                                                \
-      s += 8;                                   \
-    }                                           \
-                                                \
-    return 0;                                   \
-  }
-
-PSNIP_BUILTIN_FFS_DEFINE(ffs, int)
-PSNIP_BUILTIN_FFS_DEFINE(ffsl, long)
-PSNIP_BUILTIN_FFS_DEFINE(ffsll, long long)
+PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffs, int)
+PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffsl, long)
+PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffsll, long long)
 #  endif
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define __builtin_ffsll(v) psnip_builtin_ffsll(v)
@@ -160,7 +185,57 @@ PSNIP_BUILTIN_FFS_DEFINE(ffsll, long long)
 #  endif
 #endif
 
+#if defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_ffs32(x) (PSNIP_BUILTIN__VARIANT_32(ffs)(x))
+#else
+  PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffs32, psnip_int32_t)
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_ffs64(x) (PSNIP_BUILTIN__VARIANT_64(ffs)(x))
+#else
+  PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffs64, psnip_int64_t)
+#endif
+
 /*** __builtin_clz ***/
+
+#define PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(f_n, T)	\
+  PSNIP_BUILTIN_STATIC_INLINE				\
+  int psnip_builtin_##f_n(T x) {			\
+    static const char psnip_builtin_clz_lookup[256] = {	\
+      7, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,	\
+      3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,	\
+      2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,	\
+      2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,	\
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	\
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	\
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	\
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,	\
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	\
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0	\
+    };							\
+    size_t s = sizeof(T) * 8;				\
+    T r;						\
+							\
+    while ((s -= 8) != 0) {				\
+      r = x >> s;					\
+      if (r != 0)					\
+        return psnip_builtin_clz_lookup[r] +		\
+          (((sizeof(T) - 1) * 8) - s);			\
+    }							\
+							\
+    if (x == 0)						\
+      return (int) ((sizeof(T) * 8) - 1);		\
+    else						\
+      return psnip_builtin_clz_lookup[x] +		\
+        ((sizeof(T) - 1) * 8);				\
+  }
 
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_clz, 3, 4)
 #  define psnip_builtin_clz(x)   __builtin_clz(x)
@@ -199,49 +274,11 @@ int psnip_builtin_clz(unsigned int v) {
   return psnip_builtin_clzl(v);
 }
 #else
-static const char psnip_builtin_clz_lookup[256] = {
-  7, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,
-  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
-
-#define PSNIP_BUILTIN_CLZ_DEFINE(f_n, T)        \
-  PSNIP_BUILTIN_STATIC_INLINE                   \
-  int psnip_builtin_##f_n(T x) {                \
-    size_t s = sizeof(T) * 8;                   \
-    T r;                                        \
-                                                \
-    while ((s -= 8) != 0) {                     \
-      r = x >> s;                               \
-      if (r != 0)                               \
-        return psnip_builtin_clz_lookup[r] +    \
-          (((sizeof(T) - 1) * 8) - s);          \
-    }                                           \
-                                                \
-    if (x == 0)                                 \
-      return (int) ((sizeof(T) * 8) - 1);       \
-    else                                        \
-      return psnip_builtin_clz_lookup[x] +      \
-        ((sizeof(T) - 1) * 8);                  \
-  }
-
-PSNIP_BUILTIN_CLZ_DEFINE(clz, unsigned int)
-PSNIP_BUILTIN_CLZ_DEFINE(clzl, unsigned long)
-PSNIP_BUILTIN_CLZ_DEFINE(clzll, unsigned long long)
+PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clz, unsigned int)
+PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clzl, unsigned long)
+PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clzll, unsigned long long)
 #endif
+
 #if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #  define __builtin_clz(x)   psnip_builtin_clz(x)
 #  define __builtin_clzl(x)  psnip_builtin_clzl(x)
@@ -249,51 +286,61 @@ PSNIP_BUILTIN_CLZ_DEFINE(clzll, unsigned long long)
 #endif
 #endif
 
+#if defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_clz32(x) (PSNIP_BUILTIN__VARIANT_32(clz)(x))
+#else
+  PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clz32, psnip_uint32_t)
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_clz64(x) (PSNIP_BUILTIN__VARIANT_64(clz)(x))
+#else
+  PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clz64, psnip_uint64_t)
+#endif
+
 /*** __builtin_ctz ***/
+
+#define PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(f_n, T)	\
+  PSNIP_BUILTIN_STATIC_INLINE				\
+  int psnip_builtin_##f_n(T x) {			\
+    static const char psnip_builtin_ctz_lookup[256] = {	\
+      0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
+      4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0	\
+    };							\
+    size_t s = 0;					\
+    T r;						\
+							\
+    do {						\
+      r = (x >> s) & 0xff;				\
+      if (r != 0)					\
+        return psnip_builtin_ctz_lookup[r] + s;		\
+    } while ((s += 8) < (sizeof(T) * 8));		\
+							\
+    return sizeof(T) - 1;				\
+  }
 
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ctz, 3, 4)
 #  define psnip_builtin_ctz(x)   __builtin_ctz(x)
 #  define psnip_builtin_ctzl(x)  __builtin_ctzl(x)
 #  define psnip_builtin_ctzll(x) __builtin_ctzll(x)
 #else
-static const char psnip_builtin_ctz_lookup[256] = {
-  0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  7, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  6, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
-  4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0
-};
-
-#define PSNIP_BUILTIN_CTZ_DEFINE(f_n, T)        \
-  PSNIP_BUILTIN_STATIC_INLINE                   \
-  int psnip_builtin_##f_n(T x) {                \
-    size_t s = 0;                               \
-    T r;                                        \
-                                                \
-    do {                                        \
-      r = (x >> s) & 0xff;                      \
-      if (r != 0)                               \
-        return psnip_builtin_ctz_lookup[r] + s; \
-    } while ((s += 8) < (sizeof(T) * 8));       \
-                                                \
-    return sizeof(T) - 1;                       \
-  }
-
-PSNIP_BUILTIN_CTZ_DEFINE(ctz, unsigned int)
-PSNIP_BUILTIN_CTZ_DEFINE(ctzl, unsigned long)
-PSNIP_BUILTIN_CTZ_DEFINE(ctzll, unsigned long long)
-
+PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctz, unsigned int)
+PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctzl, unsigned long)
+PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctzll, unsigned long long)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define __builtin_ctz(x)   psnip_builtin_ctz(x)
 #    define __builtin_ctzl(x)  psnip_builtin_ctzl(x)
@@ -301,47 +348,57 @@ PSNIP_BUILTIN_CTZ_DEFINE(ctzll, unsigned long long)
 #  endif
 #endif
 
+#if defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_ctz32(x) (PSNIP_BUILTIN__VARIANT_32(ctz)(x))
+#else
+  PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctz32, psnip_uint32_t)
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_ctz64(x) (PSNIP_BUILTIN__VARIANT_64(ctz)(x))
+#else
+  PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctz64, psnip_uint64_t)
+#endif
+
 /*** __builtin_parity ***/
+
+#define PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(f_n, T)		\
+  PSNIP_BUILTIN_STATIC_INLINE					\
+  int psnip_builtin_##f_n(T x) {				\
+    static const char psnip_builtin_parity_lookup[256] = {	\
+      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
+      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
+      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
+      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
+      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
+      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
+      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
+      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
+      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
+      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
+      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
+      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
+      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
+      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
+      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
+      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0		\
+    };								\
+    int s;							\
+								\
+    for (s = (sizeof(T) / 2) * 8 ; s != 4 ; s /= 2) {		\
+      x ^= x >> s;						\
+    }								\
+    return psnip_builtin_parity_lookup[x & 0xff];		\
+  }
 
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_parity, 3, 4)
 #  define psnip_builtin_parity(x)   __builtin_parity(x)
 #  define psnip_builtin_parityl(x)  __builtin_parityl(x)
 #  define psnip_builtin_parityll(x) __builtin_parityll(x)
 #else
-static const char psnip_builtin_parity_lookup[256] = {
-  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-  1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,
-  0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0
-};
-
-#define PSNIP_BUILTIN_PARITY_DEFINE(f_n, T)           \
-  PSNIP_BUILTIN_STATIC_INLINE                         \
-  int psnip_builtin_##f_n(T x) {                      \
-    int s;                                            \
-                                                      \
-    for (s = (sizeof(T) / 2) * 8 ; s != 4 ; s /= 2) { \
-      x ^= x >> s;                                    \
-    }                                                 \
-    return psnip_builtin_parity_lookup[x & 0xff];     \
-  }
-
-PSNIP_BUILTIN_PARITY_DEFINE(parity, unsigned int)
-PSNIP_BUILTIN_PARITY_DEFINE(parityl, unsigned long)
-PSNIP_BUILTIN_PARITY_DEFINE(parityll, unsigned long long)
-
+PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(parity, unsigned int)
+PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(parityl, unsigned long)
+PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(parityll, unsigned long long)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define __builtin_parity(x)   psnip_builtin_parity(x)
 #    define __builtin_parityl(x)  psnip_builtin_parityl(x)
@@ -349,14 +406,21 @@ PSNIP_BUILTIN_PARITY_DEFINE(parityll, unsigned long long)
 #  endif
 #endif
 
+#if defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_parity32(x) (PSNIP_BUILTIN__VARIANT_32(parity)(x))
+#else
+  PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(parity32, psnip_uint32_t)
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_parity64(x) (PSNIP_BUILTIN__VARIANT_64(parity)(x))
+#else
+  PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(parity64, psnip_uint64_t)
+#endif
+
 /*** __builtin_popcount ***/
 
-#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_popcount, 3, 4)
-#  define psnip_builtin_popcount(x)   __builtin_popcount(x)
-#  define psnip_builtin_popcountl(x)  __builtin_popcountl(x)
-#  define psnip_builtin_popcountll(x) __builtin_popcountll(x)
-#else
-#define PSNIP_BUILTIN_POPCOUNT_DEFINE(f_n, T)               \
+#define PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(f_n, T)	    \
   PSNIP_BUILTIN_STATIC_INLINE                               \
   int psnip_builtin_##f_n(T x) {                            \
     x = x - ((x >> 1) & (T)~(T)0/3);                        \
@@ -365,15 +429,31 @@ PSNIP_BUILTIN_PARITY_DEFINE(parityll, unsigned long long)
     return (T)(x * ((T)~(T)0/255)) >> (sizeof(T) - 1) * 8;  \
   }
 
-PSNIP_BUILTIN_POPCOUNT_DEFINE(popcount, unsigned int)
-PSNIP_BUILTIN_POPCOUNT_DEFINE(popcountl, unsigned long)
-PSNIP_BUILTIN_POPCOUNT_DEFINE(popcountll, unsigned long long)
-
+#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_popcount, 3, 4)
+#  define psnip_builtin_popcount(x)   __builtin_popcount(x)
+#  define psnip_builtin_popcountl(x)  __builtin_popcountl(x)
+#  define psnip_builtin_popcountll(x) __builtin_popcountll(x)
+#else
+PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcount, unsigned int)
+PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcountl, unsigned long)
+PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcountll, unsigned long long)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define __builtin_popcount(x)   psnip_builtin_popcount(x)
 #    define __builtin_popcountl(x)  psnip_builtin_popcountl(x)
 #    define __builtin_popcountll(x) psnip_builtin_popcountll(x)
 #  endif
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_popcount32(x) (PSNIP_BUILTIN__VARIANT_32(popcount)(x))
+#else
+  PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcount32, psnip_uint32_t)
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_popcount64(x) (PSNIP_BUILTIN__VARIANT_64(popcount)(x))
+#else
+  PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcount64, psnip_uint64_t)
 #endif
 
 /******

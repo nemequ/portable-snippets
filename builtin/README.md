@@ -19,6 +19,12 @@ it will be implemented using either a built-in/intrinsic the compiler
 *does* support (i.e., using an MSVC intrinsic to implement a GCC
 built-in), or a fully-portable pure C implementation.
 
+For GCC-style builtins, the header will also define exact-width 32-
+and 64-bit variants in the form of `psnip_builtin_foo32` and
+`psnip_builtin_foo64`.  These are typically just aliases for the
+appropriate function, but if we can't find an appropriate type a fully
+portable implementation will be used.
+
 ## Implementation Status
 
 This is very much a work in progress.  Eventually I plan to include
