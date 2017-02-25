@@ -39,11 +39,10 @@
 
 #if defined(_MSC_VER)
 #  include <intrin.h>
-#  define psnip_builtin_int64 __int64
-#  define psnip_builtin_uint64 unsigned __int64
-#else
-#  define psnip_builtin_int64 int64_t
-#  define psnip_builtin_uint64 uint64_t
+#endif
+
+#if !defined(psnip_int64_t) || !defined(psnip_uint64_t)
+#  include "../exact-int/exact-int.h"
 #endif
 
 #if defined(HEDLEY_LIKELY) && defined(HEDLEY_UNLIKELY)
@@ -496,7 +495,7 @@ unsigned char psnip_intrin_BitScanForward(unsigned long* Index, unsigned long Ma
 #  define psnip_intrin_BitScanForward64(Index, Mask) _BitScanForward64(Index, Mask)
 #else
 PSNIP_BUILTIN_STATIC_INLINE
-unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_builtin_uint64 Mask) {
+unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_uint64_t Mask) {
   return PSNIP_BUILTIN_UNLIKELY(Mask == 0) ? 0 : ((*Index = psnip_builtin_ctzll (Mask)), 1);
 }
 

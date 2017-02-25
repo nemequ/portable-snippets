@@ -1,6 +1,6 @@
 #include <stdlib.h>
-#include <stdint.h>
 #include <limits.h>
+
 #include "munit/munit.h"
 
 #define PSNIP_BUILTIN_EMULATE_NATIVE

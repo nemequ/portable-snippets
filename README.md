@@ -19,6 +19,8 @@ This repository currently contains:
    use compiler built-ins/intrinsics, or fall back on standard C
  * [safe-math](https://github.com/nemequ/portable-snippets/tree/master/safe-math) —
    overflow-safe integer functions
+ * [exact-width](https://github.com/nemequ/portable-snippets/tree/master/exact-width) —
+   exact width types (think `<stdint.h>`) which are used by some other headers
 
 Please don't be shy about filing issues about these; if you have
 problems it's likely others will, as well, so we would like to fix
