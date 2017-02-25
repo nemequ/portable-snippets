@@ -456,6 +456,43 @@ PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcountll, unsigned long long)
   PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcount64, psnip_uint64_t)
 #endif
 
+/*** __builtin_clrsb ***/
+
+#define PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(f_n, clzfn, T) \
+  PSNIP_BUILTIN_STATIC_INLINE                               \
+  int psnip_builtin_##f_n(T x) {                            \
+    return (PSNIP_BUILTIN_UNLIKELY(x == -1) ?		    \
+	    (sizeof(x) * 8) :				    \
+	    __builtin_##clzfn((x < 0) ? ~x : x)) - 1;	    \
+  }
+
+#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_clrsb, 4, 7)
+#  define psnip_builtin_clrsb(x)   __builtin_clrsb(x)
+#  define psnip_builtin_clrsbl(x)  __builtin_clrsbl(x)
+#  define psnip_builtin_clrsbll(x) __builtin_clrsbll(x)
+#else
+PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsb, clz, int)
+PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbl, clzl, long)
+PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define __builtin_clrsb(x)   psnip_builtin_clrsb(x)
+#    define __builtin_clrsbl(x)  psnip_builtin_clrsbl(x)
+#    define __builtin_clrsbll(x) psnip_builtin_clrsbll(x)
+#  endif
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_clrsb32(x) (PSNIP_BUILTIN__VARIANT_32(clrsb)(x))
+#else
+  PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsb32, clz32, psnip_int32_t)
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_clrsb64(x) (PSNIP_BUILTIN__VARIANT_64(clrsb)(x))
+#else
+  PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsb64, clz64, psnip_int64_t)
+#endif
+
 /******
  *** MSVC-style intrinsics
  ******/

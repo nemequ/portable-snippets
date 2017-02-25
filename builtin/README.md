@@ -37,64 +37,61 @@ Architecture-specific builtins which do not have a generic version in
 either GCC or MSVC may receive an implementation, but probably not
 until people specifically request (or, better yet, provide) one.
 
-Functions without a portable version have not been implemented at all
-(i.e., there is no psnip_* function yet).
+GCC builtins:
 
-| GCC built-in     | Portable | MSVC |
-| ---------------- | -------- | ---- |
-| ffs              | ✓        | ✓    |
-| ffsl             | ✓        | ✓    |
-| ffsll            | ✓        | ✓    |
-| clz              | ✓        | ✓    |
-| clzl             | ✓        | ✓    |
-| clzll            | ✓        | ✓    |
-| ctz              | ✓        |      |
-| ctzl             | ✓        |      |
-| ctzll            | ✓        |      |
-| clrsb            |          |      |
-| clrsbl           |          |      |
-| clrsbll          |          |      |
-| popcount         | ✓        |      |
-| popcountl        | ✓        |      |
-| popcountll       | ✓        |      |
-| parity           | ✓        |      |
-| parityl          | ✓        |      |
-| parityll         | ✓        |      |
-| bswap16          |          |      |
-| bswap32          |          |      |
-| bswap64          |          |      |
+ - [x] ffs
+ - [x] ffsl
+ - [x] ffsll
+ - [x] clz
+ - [x] clzl
+ - [x] clzll
+ - [x] ctz
+ - [x] ctzl
+ - [x] ctzll
+ - [x] clrsb
+ - [x] clrsbl
+ - [x] clrsbll
+ - [x] popcount
+ - [x] popcountl
+ - [x] popcountll
+ - [x] parity
+ - [x] parityl
+ - [x] parityll
+ - [ ] bswap16
+ - [ ] bswap32
+ - [ ] bswap64
 
-| MSVC intrinsic         | Portable | GCC  |
-| ---------------------- | -------- | ---- |
-| rotl8                  | ✓        |      |
-| rotl16                 | ✓        |      |
-| rotl                   | ✓        |      |
-| rotl64                 | ✓        |      |
-| rotr8                  | ✓        |      |
-| rotr16                 | ✓        |      |
-| rotr                   | ✓        |      |
-| rotr64                 | ✓        |      |
-| BitScanForward         | ✓        |      |
-| BitScanForward64       | ✓        |      |
-| BitScanReverse         |          |      |
-| BitScanReverse64       |          |      |
-| mul128                 |          |      |
-| umul128                |          |      |
-| shiftleft128           |          |      |
-| shiftright128          |          |      |
-| mulh                   |          |      |
-| umulh                  |          |      |
-| byteswap_uint64        |          |      |
-| byteswap_ulong         |          |      |
-| byteswap_ushort        |          |      |
-| bittest                | ✓        |      |
-| bittest64              | ✓        |      |
-| bittestandcomplement   |          |      |
-| bittestandcomplement64 |          |      |
-| bittestandreset        |          |      |
-| bittestandreset64      |          |      |
-| bittestandset          |          |      |
-| bittestandset64        |          |      |
+MSVC intrinsics:
+
+ - [x] rotl8
+ - [x] rotl16
+ - [x] rotl
+ - [x] rotl64
+ - [x] rotr8
+ - [x] rotr16
+ - [x] rotr
+ - [x] rotr64
+ - [x] BitScanForward
+ - [x] BitScanForward64
+ - [ ] BitScanReverse
+ - [ ] BitScanReverse64
+ - [ ] mul128
+ - [ ] umul128
+ - [ ] shiftleft128
+ - [ ] shiftright128
+ - [ ] mulh
+ - [ ] umulh
+ - [ ] byteswap_uint64
+ - [ ] byteswap_ulong
+ - [ ] byteswap_ushort
+ - [x] bittest
+ - [x] bittest64
+ - [ ] bittestandcomplement
+ - [ ] bittestandcomplement64
+ - [ ] bittestandreset
+ - [ ] bittestandreset64
+ - [ ] bittestandset
+ - [ ] bittestandset64
 
 Note that it may not be possible to implement built-ins from one
 compiler using the built-ins from another.

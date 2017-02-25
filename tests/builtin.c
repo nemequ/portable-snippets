@@ -559,6 +559,102 @@ test_gnu_popcountll_native(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
+test_gnu_clrsb(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  int v = ~0;
+  int expected = (sizeof(v) * 8) - 1;
+
+  do {
+    munit_assert_int(psnip_builtin_clrsb(v), ==, expected);
+
+    v <<= 1;
+    expected -= 1;
+  } while (v != 0);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_clrsb_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  int v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_builtin_clrsb(v), ==, __builtin_clrsb(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_clrsbl(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long v = ~(0L);
+  int expected = (sizeof(v) * 8) - 1;
+
+  do {
+    munit_assert_int(psnip_builtin_clrsbl(v), ==, expected);
+
+    v <<= 1;
+    expected -= 1;
+  } while (v != 0);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_clrsbl_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_builtin_clrsbl(v), ==, __builtin_clrsbl(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_clrsbll(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long long v = ~(0LL);
+  int expected = (sizeof(v) * 8) - 1;
+
+  do {
+    munit_assert_int(psnip_builtin_clrsbll(v), ==, expected);
+
+    v <<= 1;
+    expected -= 1;
+  } while (v != 0);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_clrsbll_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long long v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_builtin_clrsbll(v), ==, __builtin_clrsbll(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
 test_msvc_rotl8(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1044,6 +1140,9 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_BUILTIN(popcount),
   PSNIP_TEST_BUILTIN(popcountl),
   PSNIP_TEST_BUILTIN(popcountll),
+  PSNIP_TEST_BUILTIN(clrsb),
+  PSNIP_TEST_BUILTIN(clrsbl),
+  PSNIP_TEST_BUILTIN(clrsbll),
 
   PSNIP_TEST_INTRIN(rotl8),
   PSNIP_TEST_INTRIN(rotl16),
