@@ -655,6 +655,84 @@ test_gnu_clrsbll_native(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
+test_gnu_bswap16(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_uint16_t v = (psnip_uint16_t) 0xAABBULL;
+
+  munit_assert_uint16(psnip_builtin_bswap16(v), ==, ((psnip_uint16_t) 0xBBAAULL));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bswap16_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  int v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_builtin_bswap16(v), ==, __builtin_bswap16(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bswap32(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_uint32_t v = (psnip_uint32_t) 0xAABBCCDDULL;
+
+  munit_assert_uint32(psnip_builtin_bswap32(v), ==, ((psnip_uint32_t) 0xDDCCBBAAULL));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bswap32_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  int v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_builtin_bswap32(v), ==, __builtin_bswap32(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bswap64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_uint64_t v = (psnip_uint64_t) 0xAABBCCDDEEFF0011ULL;
+
+  munit_assert_uint64(psnip_builtin_bswap64(v), ==, ((psnip_uint64_t) 0x1100FFEEDDCCBBAAULL));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bswap64_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  int v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_builtin_bswap64(v), ==, __builtin_bswap64(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
 test_msvc_rotl8(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1117,6 +1195,84 @@ test_msvc_bittest64_native(const MunitParameter params[], void* data) {
   return MUNIT_OK;
 }
 
+static MunitResult
+test_msvc_byteswap_ushort(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_uint16_t v = (psnip_uint16_t) 0xAABBULL;
+
+  munit_assert_uint16(psnip_intrin_byteswap_ushort(v), ==, ((psnip_uint16_t) 0xBBAAULL));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_byteswap_ushort_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  int v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_intrin_byteswap_ushort(v), ==, _byteswap_ushort(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_byteswap_ulong(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_uint32_t v = (psnip_uint32_t) 0xAABBCCDDULL;
+
+  munit_assert_uint32(psnip_intrin_byteswap_ulong(v), ==, ((psnip_uint32_t) 0xDDCCBBAAULL));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_byteswap_ulong_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  int v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_intrin_byteswap_ulong(v), ==, _byteswap_ulong(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_byteswap_uint64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_uint64_t v = (psnip_uint64_t) 0xAABBCCDDEEFF0011ULL;
+
+  munit_assert_uint64(psnip_intrin_byteswap_uint64(v), ==, ((psnip_uint64_t) 0x1100FFEEDDCCBBAAULL));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_byteswap_uint64_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  int v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_intrin_byteswap_uint64(v), ==, _byteswap_uint64(v));
+
+  return MUNIT_OK;
+}
+
 #define PSNIP_TEST_BUILTIN(name) \
   { (char*) "/builtin/"#name, test_gnu_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }, \
   { (char*) "/builtin/"#name"/native", test_gnu_##name##_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
@@ -1143,6 +1299,9 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_BUILTIN(clrsb),
   PSNIP_TEST_BUILTIN(clrsbl),
   PSNIP_TEST_BUILTIN(clrsbll),
+  PSNIP_TEST_BUILTIN(bswap16),
+  PSNIP_TEST_BUILTIN(bswap32),
+  PSNIP_TEST_BUILTIN(bswap64),
 
   PSNIP_TEST_INTRIN(rotl8),
   PSNIP_TEST_INTRIN(rotl16),
@@ -1152,6 +1311,9 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_INTRIN(BitScanForward64),
   PSNIP_TEST_INTRIN(bittest),
   PSNIP_TEST_INTRIN(bittest64),
+  PSNIP_TEST_INTRIN(byteswap_ushort),
+  PSNIP_TEST_INTRIN(byteswap_ulong),
+  PSNIP_TEST_INTRIN(byteswap_uint64),
 
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

@@ -493,6 +493,57 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
   PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsb64, clz64, psnip_int64_t)
 #endif
 
+/*** __builtin_bswap ***/
+
+#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_bswap16, 4, 7)
+#  define psnip_builtin_bswap16(x) __builtin_bswap16(x)
+#  define psnip_builtin_bswap32(x) __builtin_bswap32(x)
+#  define psnip_builtin_bswap64(x) __builtin_bswap64(x)
+#else
+#  if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_byteswap_ushort,13,10)
+#    define psnip_builtin_bswap16(x) _byteswap_ushort(x)
+#    define psnip_builtin_bswap32(x) _byteswap_ulong(x)
+#    define psnip_builtin_bswap64(x) _byteswap_uint64(x)
+#  else
+PSNIP_BUILTIN_STATIC_INLINE
+psnip_uint16_t
+psnip_builtin_bswap16(uint16_t v) {
+  return
+    ((v & ((psnip_uint16_t) 0xff00ULL)) >>  8) |
+    ((v & ((psnip_uint16_t) 0x00ffULL)) <<  8);
+}
+
+PSNIP_BUILTIN_STATIC_INLINE
+psnip_uint32_t
+psnip_builtin_bswap32(uint32_t v) {
+  return
+    ((v & ((psnip_uint32_t) 0xff000000ULL)) >> 24) |
+    ((v & ((psnip_uint32_t) 0x00ff0000ULL)) >>  8) |
+    ((v & ((psnip_uint32_t) 0x0000ff00ULL)) <<  8) |
+    ((v & ((psnip_uint32_t) 0x000000ffULL)) << 24);
+}
+
+PSNIP_BUILTIN_STATIC_INLINE
+psnip_uint64_t
+psnip_builtin_bswap64(uint64_t v) {
+  return
+    ((v & ((psnip_uint64_t) 0xff00000000000000ULL)) >> 56) |
+    ((v & ((psnip_uint64_t) 0x00ff000000000000ULL)) >> 40) |
+    ((v & ((psnip_uint64_t) 0x0000ff0000000000ULL)) >> 24) |
+    ((v & ((psnip_uint64_t) 0x000000ff00000000ULL)) >>  8) |
+    ((v & ((psnip_uint64_t) 0x00000000ff000000ULL)) <<  8) |
+    ((v & ((psnip_uint64_t) 0x0000000000ff0000ULL)) << 24) |
+    ((v & ((psnip_uint64_t) 0x000000000000ff00ULL)) << 40) |
+    ((v & ((psnip_uint64_t) 0x00000000000000ffULL)) << 56);
+}
+#  endif
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define __builtin_bswap16(x) psnip_builtin_bswap16(x)
+#    define __builtin_bswap32(x) psnip_builtin_bswap32(x)
+#    define __builtin_bswap64(x) psnip_builtin_bswap64(x)
+#  endif
+#endif
+
 /******
  *** MSVC-style intrinsics
  ******/
@@ -638,6 +689,23 @@ unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_uint64_t
 #  define psnip_intrin_bittest64(a, b) (((*(a)) >> (b)) & 1)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _bittest64(a, b) psnip_intrin_bittest64(a, b)
+#  endif
+#endif
+
+/*** byteswap ***/
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_byteswap_ushort,13,10)
+#  define psnip_intrin_byteswap_ushort(v) _byteswap_ushort(v)
+#  define psnip_intrin_byteswap_ulong(v)  _byteswap_ulong(v)
+#  define psnip_intrin_byteswap_uint64(v) _byteswap_uint64(v)
+#else
+#  define psnip_intrin_byteswap_ushort(v) psnip_builtin_bswap16(v)
+#  define psnip_intrin_byteswap_ulong(v)  psnip_builtin_bswap32(v)
+#  define psnip_intrin_byteswap_uint64(v) psnip_builtin_bswap64(v)
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#  define _byteswap_ushort(v) psnip_intrin_byteswap_ushort(v)
+#  define _byteswap_ulong(v)  psnip_intrin_byteswap_ulong(v)
+#  define _byteswap_uint64(v) psnip_intrin_byteswap_uint64(v)
 #  endif
 #endif
 

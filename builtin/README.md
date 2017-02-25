@@ -57,9 +57,9 @@ GCC builtins:
  - [x] parity
  - [x] parityl
  - [x] parityll
- - [ ] bswap16
- - [ ] bswap32
- - [ ] bswap64
+ - [x] bswap16
+ - [x] bswap32
+ - [x] bswap64
 
 MSVC intrinsics:
 
@@ -81,9 +81,9 @@ MSVC intrinsics:
  - [ ] shiftright128
  - [ ] mulh
  - [ ] umulh
- - [ ] byteswap_uint64
- - [ ] byteswap_ulong
- - [ ] byteswap_ushort
+ - [x] byteswap_uint64
+ - [x] byteswap_ulong
+ - [x] byteswap_ushort
  - [x] bittest
  - [x] bittest64
  - [ ] bittestandcomplement
