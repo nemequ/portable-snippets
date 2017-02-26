@@ -67,11 +67,11 @@ Clang builtins:
  - [x] bitreverse16
  - [x] bitreverse32
  - [x] bitreverse64
- - [ ] addcb
- - [ ] addcs
- - [ ] addc
- - [ ] addcl
- - [ ] addcll
+ - [x] addcb
+ - [x] addcs
+ - [x] addc
+ - [x] addcl
+ - [x] addcll
  - [ ] subcb
  - [ ] subcs
  - [ ] subc

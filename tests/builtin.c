@@ -960,6 +960,262 @@ test_gnu_bitreverse64_native(const MunitParameter params[], void* data) {
   return MUNIT_OK;
 }
 
+#if defined(__SIZEOF_INT128__)
+typedef unsigned __int128 psnip_uint_big;
+#else
+typedef psnip_uint64_t psnip_uint_big;
+#endif
+
+static MunitResult
+test_gnu_addcb(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  if (sizeof(unsigned char) < sizeof(psnip_uint_big)) {
+    unsigned char r, rh, x, y, ci, co;
+    psnip_uint_big R, X, Y, Rp;
+
+    munit_rand_memory(sizeof(x), (uint8_t*) &x);
+    munit_rand_memory(sizeof(y), (uint8_t*) &y);
+    ci = 0;
+
+    r = psnip_builtin_addcb(x, y, ci, &co);
+    Rp = co;
+    Rp <<= sizeof(r) * CHAR_BIT;
+    Rp |= r;
+
+    X = x;
+    Y = y;
+    R = X + Y;
+
+    munit_assert_uint64(R, ==, Rp);
+  } else {
+    return MUNIT_SKIP;
+  }
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_addcb_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned char x, y, ci, co1, co2, r1, r2;
+
+  munit_rand_memory(sizeof(x), (uint8_t*) &x);
+  munit_rand_memory(sizeof(y), (uint8_t*) &y);
+  ci = (unsigned char) munit_rand_int_range(0, 1);
+
+  r1 = psnip_builtin_addcb(x, y, ci, &co1);
+  r2 = __builtin_addcb(x, y, ci, &co2);
+
+  munit_assert_uint8(r1, ==, r2);
+  munit_assert_uint8(co1, ==, co2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_addcs(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  if (sizeof(unsigned short) < sizeof(psnip_uint_big)) {
+    unsigned short r, rh, x, y, ci, co;
+    psnip_uint_big R, X, Y, Rp;
+
+    munit_rand_memory(sizeof(x), (uint8_t*) &x);
+    munit_rand_memory(sizeof(y), (uint8_t*) &y);
+    ci = 0;
+
+    r = psnip_builtin_addcs(x, y, ci, &co);
+    Rp = co;
+    Rp <<= sizeof(r) * CHAR_BIT;
+    Rp |= r;
+
+    X = x;
+    Y = y;
+    R = X + Y;
+
+    munit_assert_uint64(R, ==, Rp);
+  } else {
+    return MUNIT_SKIP;
+  }
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_addcs_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned short x, y, ci, co1, co2, r1, r2;
+
+  munit_rand_memory(sizeof(x), (uint8_t*) &x);
+  munit_rand_memory(sizeof(y), (uint8_t*) &y);
+  ci = (unsigned short) munit_rand_int_range(0, 1);
+
+  r1 = psnip_builtin_addcs(x, y, ci, &co1);
+  r2 = __builtin_addcs(x, y, ci, &co2);
+
+  munit_assert_uint8(r1, ==, r2);
+  munit_assert_uint8(co1, ==, co2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_addc(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  if (sizeof(unsigned int) < sizeof(psnip_uint_big)) {
+    unsigned int r, rh, x, y, ci, co;
+    psnip_uint_big R, X, Y, Rp;
+
+    munit_rand_memory(sizeof(x), (uint8_t*) &x);
+    munit_rand_memory(sizeof(y), (uint8_t*) &y);
+    ci = 0;
+
+    r = psnip_builtin_addc(x, y, ci, &co);
+    Rp = co;
+    Rp <<= sizeof(r) * CHAR_BIT;
+    Rp |= r;
+
+    X = x;
+    Y = y;
+    R = X + Y;
+
+    munit_assert_uint64(R, ==, Rp);
+  } else {
+    return MUNIT_SKIP;
+  }
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_addc_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned int x, y, ci, co1, co2, r1, r2;
+
+  munit_rand_memory(sizeof(x), (uint8_t*) &x);
+  munit_rand_memory(sizeof(y), (uint8_t*) &y);
+  ci = (unsigned int) munit_rand_int_range(0, 1);
+
+  r1 = psnip_builtin_addc(x, y, ci, &co1);
+  r2 = __builtin_addc(x, y, ci, &co2);
+
+  munit_assert_uint8(r1, ==, r2);
+  munit_assert_uint8(co1, ==, co2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_addcl(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  if (sizeof(unsigned long) < sizeof(psnip_uint_big)) {
+    unsigned long r, rh, x, y, ci, co;
+    psnip_uint_big R, X, Y, Rp;
+
+    munit_rand_memory(sizeof(x), (uint8_t*) &x);
+    munit_rand_memory(sizeof(y), (uint8_t*) &y);
+    ci = 0;
+
+    r = psnip_builtin_addcl(x, y, ci, &co);
+    Rp = co;
+    Rp <<= sizeof(r) * CHAR_BIT;
+    Rp |= r;
+
+    X = x;
+    Y = y;
+    R = X + Y;
+
+    munit_assert_uint64(R, ==, Rp);
+  } else {
+    return MUNIT_SKIP;
+  }
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_addcl_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long x, y, ci, co1, co2, r1, r2;
+
+  munit_rand_memory(sizeof(x), (uint8_t*) &x);
+  munit_rand_memory(sizeof(y), (uint8_t*) &y);
+  ci = (unsigned long) munit_rand_int_range(0, 1);
+
+  r1 = psnip_builtin_addcl(x, y, ci, &co1);
+  r2 = __builtin_addcl(x, y, ci, &co2);
+
+  munit_assert_uint8(r1, ==, r2);
+  munit_assert_uint8(co1, ==, co2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_addcll(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  if (sizeof(unsigned long long) < sizeof(psnip_uint_big)) {
+    unsigned long long r, rh, x, y, ci, co;
+    psnip_uint_big R, X, Y, Rp;
+
+    munit_rand_memory(sizeof(x), (uint8_t*) &x);
+    munit_rand_memory(sizeof(y), (uint8_t*) &y);
+    ci = 0;
+
+    r = psnip_builtin_addcll(x, y, ci, &co);
+    Rp = co;
+    Rp <<= sizeof(r) * CHAR_BIT;
+    Rp |= r;
+
+    X = x;
+    Y = y;
+    R = X + Y;
+
+    munit_assert_uint64(R, ==, Rp);
+  } else {
+    return MUNIT_SKIP;
+  }
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_addcll_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long long x, y, ci, co1, co2, r1, r2;
+
+  munit_rand_memory(sizeof(x), (uint8_t*) &x);
+  munit_rand_memory(sizeof(y), (uint8_t*) &y);
+  ci = (unsigned long long) munit_rand_int_range(0, 1);
+
+  r1 = psnip_builtin_addcll(x, y, ci, &co1);
+  r2 = __builtin_addcll(x, y, ci, &co2);
+
+  munit_assert_uint8(r1, ==, r2);
+  munit_assert_uint8(co1, ==, co2);
+
+  return MUNIT_OK;
+}
+
 static MunitResult
 test_msvc_rotl8(const MunitParameter params[], void* data) {
   (void) params;
@@ -1758,6 +2014,11 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_BUILTIN(bitreverse16),
   PSNIP_TEST_BUILTIN(bitreverse32),
   PSNIP_TEST_BUILTIN(bitreverse64),
+  PSNIP_TEST_BUILTIN(addcb),
+  PSNIP_TEST_BUILTIN(addcs),
+  PSNIP_TEST_BUILTIN(addc),
+  PSNIP_TEST_BUILTIN(addcl),
+  PSNIP_TEST_BUILTIN(addcll),
 
   PSNIP_TEST_INTRIN(rotl8),
   PSNIP_TEST_INTRIN(rotl16),

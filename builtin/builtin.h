@@ -104,6 +104,57 @@
 #  define PSNIP_BUILTIN__VARIANT_64(name) psnip_builtin_##name##ll
 #endif
 
+/* Clang has some builtins that have "s" and "b" suffixes for short
+   and byte (?). */
+
+#if CHAR_MIN == (-127-1) && INT_MAX == 127
+#  define PSNIP_BUILTIN__VARIANT2_8(name) name##b
+#elif SHORT_MIN == (-127-1) && INT_MAX == 127
+#  define PSNIP_BUILTIN__VARIANT2_8(name) name##s
+#elif INT_MIN == (-127-1) && INT_MAX == 127
+#  define PSNIP_BUILTIN__VARIANT2_8(name) name
+#elif LONG_MIN == (-127-1) && LONG_MAX == 127
+#  define PSNIP_BUILTIN__VARIANT2_8(name) name##l
+#elif LLONG_MIN == (-127-1) && LLONG_MAX == 127
+#  define PSNIP_BUILTIN__VARIANT2_8(name) name##ll
+#endif
+
+#if CHAR_MIN == (-32767-1) && INT_MAX == 32767
+#  define PSNIP_BUILTIN__VARIANT2_16(name) name##b
+#elif SHORT_MIN == (-32767-1) && INT_MAX == 32767
+#  define PSNIP_BUILTIN__VARIANT2_16(name) name##s
+#elif INT_MIN == (-32767-1) && INT_MAX == 32767
+#  define PSNIP_BUILTIN__VARIANT2_16(name) name
+#elif LONG_MIN == (-32767-1) && LONG_MAX == 32767
+#  define PSNIP_BUILTIN__VARIANT2_16(name) name##l
+#elif LLONG_MIN == (-32767-1) && LLONG_MAX == 32767
+#  define PSNIP_BUILTIN__VARIANT2_16(name) name##ll
+#endif
+
+#if CHAR_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#  define PSNIP_BUILTIN__VARIANT2_32(name) name##b
+#elif SHORT_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#  define PSNIP_BUILTIN__VARIANT2_32(name) name##s
+#elif INT_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#  define PSNIP_BUILTIN__VARIANT2_32(name) name
+#elif LONG_MIN == (-2147483647-1) && LONG_MAX == 2147483647
+#  define PSNIP_BUILTIN__VARIANT2_32(name) name##l
+#elif LLONG_MIN == (-2147483647-1) && LLONG_MAX == 2147483647
+#  define PSNIP_BUILTIN__VARIANT2_32(name) name##ll
+#endif
+
+#if CHAR_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN__VARIANT2_64(name) name##b
+#elif SHORT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN__VARIANT2_64(name) name##s
+#elif INT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN__VARIANT2_64(name) name
+#elif LONG_MIN == (-9223372036854775807LL-1) && LONG_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN__VARIANT2_64(name) name##l
+#elif LLONG_MIN == (-9223372036854775807LL-1) && LLONG_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN__VARIANT2_64(name) name##ll
+#endif
+
 /******
  *** GCC-style built-ins
  ******/
@@ -532,6 +583,66 @@ PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t)
 #    define __builtin_bitreverse32(x) psnip_builtin_bitreverse32(x)
 #    define __builtin_bitreverse64(x) psnip_builtin_bitreverse64(x)
 #  endif
+#endif
+
+/*** __builtin_addc ***/
+
+#define PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(f_n, T, max)	\
+  PSNIP_BUILTIN_STATIC_INLINE					\
+  T psnip_builtin_##f_n(T x, T y, T ci, T* co) {		\
+    T r = x + y;						\
+    *co = (x > (max - y));					\
+    if (ci) {							\
+      if (r == max)						\
+	*co = 1;						\
+      r += ci;							\
+    }								\
+    return r;							\
+  }
+
+#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_addc)
+#  define psnip_builtin_addcb(x, y, ci, co)  __builtin_addcb(x, y, ci, co)
+#  define psnip_builtin_addcs(x, y, ci, co)  __builtin_addcs(x, y, ci, co)
+#  define psnip_builtin_addc(x, y, ci, co)   __builtin_addc(x, y, ci, co)
+#  define psnip_builtin_addcl(x, y, ci, co)  __builtin_addcl(x, y, ci, co)
+#  define psnip_builtin_addcll(x, y, ci, co) __builtin_addcll(x, y, ci, co)
+#else
+PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addcb,  unsigned char,  UCHAR_MAX)
+PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addcs,  unsigned short, USHRT_MAX)
+PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc,   unsigned int,   UINT_MAX)
+PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addcl,  unsigned long,  ULONG_MAX)
+PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addcll, unsigned long,  ULLONG_MAX)
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define __builtin_addcb(x, y, ci, co)  psnip_builtin_addcb(x, y, ci, co)
+#    define __builtin_addcs(x, y, ci, co)  psnip_builtin_addcs(x, y, ci, co)
+#    define __builtin_addc(x, y, ci, co)   psnip_builtin_addc(x, y, ci, co)
+#    define __builtin_addcl(x, y, ci, co)  psnip_builtin_addcl(x, y, ci, co)
+#    define __builtin_addcll(x, y, ci, co) psnip_builtin_addcll(x, y, ci, co)
+#  endif
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT2_8)
+#  define psnip_builtin_addc8(x) (PSNIP_BUILTIN__VARIANT2_8(addc)(x))
+#else
+PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc8, psnip_uint8_t, 255)
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT2_16)
+#  define psnip_builtin_addc16(x) (PSNIP_BUILTIN__VARIANT2_16(addc)(x))
+#else
+PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc16, psnip_uint16_t, 65535)
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT2_32)
+#  define psnip_builtin_addc32(x) (PSNIP_BUILTIN__VARIANT2_32(addc)(x))
+#else
+PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc32, psnip_uint32_t, 4294967295)
+#endif
+
+#if defined(PSNIP_BUILTIN__VARIANT2_64)
+#  define psnip_builtin_addc64(x) (PSNIP_BUILTIN__VARIANT2_64(addc)(x))
+#else
+PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc64, psnip_uint64_t, 18446744073709551615ULL)
 #endif
 
 /*** __builtin_bswap ***/
