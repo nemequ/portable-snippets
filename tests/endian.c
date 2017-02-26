@@ -1,25 +1,24 @@
 #include <stdlib.h>
-#include <stdint.h>
 #include "../endian/endian.h"
 #include "munit/munit.h"
 
 const union {
   unsigned char bytes[2];
-  PSNIP_ENDIAN_UINT16_T value;
+  psnip_uint16_t value;
 } test_data_16 = {
   { 1, 2 }
 };
 
 const union {
   unsigned char bytes[4];
-  PSNIP_ENDIAN_UINT32_T value;
+  psnip_uint32_t value;
 } test_data_32 = {
   { 1, 2, 3, 4 }
 };
 
 const union {
   unsigned char bytes[8];
-  PSNIP_ENDIAN_UINT64_T value;
+  psnip_uint64_t value;
 } test_data_64 = {
   { 1, 2, 3, 4, 5, 6, 7, 8 }
 };
@@ -29,9 +28,9 @@ test_endian_swap_known(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  munit_assert_uint16(PSNIP_BSWAP16(UINT16_C(0xefbe)), ==, UINT16_C(0xbeef));
-  munit_assert_uint32(PSNIP_BSWAP32(UINT32_C(0xefbeadde)), ==, UINT32_C(0xdeadbeef));
-  munit_assert_uint64(PSNIP_BSWAP64(UINT64_C(0x0df0dde0fe0fdcba)), ==, UINT64_C(0xbadc0ffee0ddf00d));
+  munit_assert_uint16(psnip_builtin_bswap16(UINT16_C(0xefbe)), ==, UINT16_C(0xbeef));
+  munit_assert_uint32(psnip_builtin_bswap32(UINT32_C(0xefbeadde)), ==, UINT32_C(0xdeadbeef));
+  munit_assert_uint64(psnip_builtin_bswap64(UINT64_C(0x0df0dde0fe0fdcba)), ==, UINT64_C(0xbadc0ffee0ddf00d));
 
   return MUNIT_OK;
 }
@@ -41,29 +40,29 @@ test_endian_swap_random(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  munit_assert_uint16(PSNIP_BSWAP16(UINT16_C(0xefbe)), ==, UINT16_C(0xbeef));
+  munit_assert_uint16(psnip_builtin_bswap16(UINT16_C(0xefbe)), ==, UINT16_C(0xbeef));
   {
     const uint16_t input = (uint16_t) munit_rand_uint32();
-    const uint16_t swapped = PSNIP_BSWAP16(input);
-    const uint16_t double_swapped = PSNIP_BSWAP16(swapped);
+    const uint16_t swapped = psnip_builtin_bswap16(input);
+    const uint16_t double_swapped = psnip_builtin_bswap16(swapped);
 
     munit_assert_uint16(input, ==, double_swapped);
   }
 
-  munit_assert_uint32(PSNIP_BSWAP32(UINT32_C(0xefbeadde)), ==, UINT32_C(0xdeadbeef));
+  munit_assert_uint32(psnip_builtin_bswap32(UINT32_C(0xefbeadde)), ==, UINT32_C(0xdeadbeef));
   {
     const uint32_t input = munit_rand_uint32();
-    const uint32_t swapped = PSNIP_BSWAP32(input);
-    const uint32_t double_swapped = PSNIP_BSWAP32(swapped);
+    const uint32_t swapped = psnip_builtin_bswap32(input);
+    const uint32_t double_swapped = psnip_builtin_bswap32(swapped);
 
     munit_assert_uint32(input, ==, double_swapped);
   }
 
-  munit_assert_uint64(PSNIP_BSWAP64(UINT64_C(0xdf0dde0fe0fdcba)), ==, UINT64_C(0xbadc0ffee0ddf00d));
+  munit_assert_uint64(psnip_builtin_bswap64(UINT64_C(0xdf0dde0fe0fdcba)), ==, UINT64_C(0xbadc0ffee0ddf00d));
   {
-    const uint64_t input = (((uint64_t) munit_rand_uint32()) << 8) | munit_rand_uint32();
-    const uint64_t swapped = PSNIP_BSWAP64(input);
-    const uint64_t double_swapped = PSNIP_BSWAP64(swapped);
+    const uint64_t input = (((uint64_t) munit_rand_uint32()) << 32) | munit_rand_uint32();
+    const uint64_t swapped = psnip_builtin_bswap64(input);
+    const uint64_t double_swapped = psnip_builtin_bswap64(swapped);
 
     munit_assert_uint64(input, ==, double_swapped);
   }
@@ -76,9 +75,9 @@ test_endian_from_be(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  munit_assert_uint16(PSNIP_READ_BE16(test_data_16.value), ==, UINT16_C(0x0102));
-  munit_assert_uint32(PSNIP_READ_BE32(test_data_32.value), ==, UINT32_C(0x01020304));
-  munit_assert_uint64(PSNIP_READ_BE64(test_data_64.value), ==, UINT64_C(0x0102030405060708));
+  munit_assert_uint16(psnip_endian_be16(test_data_16.value), ==, UINT16_C(0x0102));
+  munit_assert_uint32(psnip_endian_be32(test_data_32.value), ==, UINT32_C(0x01020304));
+  munit_assert_uint64(psnip_endian_be64(test_data_64.value), ==, UINT64_C(0x0102030405060708));
 
   return MUNIT_OK;
 }
@@ -88,9 +87,9 @@ test_endian_from_le(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  munit_assert_uint16(PSNIP_READ_LE16(test_data_16.value), ==, UINT16_C(0x0201));
-  munit_assert_uint32(PSNIP_READ_LE32(test_data_32.value), ==, UINT32_C(0x04030201));
-  munit_assert_uint64(PSNIP_READ_LE64(test_data_64.value), ==, UINT64_C(0x0807060504030201));
+  munit_assert_uint16(psnip_endian_le16(test_data_16.value), ==, UINT16_C(0x0201));
+  munit_assert_uint32(psnip_endian_le32(test_data_32.value), ==, UINT32_C(0x04030201));
+  munit_assert_uint64(psnip_endian_le64(test_data_64.value), ==, UINT64_C(0x0807060504030201));
 
   return MUNIT_OK;
 }

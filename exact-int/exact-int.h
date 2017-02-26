@@ -141,13 +141,13 @@
 #    if !defined(psnip_uint16_t)
 #      if UCHAR_MAX == 65535
 #        define psnip_uint16_t unsigned char
-#      elif SHRT == 65535
+#      elif USHRT_MAX == 65535
 #        define psnip_uint16_t unsigned short
-#      elif INT == 65535
+#      elif UINT_MAX == 65535
 #        define psnip_uint16_t unsigned int
-#      elif LONG == 65535
+#      elif ULONG_MAX == 65535
 #        define psnip_uint16_t unsigned long
-#      elif LLONG == 65535
+#      elif ULLONG_MAX == 65535
 #        define psnip_uint16_t unsigned long long
 #      else
 #        error Unable to locate 16-bit unsigned integer type.
@@ -171,13 +171,13 @@
 #    if !defined(psnip_uint32_t)
 #      if UCHAR_MAX == 4294967295
 #        define psnip_uint32_t unsigned char
-#      elif SHRT == 4294967295
+#      elif USHRT_MAX == 4294967295
 #        define psnip_uint32_t unsigned short
-#      elif INT == 4294967295
+#      elif UINT_MAX == 4294967295
 #        define psnip_uint32_t unsigned int
-#      elif LONG == 4294967295
+#      elif ULONG_MAX == 4294967295
 #        define psnip_uint32_t unsigned long
-#      elif LLONG == 4294967295
+#      elif ULLONG_MAX == 4294967295
 #        define psnip_uint32_t unsigned long long
 #      else
 #        error Unable to locate 32-bit unsigned integer type.
@@ -201,13 +201,13 @@
 #    if !defined(psnip_uint64_t)
 #      if UCHAR_MAX == 18446744073709551615ULL
 #        define psnip_uint64_t unsigned char
-#      elif SHRT == 18446744073709551615ULL
+#      elif USHRT_MAX == 18446744073709551615ULL
 #        define psnip_uint64_t unsigned short
-#      elif INT == 18446744073709551615ULL
+#      elif UINT_MAX == 18446744073709551615ULL
 #        define psnip_uint64_t unsigned int
-#      elif LONG == 18446744073709551615ULL
+#      elif ULONG_MAX == 18446744073709551615ULL
 #        define psnip_uint64_t unsigned long
-#      elif LLONG == 18446744073709551615ULL
+#      elif ULLONG_MAX == 18446744073709551615ULL
 #        define psnip_uint64_t unsigned long long
 #      else
 #        error Unable to locate 64-bit unsigned integer type.

@@ -535,50 +535,58 @@ PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t)
 
 /*** __builtin_bswap ***/
 
-#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_bswap16, 4, 7)
+#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_bswap16, 4, 8)
 #  define psnip_builtin_bswap16(x) __builtin_bswap16(x)
-#  define psnip_builtin_bswap32(x) __builtin_bswap32(x)
-#  define psnip_builtin_bswap64(x) __builtin_bswap64(x)
 #else
 #  if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_byteswap_ushort,13,10)
 #    define psnip_builtin_bswap16(x) _byteswap_ushort(x)
-#    define psnip_builtin_bswap32(x) _byteswap_ulong(x)
-#    define psnip_builtin_bswap64(x) _byteswap_uint64(x)
 #  else
 PSNIP_BUILTIN_STATIC_INLINE
 psnip_uint16_t
-psnip_builtin_bswap16(uint16_t v) {
+psnip_builtin_bswap16(psnip_uint16_t v) {
   return
-    ((v & ((psnip_uint16_t) 0xff00ULL)) >>  8) |
-    ((v & ((psnip_uint16_t) 0x00ffULL)) <<  8);
-}
-
-PSNIP_BUILTIN_STATIC_INLINE
-psnip_uint32_t
-psnip_builtin_bswap32(uint32_t v) {
-  return
-    ((v & ((psnip_uint32_t) 0xff000000ULL)) >> 24) |
-    ((v & ((psnip_uint32_t) 0x00ff0000ULL)) >>  8) |
-    ((v & ((psnip_uint32_t) 0x0000ff00ULL)) <<  8) |
-    ((v & ((psnip_uint32_t) 0x000000ffULL)) << 24);
-}
-
-PSNIP_BUILTIN_STATIC_INLINE
-psnip_uint64_t
-psnip_builtin_bswap64(uint64_t v) {
-  return
-    ((v & ((psnip_uint64_t) 0xff00000000000000ULL)) >> 56) |
-    ((v & ((psnip_uint64_t) 0x00ff000000000000ULL)) >> 40) |
-    ((v & ((psnip_uint64_t) 0x0000ff0000000000ULL)) >> 24) |
-    ((v & ((psnip_uint64_t) 0x000000ff00000000ULL)) >>  8) |
-    ((v & ((psnip_uint64_t) 0x00000000ff000000ULL)) <<  8) |
-    ((v & ((psnip_uint64_t) 0x0000000000ff0000ULL)) << 24) |
-    ((v & ((psnip_uint64_t) 0x000000000000ff00ULL)) << 40) |
-    ((v & ((psnip_uint64_t) 0x00000000000000ffULL)) << 56);
+    ((v & (((psnip_uint16_t) 0xff) << 8)) >> 8) |
+    ((v & (((psnip_uint16_t) 0xff)     )) << 8);
 }
 #  endif
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define __builtin_bswap16(x) psnip_builtin_bswap16(x)
+#  endif
+#endif
+
+#if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_bswap16, 4, 3)
+#  define psnip_builtin_bswap32(x) __builtin_bswap32(x)
+#  define psnip_builtin_bswap64(x) __builtin_bswap64(x)
+#else
+#  if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_byteswap_ushort,13,10)
+#    define psnip_builtin_bswap32(x) _byteswap_ulong(x)
+#    define psnip_builtin_bswap64(x) _byteswap_uint64(x)
+#  else
+PSNIP_BUILTIN_STATIC_INLINE
+psnip_uint32_t
+psnip_builtin_bswap32(psnip_uint32_t v) {
+  return
+    ((v & (((psnip_uint32_t) 0xff) << 24)) >> 24) |
+    ((v & (((psnip_uint32_t) 0xff) << 16)) >>  8) |
+    ((v & (((psnip_uint32_t) 0xff) <<  8)) <<  8) |
+    ((v & (((psnip_uint32_t) 0xff)      )) << 24);
+}
+
+PSNIP_BUILTIN_STATIC_INLINE
+psnip_uint64_t
+psnip_builtin_bswap64(psnip_uint64_t v) {
+  return
+    ((v & (((psnip_uint64_t) 0xff) << 56)) >> 56) |
+    ((v & (((psnip_uint64_t) 0xff) << 48)) >> 40) |
+    ((v & (((psnip_uint64_t) 0xff) << 40)) >> 24) |
+    ((v & (((psnip_uint64_t) 0xff) << 32)) >>  8) |
+    ((v & (((psnip_uint64_t) 0xff) << 24)) <<  8) |
+    ((v & (((psnip_uint64_t) 0xff) << 16)) << 24) |
+    ((v & (((psnip_uint64_t) 0xff) <<  8)) << 40) |
+    ((v & (((psnip_uint64_t) 0xff)      )) << 56);
+}
+#  endif
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define __builtin_bswap32(x) psnip_builtin_bswap32(x)
 #    define __builtin_bswap64(x) psnip_builtin_bswap64(x)
 #  endif
@@ -627,7 +635,7 @@ PSNIP_BUILTIN_ROTL_DEFINE(rotl, unsigned int)
 #if defined(_MSC_VER)
 PSNIP_BUILTIN_ROTL_DEFINE(rotl64, unsigned __int64)
 #else
-PSNIP_BUILTIN_ROTL_DEFINE(rotl64, uint64_t)
+PSNIP_BUILTIN_ROTL_DEFINE(rotl64, psnip_uint64_t)
 #endif
 
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
@@ -675,7 +683,7 @@ PSNIP_BUILTIN_ROTR_DEFINE(rotr, unsigned int)
 #if defined(_MSC_VER)
 PSNIP_BUILTIN_ROTR_DEFINE(rotr64, unsigned __int64)
 #else
-PSNIP_BUILTIN_ROTR_DEFINE(rotr64, uint64_t)
+PSNIP_BUILTIN_ROTR_DEFINE(rotr64, psnip_uint64_t)
 #endif
 
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
