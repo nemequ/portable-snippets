@@ -65,3 +65,9 @@ psnip_add_tests(TARGET safe-math
     safe-math.c
   TESTS
     "/safe-math")
+
+psnip_add_tests(TARGET unaligned
+  SOURCES
+    unaligned.c
+  TESTS
+    "/unaligned")
