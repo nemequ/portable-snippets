@@ -714,9 +714,37 @@ PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement, long)
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandcomplement64, 14, 0) && defined(_M_AMD64)
 #  define psnip_intrin_bittestandcomplement64(a, b) _bittestandcomplement64(a, b)
 #else
-PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement64, long)
+PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement64, psnip_int64_t)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _bittestandcomplement64(a, b) psnip_intrin_bittestandcomplement64(a, b)
+#  endif
+#endif
+
+/*** bittestandreset ***/
+
+#define PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(f_n, T)	\
+  PSNIP_BUILTIN_STATIC_INLINE					\
+  unsigned char psnip_intrin_##f_n(T* a, T b) {			\
+    const char r = (*a >> b) & 1;				\
+    *a &= ~(((T) 1) << b);					\
+    return r;							\
+  }
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandreset, 14, 0)
+#  define psnip_intrin_bittestandreset(a, b) _bittestandreset(a, b)
+#else
+PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset, long)
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _bittestandreset(a, b) psnip_intrin_bittestandreset(a, b)
+#  endif
+#endif
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandreset64, 14, 0) && (defined(_M_AMD64) || defined(_M_IA64))
+#  define psnip_intrin_bittestandreset64(a, b) _bittestandreset64(a, b)
+#else
+PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset64, psnip_int64_t)
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _bittestandreset64(a, b) psnip_intrin_bittestandreset64(a, b)
 #  endif
 #endif
 

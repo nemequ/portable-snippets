@@ -1227,7 +1227,7 @@ test_msvc_bittestandcomplement_native(const MunitParameter params[], void* data)
   p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
 
   r1 = psnip_intrin_bittestandcomplement(&i1, p);
-  r2 = psnip_intrin_bittestandcomplement(&i2, p);
+  r2 = _bittestandcomplement(&i2, p);
 
   munit_assert_int(r1, ==, r2);
   munit_assert_long(i1, ==, i2);
@@ -1267,7 +1267,79 @@ test_msvc_bittestandcomplement64_native(const MunitParameter params[], void* dat
   p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
 
   r1 = psnip_intrin_bittestandcomplement64(&i1, p);
-  r2 = psnip_intrin_bittestandcomplement64(&i2, p);
+  r2 = _bittestandcomplement64(&i2, p);
+
+  munit_assert_int(r1, ==, r2);
+  munit_assert_long(i1, ==, i2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittestandreset(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long i = -112;
+  unsigned char result;
+
+  result = psnip_intrin_bittestandreset(&i, (sizeof(i) * 8) - 1);
+  munit_assert_uint8(result, ==, 1);
+  munit_assert_long(i, ==, LONG_MAX - 111);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittestandreset_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long i1, i2, p;
+  unsigned char r1, r2;
+
+  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
+  i2 = i1;
+  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
+
+  r1 = psnip_intrin_bittestandreset(&i1, p);
+  r2 = _bittestandreset(&i2, p);
+
+  munit_assert_int(r1, ==, r2);
+  munit_assert_long(i1, ==, i2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittestandreset64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_int64_t i = -112;
+  unsigned char result;
+
+  result = psnip_intrin_bittestandreset64(&i, (sizeof(i) * 8) - 1);
+  munit_assert_uint8(result, ==, 1);
+  munit_assert_int64(i, ==, INT64_MAX - 111);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittestandreset64_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_int64_t i1, i2, p;
+  unsigned char r1, r2;
+
+  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
+  i2 = i1;
+  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
+
+  r1 = psnip_intrin_bittestandreset64(&i1, p);
+  r2 = _bittestandreset64(&i2, p);
 
   munit_assert_int(r1, ==, r2);
   munit_assert_long(i1, ==, i2);
@@ -1393,6 +1465,8 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_INTRIN(bittest64),
   PSNIP_TEST_INTRIN(bittestandcomplement),
   PSNIP_TEST_INTRIN(bittestandcomplement64),
+  PSNIP_TEST_INTRIN(bittestandreset),
+  PSNIP_TEST_INTRIN(bittestandreset64),
   PSNIP_TEST_INTRIN(byteswap_ushort),
   PSNIP_TEST_INTRIN(byteswap_ulong),
   PSNIP_TEST_INTRIN(byteswap_uint64),

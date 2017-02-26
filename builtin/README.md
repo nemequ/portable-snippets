@@ -88,8 +88,8 @@ MSVC intrinsics:
  - [x] bittest64
  - [x] bittestandcomplement
  - [x] bittestandcomplement64
- - [ ] bittestandreset
- - [ ] bittestandreset64
+ - [x] bittestandreset
+ - [x] bittestandreset64
  - [ ] bittestandset
  - [ ] bittestandset64
 
