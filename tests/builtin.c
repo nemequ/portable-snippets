@@ -671,7 +671,7 @@ test_gnu_bswap16_native(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  int v;
+  uint16_t v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
@@ -697,7 +697,7 @@ test_gnu_bswap32_native(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  int v;
+  uint32_t v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
@@ -723,7 +723,7 @@ test_gnu_bswap64_native(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  int v;
+  uint64_t v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
@@ -1212,7 +1212,7 @@ test_msvc_byteswap_ushort_native(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  int v;
+  unsigned short v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
@@ -1238,7 +1238,7 @@ test_msvc_byteswap_ulong_native(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  int v;
+  unsigned long v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
@@ -1264,7 +1264,7 @@ test_msvc_byteswap_uint64_native(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  int v;
+  uint64_t v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 

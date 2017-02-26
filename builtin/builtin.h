@@ -659,7 +659,7 @@ unsigned char psnip_intrin_BitScanForward(unsigned long* Index, unsigned long Ma
 #  endif
 #endif
 
-#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward, 14, 0) && (defined(_M_AMD64) || defined(_M_AMD64))
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward64, 14, 0) && (defined(_M_AMD64) || defined(_M_ARM))
 #  define psnip_intrin_BitScanForward64(Index, Mask) _BitScanForward64(Index, Mask)
 #else
 PSNIP_BUILTIN_STATIC_INLINE
@@ -683,7 +683,7 @@ unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_uint64_t
 #  endif
 #endif
 
-#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittest64, 14, 0) && (defined(_M_AMD64) || defined(_M_AMD64))
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittest64, 14, 0) && (defined(_M_AMD64) || defined(_M_ARM))
 #  define psnip_intrin_bittest64(a, b) _bittest64(a, b)
 #else
 #  define psnip_intrin_bittest64(a, b) (((*(a)) >> (b)) & 1)
@@ -703,9 +703,9 @@ unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_uint64_t
 #  define psnip_intrin_byteswap_ulong(v)  psnip_builtin_bswap32(v)
 #  define psnip_intrin_byteswap_uint64(v) psnip_builtin_bswap64(v)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
-#  define _byteswap_ushort(v) psnip_intrin_byteswap_ushort(v)
-#  define _byteswap_ulong(v)  psnip_intrin_byteswap_ulong(v)
-#  define _byteswap_uint64(v) psnip_intrin_byteswap_uint64(v)
+#    define _byteswap_ushort(v) psnip_intrin_byteswap_ushort(v)
+#    define _byteswap_ulong(v)  psnip_intrin_byteswap_ulong(v)
+#    define _byteswap_uint64(v) psnip_intrin_byteswap_uint64(v)
 #  endif
 #endif
 
