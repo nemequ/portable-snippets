@@ -94,120 +94,120 @@
 #  else
 #    include <limits.h>
 #    if !defined(psnip_int8_t)
-#      if CHAR_MIN == (-127-1) && CHAR_MAX == 127
+#      if defined(CHAR_MIN) && defined(CHAR_MAX) && (CHAR_MIN == (-127-1)) && (CHAR_MAX == 127)
 #        define psnip_int8_t char
-#      elif SHRT_MIN == (-127-1) && SHRT_MAX == 127
+#      elif defined(SHRT_MIN) && defined(SHRT_MAX) && (SHRT_MIN == (-127-1)) && (SHRT_MAX == 127)
 #        define psnip_int8_t short
-#      elif INT_MIN == (-127-1) && INT_MAX == 127
+#      elif defined(INT_MIN) && defined(INT_MAX) && (INT_MIN == (-127-1)) && (INT_MAX == 127)
 #        define psnip_int8_t int
-#      elif LONG_MIN == (-127-1) && LONG_MAX == 127
+#      elif defined(LONG_MIN) && defined(LONG_MAX) && (LONG_MIN == (-127-1)) && (LONG_MAX == 127)
 #        define psnip_int8_t long
-#      elif LLONG_MIN == (-127-1) && LLONG_MAX == 127
+#      elif defined(LLONG_MIN) && defined(LLONG_MAX) && (LLONG_MIN == (-127-1)) && (LLONG_MAX == 127)
 #        define psnip_int8_t long long
 #      else
 #        error Unable to locate 8-bit signed integer type.
 #      endif
 #    endif
 #    if !defined(psnip_uint8_t)
-#      if UCHAR_MAX == 255
+#      if defined(UCHAR_MAX) && (UCHAR_MAX == 255)
 #        define psnip_uint8_t unsigned char
-#      elif USHRT_MAX == 255
+#      elif defined(USHRT_MAX) && (USHRT_MAX == 255)
 #        define psnip_uint8_t unsigned short
-#      elif UINT_MAX == 255
+#      elif defined(UINT_MAX) && (UINT_MAX == 255)
 #        define psnip_uint8_t unsigned int
-#      elif ULONG_MAX == 255
+#      elif defined(ULONG_MAX) && (ULONG_MAX == 255)
 #        define psnip_uint8_t unsigned long
-#      elif ULLONG_MAX == 255
+#      elif defined(ULLONG_MAX) && (ULLONG_MAX == 255)
 #        define psnip_uint8_t unsigned long long
 #      else
 #        error Unable to locate 8-bit unsigned integer type.
 #      endif
 #    endif
 #    if !defined(psnip_int16_t)
-#      if CHAR_MIN == (-32767-1) && CHAR_MAX == 32767
+#      if defined(CHAR_MIN) && defined(CHAR_MAX) && (CHAR_MIN == (-32767-1)) && (CHAR_MAX == 32767)
 #        define psnip_int16_t char
-#      elif SHRT_MIN == (-32767-1) && SHRT_MAX == 32767
+#      elif defined(SHRT_MIN) && defined(SHRT_MAX) && (SHRT_MIN == (-32767-1)) && (SHRT_MAX == 32767)
 #        define psnip_int16_t short
-#      elif INT_MIN == (-32767-1) && INT_MAX == 32767
+#      elif defined(INT_MIN) && defined(INT_MAX) && (INT_MIN == (-32767-1)) && (INT_MAX == 32767)
 #        define psnip_int16_t int
-#      elif LONG_MIN == (-32767-1) && LONG_MAX == 32767
+#      elif defined(LONG_MIN) && defined(LONG_MAX) && (LONG_MIN == (-32767-1)) && (LONG_MAX == 32767)
 #        define psnip_int16_t long
-#      elif LLONG_MIN == (-32767-1) && LLONG_MAX == 32767
+#      elif defined(LLONG_MIN) && defined(LLONG_MAX) && (LLONG_MIN == (-32767-1)) && (LLONG_MAX == 32767)
 #        define psnip_int16_t long long
 #      else
 #        error Unable to locate 16-bit signed integer type.
 #      endif
 #    endif
 #    if !defined(psnip_uint16_t)
-#      if UCHAR_MAX == 65535
+#      if defined(UCHAR_MAX) && (UCHAR_MAX == 65535)
 #        define psnip_uint16_t unsigned char
-#      elif USHRT_MAX == 65535
+#      elif defined(USHRT_MAX) && (USHRT_MAX == 65535)
 #        define psnip_uint16_t unsigned short
-#      elif UINT_MAX == 65535
+#      elif defined(UINT_MAX) && (UINT_MAX == 65535)
 #        define psnip_uint16_t unsigned int
-#      elif ULONG_MAX == 65535
+#      elif defined(ULONG_MAX) && (ULONG_MAX == 65535)
 #        define psnip_uint16_t unsigned long
-#      elif ULLONG_MAX == 65535
+#      elif defined(ULLONG_MAX) && (ULLONG_MAX == 65535)
 #        define psnip_uint16_t unsigned long long
 #      else
 #        error Unable to locate 16-bit unsigned integer type.
 #      endif
 #    endif
 #    if !defined(psnip_int32_t)
-#      if CHAR_MIN == (-2147483647-1) && CHAR_MAX == 2147483647
+#      if defined(CHAR_MIN) && defined(CHAR_MAX) && (CHAR_MIN == (-2147483647-1)) && (CHAR_MAX == 2147483647)
 #        define psnip_int32_t char
-#      elif SHRT_MIN == (-2147483647-1) && SHRT_MAX == 2147483647
+#      elif defined(SHRT_MIN) && defined(SHRT_MAX) && (SHRT_MIN == (-2147483647-1)) && (SHRT_MAX == 2147483647)
 #        define psnip_int32_t short
-#      elif INT_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#      elif defined(INT_MIN) && defined(INT_MAX) && (INT_MIN == (-2147483647-1)) && (INT_MAX == 2147483647)
 #        define psnip_int32_t int
-#      elif LONG_MIN == (-2147483647-1) && LONG_MAX == 2147483647
+#      elif defined(LONG_MIN) && defined(LONG_MAX) && (LONG_MIN == (-2147483647-1)) && (LONG_MAX == 2147483647)
 #        define psnip_int32_t long
-#      elif LLONG_MIN == (-2147483647-1) && LLONG_MAX == 2147483647
+#      elif defined(LLONG_MIN) && defined(LLONG_MAX) && (LLONG_MIN == (-2147483647-1)) && (LLONG_MAX == 2147483647)
 #        define psnip_int32_t long long
 #      else
 #        error Unable to locate 32-bit signed integer type.
 #      endif
 #    endif
 #    if !defined(psnip_uint32_t)
-#      if UCHAR_MAX == 4294967295
+#      if defined(UCHAR_MAX) && (UCHAR_MAX == 4294967295)
 #        define psnip_uint32_t unsigned char
-#      elif USHRT_MAX == 4294967295
+#      elif defined(USHRT_MAX) && (USHRT_MAX == 4294967295)
 #        define psnip_uint32_t unsigned short
-#      elif UINT_MAX == 4294967295
+#      elif defined(UINT_MAX) && (UINT_MAX == 4294967295)
 #        define psnip_uint32_t unsigned int
-#      elif ULONG_MAX == 4294967295
+#      elif defined(ULONG_MAX) && (ULONG_MAX == 4294967295)
 #        define psnip_uint32_t unsigned long
-#      elif ULLONG_MAX == 4294967295
+#      elif defined(ULLONG_MAX) && (ULLONG_MAX == 4294967295)
 #        define psnip_uint32_t unsigned long long
 #      else
 #        error Unable to locate 32-bit unsigned integer type.
 #      endif
 #    endif
 #    if !defined(psnip_int64_t)
-#      if CHAR_MIN == (-9223372036854775807LL-1) && CHAR_MAX == 9223372036854775807LL
+#      if defined(CHAR_MIN) && defined(CHAR_MAX) && (CHAR_MIN == (-9223372036854775807LL-1)) && (CHAR_MAX == 9223372036854775807LL)
 #        define psnip_int64_t char
-#      elif SHRT_MIN == (-9223372036854775807LL-1) && SHRT_MAX == 9223372036854775807LL
+#      elif defined(SHRT_MIN) && defined(SHRT_MAX) && (SHRT_MIN == (-9223372036854775807LL-1)) && (SHRT_MAX == 9223372036854775807LL)
 #        define psnip_int64_t short
-#      elif INT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#      elif defined(INT_MIN) && defined(INT_MAX) && (INT_MIN == (-9223372036854775807LL-1)) && (INT_MAX == 9223372036854775807LL)
 #        define psnip_int64_t int
-#      elif LONG_MIN == (-9223372036854775807LL-1) && LONG_MAX == 9223372036854775807LL
+#      elif defined(LONG_MIN) && defined(LONG_MAX) && (LONG_MIN == (-9223372036854775807LL-1)) && (LONG_MAX == 9223372036854775807LL)
 #        define psnip_int64_t long
-#      elif LLONG_MIN == (-9223372036854775807LL-1) && LLONG_MAX == 9223372036854775807LL
+#      elif defined(LLONG_MIN) && defined(LLONG_MAX) && (LLONG_MIN == (-9223372036854775807LL-1)) && (LLONG_MAX == 9223372036854775807LL)
 #        define psnip_int64_t long long
 #      else
 #        error Unable to locate 64-bit signed integer type.
 #      endif
 #    endif
 #    if !defined(psnip_uint64_t)
-#      if UCHAR_MAX == 18446744073709551615ULL
+#      if defined(UCHAR_MAX) && (UCHAR_MAX == 18446744073709551615ULL)
 #        define psnip_uint64_t unsigned char
-#      elif USHRT_MAX == 18446744073709551615ULL
+#      elif defined(USHRT_MAX) && (USHRT_MAX == 18446744073709551615ULL)
 #        define psnip_uint64_t unsigned short
-#      elif UINT_MAX == 18446744073709551615ULL
+#      elif defined(UINT_MAX) && (UINT_MAX == 18446744073709551615ULL)
 #        define psnip_uint64_t unsigned int
-#      elif ULONG_MAX == 18446744073709551615ULL
+#      elif defined(ULONG_MAX) && (ULONG_MAX == 18446744073709551615ULL)
 #        define psnip_uint64_t unsigned long
-#      elif ULLONG_MAX == 18446744073709551615ULL
+#      elif defined(ULLONG_MAX) && (ULLONG_MAX == 18446744073709551615ULL)
 #        define psnip_uint64_t unsigned long long
 #      else
 #        error Unable to locate 64-bit unsigned integer type.
