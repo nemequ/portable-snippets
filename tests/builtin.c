@@ -1196,6 +1196,86 @@ test_msvc_bittest64_native(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
+test_msvc_bittestandcomplement(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long i = 1;
+  unsigned char result;
+
+  result = psnip_intrin_bittestandcomplement(&i, 1);
+  munit_assert_uint8(result, ==, 0);
+  munit_assert_long(i, ==, 3);
+
+  result = psnip_intrin_bittestandcomplement(&i, 1);
+  munit_assert_uint8(result, ==, 1);
+  munit_assert_long(i, ==, 1);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittestandcomplement_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long i1, i2, p;
+  unsigned char r1, r2;
+
+  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
+  i2 = i1;
+  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
+
+  r1 = psnip_intrin_bittestandcomplement(&i1, p);
+  r2 = psnip_intrin_bittestandcomplement(&i2, p);
+
+  munit_assert_int(r1, ==, r2);
+  munit_assert_long(i1, ==, i2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittestandcomplement64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_int64_t i = 1;
+  unsigned char result;
+
+  result = psnip_intrin_bittestandcomplement64(&i, 1);
+  munit_assert_uint8(result, ==, 0);
+  munit_assert_long(i, ==, 3);
+
+  result = psnip_intrin_bittestandcomplement64(&i, 1);
+  munit_assert_uint8(result, ==, 1);
+  munit_assert_long(i, ==, 1);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittestandcomplement64_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_int64_t i1, i2, p;
+  unsigned char r1, r2;
+
+  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
+  i2 = i1;
+  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
+
+  r1 = psnip_intrin_bittestandcomplement64(&i1, p);
+  r2 = psnip_intrin_bittestandcomplement64(&i2, p);
+
+  munit_assert_int(r1, ==, r2);
+  munit_assert_long(i1, ==, i2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
 test_msvc_byteswap_ushort(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1311,6 +1391,8 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_INTRIN(BitScanForward64),
   PSNIP_TEST_INTRIN(bittest),
   PSNIP_TEST_INTRIN(bittest64),
+  PSNIP_TEST_INTRIN(bittestandcomplement),
+  PSNIP_TEST_INTRIN(bittestandcomplement64),
   PSNIP_TEST_INTRIN(byteswap_ushort),
   PSNIP_TEST_INTRIN(byteswap_ulong),
   PSNIP_TEST_INTRIN(byteswap_uint64),

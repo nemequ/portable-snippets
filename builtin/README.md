@@ -86,8 +86,8 @@ MSVC intrinsics:
  - [x] byteswap_ushort
  - [x] bittest
  - [x] bittest64
- - [ ] bittestandcomplement
- - [ ] bittestandcomplement64
+ - [x] bittestandcomplement
+ - [x] bittestandcomplement64
  - [ ] bittestandreset
  - [ ] bittestandreset64
  - [ ] bittestandset
