@@ -25,6 +25,14 @@
 #  define PSNIP_BUILTIN_GNU_HAS_BUILTIN(builtin,major,minor) (0)
 #endif
 
+#if defined(HEDLEY_CLANG_HAS_BUILTIN)
+#  define PSNIP_BUILTIN_CLANG_HAS_BUILTIN(builtin) HEDLEY_CLANG_HAS_BUILTIN(builtin)
+#elif defined(__has_builtin)
+#  define PSNIP_BUILTIN_CLANG_HAS_BUILTIN(builtin) __has_builtin(builtin)
+#else
+#  define PSNIP_BUILTIN_CLANG_HAS_BUILTIN(builtin) (0)
+#endif
+
 #if defined(HEDLEY_MSVC_VERSION_CHECK)
 #  define PSNIP_BUILTIN_MSVC_HAS_INTRIN(intrin,major,minor) HEDLEY_MSVC_VERSION_CHECK(major,minor,0)
 #elif !defined(_MSC_VER)
@@ -491,6 +499,38 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
 #  define psnip_builtin_clrsb64(x) (PSNIP_BUILTIN__VARIANT_64(clrsb)(x))
 #else
   PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsb64, clz64, psnip_int64_t)
+#endif
+
+/*** __builtin_bitreverse ***/
+
+#define PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(f_n, T)	\
+  PSNIP_BUILTIN_STATIC_INLINE					\
+  T psnip_builtin_##f_n(T x) {					\
+    unsigned int s = sizeof(x) * CHAR_BIT;			\
+    T mask = ~0;						\
+    while ((s >>= 1) > 0) {					\
+      mask ^= (mask << s);					\
+      x = ((x >> s) & mask) | ((x << s) & ~mask);		\
+    }								\
+    return x;							\
+  }
+
+#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_bitreverse64)
+#  define psnip_builtin_bitreverse8(x)  __builtin_bitreverse8(x)
+#  define psnip_builtin_bitreverse16(x) __builtin_bitreverse16(x)
+#  define psnip_builtin_bitreverse32(x) __builtin_bitreverse32(x)
+#  define psnip_builtin_bitreverse64(x) __builtin_bitreverse64(x)
+#else
+PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse8,  psnip_int8_t)
+PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse16, psnip_int16_t)
+PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse32, psnip_int32_t)
+PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t)
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define __builtin_bitreverse8(x)  psnip_builtin_bitreverse8(x)
+#    define __builtin_bitreverse16(x) psnip_builtin_bitreverse16(x)
+#    define __builtin_bitreverse32(x) psnip_builtin_bitreverse32(x)
+#    define __builtin_bitreverse64(x) psnip_builtin_bitreverse64(x)
+#  endif
 #endif
 
 /*** __builtin_bswap ***/

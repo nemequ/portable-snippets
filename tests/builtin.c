@@ -733,6 +733,234 @@ test_gnu_bswap64_native(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
+test_gnu_bitreverse8(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_uint8_t v = 182;
+
+  munit_assert_uint16(psnip_builtin_bitreverse8(v), ==, 109);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bitreverse8_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  uint16_t v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_builtin_bitreverse8(v), ==, __builtin_bitreverse8(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bitreverse16(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  const struct { uint16_t v; uint16_t r; } tests[] = {
+    { 0x920b, 0xd049 }, { 0x4a43, 0xc252 }, { 0x29d4, 0x2b94 }, { 0xed1a, 0x58b7 },
+    { 0x8bc2, 0x43d1 }, { 0xcf7b, 0xdef3 }, { 0x0c60, 0x0630 }, { 0x39a3, 0xc59c },
+    { 0xee8a, 0x5177 }, { 0xe48c, 0x3127 }, { 0x4152, 0x4a82 }, { 0xd163, 0xc68b },
+    { 0x2359, 0x9ac4 }, { 0x1f01, 0x80f8 }, { 0x2383, 0xc1c4 }, { 0x9ae7, 0xe759 },
+    { 0x7c9f, 0xf93e }, { 0xf33f, 0xfccf }, { 0x6f37, 0xecf6 }, { 0x0291, 0x8940 },
+    { 0x31fc, 0x3f8c }, { 0xec7e, 0x7e37 }, { 0x4da5, 0xa5b2 }, { 0xd025, 0xa40b },
+    { 0x8f99, 0x99f1 }, { 0x934f, 0xf2c9 }, { 0xfbe4, 0x27df }, { 0x7846, 0x621e },
+    { 0xbb48, 0x12dd }, { 0x8dcf, 0xf3b1 }, { 0x1a42, 0x4258 }, { 0xbc00, 0x003d },
+    { 0xace9, 0x9735 }, { 0x7f13, 0xc8fe }, { 0xb872, 0x4e1d }, { 0x8d27, 0xe4b1 },
+    { 0xebb6, 0x6dd7 }, { 0x9a87, 0xe159 }, { 0xe4ba, 0x5d27 }, { 0x9050, 0x0a09 },
+    { 0xf9c7, 0xe39f }, { 0xec24, 0x2437 }, { 0x1913, 0xc898 }, { 0x2b7d, 0xbed4 },
+    { 0x563a, 0x5c6a }, { 0x914a, 0x5289 }, { 0x7bfa, 0x5fde }, { 0xf426, 0x642f },
+    { 0x648f, 0xf126 }, { 0x4e4f, 0xf272 }, { 0xc0ff, 0xff03 }, { 0xc0f2, 0x4f03 },
+    { 0xbe3f, 0xfc7d }, { 0x4f99, 0x99f2 }, { 0x4062, 0x4602 }, { 0x877f, 0xfee1 },
+    { 0x68a5, 0xa516 }, { 0x548d, 0xb12a }, { 0x999e, 0x7999 }, { 0x8545, 0xa2a1 },
+    { 0x9184, 0x2189 }, { 0xaf0c, 0x30f5 }, { 0xe091, 0x8907 }, { 0x86d7, 0xeb61 }
+  };
+
+  int i;
+
+  for (i = 0 ; i < 64 ; i++)
+    munit_assert_uint16(psnip_builtin_bitreverse16(tests[i].v), ==, tests[i].r);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bitreverse16_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  uint16_t v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_builtin_bitreverse16(v), ==, __builtin_bitreverse16(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bitreverse32(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  const struct { uint32_t v; uint32_t r; } tests[] = {
+    { UINT32_C(0x78418ca2), UINT32_C(0x4531821e) }, { UINT32_C(0x48ec7114), UINT32_C(0x288e3712) },
+    { UINT32_C(0x667103a9), UINT32_C(0x95c08e66) }, { UINT32_C(0xb02d55bb), UINT32_C(0xddaab40d) },
+    { UINT32_C(0x88833921), UINT32_C(0x849cc111) }, { UINT32_C(0x3df3e00c), UINT32_C(0x3007cfbc) },
+    { UINT32_C(0x08227fd5), UINT32_C(0xabfe4410) }, { UINT32_C(0xd42cf07c), UINT32_C(0x3e0f342b) },
+    { UINT32_C(0x1120bbf6), UINT32_C(0x6fdd0488) }, { UINT32_C(0xf61a587f), UINT32_C(0xfe1a586f) },
+    { UINT32_C(0x524ff49d), UINT32_C(0xb92ff24a) }, { UINT32_C(0xcbff97a6), UINT32_C(0x65e9ffd3) },
+    { UINT32_C(0xe0ab8ead), UINT32_C(0xb571d507) }, { UINT32_C(0x1a383b2f), UINT32_C(0xf4dc1c58) },
+    { UINT32_C(0x4a5f651d), UINT32_C(0xb8a6fa52) }, { UINT32_C(0x7383307b), UINT32_C(0xde0cc1ce) },
+    { UINT32_C(0xec924426), UINT32_C(0x64224937) }, { UINT32_C(0xddeb26b7), UINT32_C(0xed64d7bb) },
+    { UINT32_C(0x4f3bc252), UINT32_C(0x4a43dcf2) }, { UINT32_C(0x92b4672e), UINT32_C(0x74e62d49) },
+    { UINT32_C(0xb09869a1), UINT32_C(0x8596190d) }, { UINT32_C(0xdf6cd3cc), UINT32_C(0x33cb36fb) },
+    { UINT32_C(0xfa53dbab), UINT32_C(0xd5dbca5f) }, { UINT32_C(0x30e333e6), UINT32_C(0x67ccc70c) },
+    { UINT32_C(0x263d5be4), UINT32_C(0x27dabc64) }, { UINT32_C(0x8532fe3b), UINT32_C(0xdc7f4ca1) },
+    { UINT32_C(0xdd4808d5), UINT32_C(0xab1012bb) }, { UINT32_C(0x29a8c6f9), UINT32_C(0x9f631594) },
+    { UINT32_C(0x8ae2c92c), UINT32_C(0x34934751) }, { UINT32_C(0x16ec5edd), UINT32_C(0xbb7a3768) },
+    { UINT32_C(0x1cf346b2), UINT32_C(0x4d62cf38) }, { UINT32_C(0x11f83e34), UINT32_C(0x2c7c1f88) },
+    { UINT32_C(0xf417bf41), UINT32_C(0x82fde82f) }, { UINT32_C(0xb1e77384), UINT32_C(0x21cee78d) },
+    { UINT32_C(0x258785fa), UINT32_C(0x5fa1e1a4) }, { UINT32_C(0xd5c19754), UINT32_C(0x2ae983ab) },
+    { UINT32_C(0xf457c146), UINT32_C(0x6283ea2f) }, { UINT32_C(0xce8a83ee), UINT32_C(0x77c15173) },
+    { UINT32_C(0x1402b002), UINT32_C(0x400d4028) }, { UINT32_C(0x91a1c97b), UINT32_C(0xde938589) },
+    { UINT32_C(0x448b4a5e), UINT32_C(0x7a52d122) }, { UINT32_C(0x4dbb4e40), UINT32_C(0x0272ddb2) },
+    { UINT32_C(0xfda65f65), UINT32_C(0xa6fa65bf) }, { UINT32_C(0xdb9d9403), UINT32_C(0xc029b9db) },
+    { UINT32_C(0xb0fa7da3), UINT32_C(0xc5be5f0d) }, { UINT32_C(0xdd70807c), UINT32_C(0x3e010ebb) },
+    { UINT32_C(0xce442cf7), UINT32_C(0xef342273) }, { UINT32_C(0x0e3e8338), UINT32_C(0x1cc17c70) },
+    { UINT32_C(0xb8c3a83d), UINT32_C(0xbc15c31d) }, { UINT32_C(0x551c1e45), UINT32_C(0xa27838aa) },
+    { UINT32_C(0x5b3d5709), UINT32_C(0x90eabcda) }, { UINT32_C(0x3c5852b2), UINT32_C(0x4d4a1a3c) },
+    { UINT32_C(0x7937208b), UINT32_C(0xd104ec9e) }, { UINT32_C(0x5d5e32a8), UINT32_C(0x154c7aba) },
+    { UINT32_C(0x2c5ff965), UINT32_C(0xa69ffa34) }, { UINT32_C(0x9bbcb24f), UINT32_C(0xf24d3dd9) },
+    { UINT32_C(0x56e99d80), UINT32_C(0x01b9976a) }, { UINT32_C(0xc3a399a2), UINT32_C(0x4599c5c3) },
+    { UINT32_C(0x24a2f605), UINT32_C(0xa06f4524) }, { UINT32_C(0xaed4d60f), UINT32_C(0xf06b2b75) },
+    { UINT32_C(0x5dc9a4e2), UINT32_C(0x472593ba) }, { UINT32_C(0x971aecda), UINT32_C(0x5b3758e9) },
+    { UINT32_C(0x96fe63cb), UINT32_C(0xd3c67f69) }, { UINT32_C(0x4230d35a), UINT32_C(0x5acb0c42) }
+  };
+
+  int i;
+
+  for (i = 0 ; i < 64 ; i++)
+    munit_assert_uint32(psnip_builtin_bitreverse32(tests[i].v), ==, tests[i].r);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bitreverse32_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  uint32_t v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_builtin_bitreverse32(v), ==, __builtin_bitreverse32(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bitreverse64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  const struct { uint64_t v; uint64_t r; } tests[] = {
+    { UINT64_C(0x308afbc73f0862a5), UINT64_C(0xa54610fce3df510c) },
+    { UINT64_C(0x8027240b84a64cea), UINT64_C(0x57326521d024e401) },
+    { UINT64_C(0xf1b95731ec6d1043), UINT64_C(0xc208b6378cea9d8f) },
+    { UINT64_C(0x7e2bb385fc0e5836), UINT64_C(0x6c1a703fa1cdd47e) },
+    { UINT64_C(0x6068df7a47c08742), UINT64_C(0x42e103e25efb1606) },
+    { UINT64_C(0x1aa3bb17aef98aa3), UINT64_C(0xc5519f75e8ddc558) },
+    { UINT64_C(0xa287d99ee0d8d530), UINT64_C(0x0cab1b07799be145) },
+    { UINT64_C(0x894664ca4368366d), UINT64_C(0xb66c16c253266291) },
+    { UINT64_C(0xf31cbf8b8c8dc3a9), UINT64_C(0x95c3b131d1fd38cf) },
+    { UINT64_C(0xce9eb8b1edd43676), UINT64_C(0x6e6c2bb78d1d7973) },
+    { UINT64_C(0x2b7a9cd63e189b23), UINT64_C(0xc4d9187c6b395ed4) },
+    { UINT64_C(0x3c609212b194765d), UINT64_C(0xba6e298d4849063c) },
+    { UINT64_C(0x010dcc4b51092c07), UINT64_C(0xe034908ad233b080) },
+    { UINT64_C(0x95d2165dea68f546), UINT64_C(0x62af1657ba684ba9) },
+    { UINT64_C(0x8fdecebd117b1521), UINT64_C(0x84a8de88bd737bf1) },
+    { UINT64_C(0x85190c2e60338cfb), UINT64_C(0xdf31cc06743098a1) },
+    { UINT64_C(0xd7df3e6407cc6b19), UINT64_C(0x98d633e0267cfbeb) },
+    { UINT64_C(0x0bf04a03c1552a7c), UINT64_C(0x3e54aa83c0520fd0) },
+    { UINT64_C(0xaca884f577678a08), UINT64_C(0x1051e6eeaf211535) },
+    { UINT64_C(0xb74e69e1dae1f05e), UINT64_C(0x7a0f875b879672ed) },
+    { UINT64_C(0x37e8fd8735fafcf8), UINT64_C(0x1f3f5face1bf17ec) },
+    { UINT64_C(0xd07db647a43055ed), UINT64_C(0xb7aa0c25e26dbe0b) },
+    { UINT64_C(0x5d387a2eb8d11faf), UINT64_C(0xf5f88b1d745e1cba) },
+    { UINT64_C(0xa0fb85d86c4114f4), UINT64_C(0x2f2882361ba1df05) },
+    { UINT64_C(0x32be7eadf096f2fa), UINT64_C(0x5f4f690fb57e7d4c) },
+    { UINT64_C(0x240bff8fcb507716), UINT64_C(0x68ee0ad3f1ffd024) },
+    { UINT64_C(0xa5a88b2b85f8f224), UINT64_C(0x244f1fa1d4d115a5) },
+    { UINT64_C(0x51b3172c5ac49ee9), UINT64_C(0x9779235a34e8cd8a) },
+    { UINT64_C(0x9e7a27dffce5ecd8), UINT64_C(0x1b37a73ffbe45e79) },
+    { UINT64_C(0xba503e01c99ef696), UINT64_C(0x696f7993807c0a5d) },
+    { UINT64_C(0xf84b0454161168ae), UINT64_C(0x751688682a20d21f) },
+    { UINT64_C(0x435cf21f723b74d2), UINT64_C(0x4b2edc4ef84f3ac2) },
+    { UINT64_C(0x3b0345cbbfd8967c), UINT64_C(0x3e691bfdd3a2c0dc) },
+    { UINT64_C(0xe4f997187c1e80ae), UINT64_C(0x7501783e18e99f27) },
+    { UINT64_C(0x961c103a57a55c4a), UINT64_C(0x523aa5ea5c083869) },
+    { UINT64_C(0x47ce8b971fb05608), UINT64_C(0x106a0df8e9d173e2) },
+    { UINT64_C(0x6d1f9852530fcdbd), UINT64_C(0xbdb3f0ca4a19f8b6) },
+    { UINT64_C(0x20158c5c1762f3ec), UINT64_C(0x37cf46e83a31a804) },
+    { UINT64_C(0xb16d44a688e35217), UINT64_C(0xe84ac7116522b68d) },
+    { UINT64_C(0x94ef5dc2f8734883), UINT64_C(0xc112ce1f43baf729) },
+    { UINT64_C(0x5a6dec6caca2c4e9), UINT64_C(0x972345353637b65a) },
+    { UINT64_C(0x21d06b5e5a3cc478), UINT64_C(0x1e233c5a7ad60b84) },
+    { UINT64_C(0x6d45e19bcfe1774c), UINT64_C(0x32ee87f3d987a2b6) },
+    { UINT64_C(0x39cf8cca2068fe45), UINT64_C(0xa27f16045331f39c) },
+    { UINT64_C(0x00de013799794c2a), UINT64_C(0x54329e99ec807b00) },
+    { UINT64_C(0x1693d09f77270c94), UINT64_C(0x2930e4eef90bc968) },
+    { UINT64_C(0xac6daa88cffc8dd4), UINT64_C(0x2bb13ff31155b635) },
+    { UINT64_C(0x29ae817961f92b21), UINT64_C(0x84d49f869e817594) },
+    { UINT64_C(0xce0a37e3cd164d9c), UINT64_C(0x39b268b3c7ec5073) },
+    { UINT64_C(0xf1202fe6eb2964b2), UINT64_C(0x4d2694d767f4048f) },
+    { UINT64_C(0xcac56f531b8bb9be), UINT64_C(0x7d9dd1d8caf6a353) },
+    { UINT64_C(0xd25bbd455f887443), UINT64_C(0xc22e11faa2bdda4b) },
+    { UINT64_C(0xc03db58e58cce928), UINT64_C(0x1497331a71adbc03) },
+    { UINT64_C(0x2a80fe8c4e6192ed), UINT64_C(0xb7498672317f0154) },
+    { UINT64_C(0x8403247899351df8), UINT64_C(0x1fb8ac991e24c021) },
+    { UINT64_C(0xf31cbc4658899c0f), UINT64_C(0xf039911a623d38cf) },
+    { UINT64_C(0x2a02081ee53b8021), UINT64_C(0x8401dca778104054) },
+    { UINT64_C(0xc6e4aa7ea41ee3e5), UINT64_C(0xa7c778257e552763) },
+    { UINT64_C(0x5feda4f6f75e73bf), UINT64_C(0xfdce7aef6f25b7fa) },
+    { UINT64_C(0x6645644da160119c), UINT64_C(0x39880685b226a266) },
+    { UINT64_C(0xeccbc95517b603dc), UINT64_C(0x3bc06de8aa93d337) },
+    { UINT64_C(0x83f45e1182739325), UINT64_C(0xa4c9ce41887a2fc1) },
+    { UINT64_C(0xea285d2fd31ed5fc), UINT64_C(0x3fab78cbf4ba1457) },
+    { UINT64_C(0x4873eb126c124c55), UINT64_C(0xaa32483648d7ce12) }
+  };
+
+  int i;
+
+  for (i = 0 ; i < 64 ; i++)
+    munit_assert_uint64(psnip_builtin_bitreverse64(tests[i].v), ==, tests[i].r);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_bitreverse64_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  uint64_t v;
+
+  munit_rand_memory(sizeof(v), (uint8_t*) &v);
+
+  munit_assert_int(psnip_builtin_bitreverse64(v), ==, __builtin_bitreverse64(v));
+
+  return MUNIT_OK;
+}
+
+static MunitResult
 test_msvc_rotl8(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1526,6 +1754,10 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_BUILTIN(bswap16),
   PSNIP_TEST_BUILTIN(bswap32),
   PSNIP_TEST_BUILTIN(bswap64),
+  PSNIP_TEST_BUILTIN(bitreverse8),
+  PSNIP_TEST_BUILTIN(bitreverse16),
+  PSNIP_TEST_BUILTIN(bitreverse32),
+  PSNIP_TEST_BUILTIN(bitreverse64),
 
   PSNIP_TEST_INTRIN(rotl8),
   PSNIP_TEST_INTRIN(rotl16),

@@ -61,6 +61,23 @@ GCC builtins:
  - [x] bswap32
  - [x] bswap64
 
+Clang builtins:
+
+ - [x] bitreverse8
+ - [x] bitreverse16
+ - [x] bitreverse32
+ - [x] bitreverse64
+ - [ ] addcb
+ - [ ] addcs
+ - [ ] addc
+ - [ ] addcl
+ - [ ] addcll
+ - [ ] subcb
+ - [ ] subcs
+ - [ ] subc
+ - [ ] subcl
+ - [ ] subcll
+
 MSVC intrinsics:
 
  - [x] rotl8
