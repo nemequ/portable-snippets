@@ -76,7 +76,7 @@ MSVC intrinsics:
  - [ ] BitScanReverse
  - [ ] BitScanReverse64
  - [ ] mul128
- - [ ] umul128
+ - [x] umul128
  - [ ] shiftleft128
  - [ ] shiftright128
  - [ ] mulh

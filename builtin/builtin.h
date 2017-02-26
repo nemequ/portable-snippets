@@ -709,4 +709,52 @@ unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_uint64_t
 #  endif
 #endif
 
+/*** umul128 ***/
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_umul128,14,0) && defined(_M_AMD64)
+#  define psnip_intrin_umul128(Multiplier, Multiplicand, HighProduct) _mul128(Multiplier, Multiplicand, HighProduct)
+#else
+#  if defined(__SIZEOF_INT128__) && (__SIZEOF_INT128__ >= 16) && 0
+PSNIP_BUILTIN_STATIC_INLINE
+psnip_uint64_t
+psnip_intrin_umul128(psnip_uint64_t Multiplier, psnip_uint64_t Multiplicand, psnip_uint64_t* HighProduct) {
+  const unsigned __int128 r = (unsigned __int128) Multiplier * (unsigned __int128) Multiplicand;
+  *HighProduct = (psnip_uint64_t) (r >> 64);
+  return (psnip_uint64_t) r;
+}
+#  else
+PSNIP_BUILTIN_STATIC_INLINE
+psnip_uint64_t
+psnip_intrin_umul128(psnip_uint64_t Multiplier, psnip_uint64_t Multiplicand, psnip_uint64_t* HighProduct) {
+  const psnip_uint64_t
+    a_h = Multiplier >> 32,
+    a_l = Multiplier & 0xffffffff,
+    b_h = Multiplicand >> 32,
+    b_l = Multiplicand & 0xffffffff;
+
+  const psnip_uint64_t
+    p_hh = a_h * b_h,
+    p_hl = a_h * b_l,
+    p_lh = a_l * b_h,
+    p_ll = a_l * b_l;
+
+  const psnip_uint64_t
+    t = p_hl + p_lh,
+    t_c = t < p_hl,
+    l = p_ll + (t << 32),
+    l_c = l < p_ll ? 1 : 0;
+
+  *HighProduct =
+    (a_h * b_h) +
+    ((t >> 32) & 0xffffffff) + (t_c << 32) +
+    l_c;
+
+  return l;
+}
+#  endif
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _umul128(Multiplier, Multiplicand, HighProduct) psnip_intrin_umul128(Multiplier, Multiplicand, HighProduct)
+#  endif
+#endif
+
 #endif /* defined(PSNIP_BUILTIN_H) */
