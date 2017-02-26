@@ -1348,6 +1348,78 @@ test_msvc_bittestandreset64_native(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
+test_msvc_bittestandset(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long i = LONG_MAX - 111;
+  unsigned char result;
+
+  result = psnip_intrin_bittestandset(&i, (sizeof(i) * 8) - 1);
+  munit_assert_uint8(result, ==, 0);
+  munit_assert_long(i, ==, -112);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittestandset_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long i1, i2, p;
+  unsigned char r1, r2;
+
+  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
+  i2 = i1;
+  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
+
+  r1 = psnip_intrin_bittestandset(&i1, p);
+  r2 = _bittestandset(&i2, p);
+
+  munit_assert_int(r1, ==, r2);
+  munit_assert_long(i1, ==, i2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittestandset64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long i = LONG_MAX - 111;
+  unsigned char result;
+
+  result = psnip_intrin_bittestandset64(&i, (sizeof(i) * 8) - 1);
+  munit_assert_uint8(result, ==, 0);
+  munit_assert_long(i, ==, -112);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_bittestandset64_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  long i1, i2, p;
+  unsigned char r1, r2;
+
+  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
+  i2 = i1;
+  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
+
+  r1 = psnip_intrin_bittestandset64(&i1, p);
+  r2 = _bittestandset64(&i2, p);
+
+  munit_assert_int(r1, ==, r2);
+  munit_assert_long(i1, ==, i2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
 test_msvc_byteswap_ushort(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1467,6 +1539,7 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_INTRIN(bittestandcomplement64),
   PSNIP_TEST_INTRIN(bittestandreset),
   PSNIP_TEST_INTRIN(bittestandreset64),
+  PSNIP_TEST_INTRIN(bittestandset),
   PSNIP_TEST_INTRIN(byteswap_ushort),
   PSNIP_TEST_INTRIN(byteswap_ulong),
   PSNIP_TEST_INTRIN(byteswap_uint64),

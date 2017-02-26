@@ -748,6 +748,34 @@ PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset64, psnip_int64_t)
 #  endif
 #endif
 
+/*** bittestandset ***/
+
+#define PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(f_n, T)	\
+  PSNIP_BUILTIN_STATIC_INLINE					\
+  unsigned char psnip_intrin_##f_n(T* a, T b) {			\
+    const char r = (*a >> b) & 1;				\
+    *a |= ((T) 1) << b;						\
+    return r;							\
+  }
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandset, 14, 0)
+#  define psnip_intrin_bittestandset(a, b) _bittestandset(a, b)
+#else
+PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset, long)
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _bittestandset(a, b) psnip_intrin_bittestandset(a, b)
+#  endif
+#endif
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandset64, 14, 0) && defined(_M_AMD64)
+#  define psnip_intrin_bittestandset64(a, b) _bittestandset64(a, b)
+#else
+PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset64, psnip_int64_t)
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _bittestandset64(a, b) psnip_intrin_bittestandset64(a, b)
+#  endif
+#endif
+
 /*** byteswap ***/
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_byteswap_ushort,13,10)

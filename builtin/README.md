@@ -90,8 +90,8 @@ MSVC intrinsics:
  - [x] bittestandcomplement64
  - [x] bittestandreset
  - [x] bittestandreset64
- - [ ] bittestandset
- - [ ] bittestandset64
+ - [x] bittestandset
+ - [x] bittestandset64
 
 Note that it may not be possible to implement built-ins from one
 compiler using the built-ins from another.
