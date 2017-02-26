@@ -51,7 +51,8 @@
 
 #if \
   !defined(psnip_int64_t) || !defined(psnip_uint64_t) || \
-  !defined(psnip_int32_t) || !defined(psnip_uint32_t)
+  !defined(psnip_int32_t) || !defined(psnip_uint32_t) || \
+  !defined(psnip_int16_t) || !defined(psnip_uint16_t)
 #  include "../exact-int/exact-int.h"
 #endif
 
@@ -250,7 +251,7 @@ PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffsll, long long)
 #  define psnip_builtin_clzl(x)  __builtin_clzl(x)
 #  define psnip_builtin_clzll(x) __builtin_clzll(x)
 #else
-#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanReverse64,14,0)
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanReverse,14,0)
 PSNIP_BUILTIN_STATIC_INLINE
 int psnip_builtin_clzll(unsigned long long v) {
   unsigned long r = 0;

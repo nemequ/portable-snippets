@@ -111,13 +111,13 @@
 #    if !defined(psnip_uint8_t)
 #      if UCHAR_MAX == 255
 #        define psnip_uint8_t unsigned char
-#      elif SHRT == 255
+#      elif USHRT_MAX == 255
 #        define psnip_uint8_t unsigned short
-#      elif INT == 255
+#      elif UINT_MAX == 255
 #        define psnip_uint8_t unsigned int
-#      elif LONG == 255
+#      elif ULONG_MAX == 255
 #        define psnip_uint8_t unsigned long
-#      elif LLONG == 255
+#      elif ULLONG_MAX == 255
 #        define psnip_uint8_t unsigned long long
 #      else
 #        error Unable to locate 8-bit unsigned integer type.
