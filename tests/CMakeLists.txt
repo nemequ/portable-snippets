@@ -37,15 +37,11 @@ endfunction(psnip_add_tests)
 
 psnip_add_tests(TARGET endian
   SOURCES
-    endian.c
-  TESTS
-    "/endian")
+    endian.c)
 
 psnip_add_tests(TARGET atomic
   SOURCES
-    atomic.c
-  TESTS
-    "/atomic")
+    atomic.c)
 
 if(ENABLE_OPENMP)
   find_package(OpenMP REQUIRED)
@@ -62,12 +58,12 @@ psnip_add_tests(TARGET builtin
 
 psnip_add_tests(TARGET safe-math
   SOURCES
-    safe-math.c
-  TESTS
-    "/safe-math")
+    safe-math.c)
 
 psnip_add_tests(TARGET unaligned
   SOURCES
-    unaligned.c
-  TESTS
-    "/unaligned")
+    unaligned.c)
+
+psnip_add_tests(TARGET clock
+  SOURCES
+    clock.c)

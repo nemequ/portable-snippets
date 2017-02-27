@@ -70,9 +70,8 @@ test_unaligned_uint16(const MunitParameter params[], void* data) {
 
 static MunitTest test_suite_tests[] = {
   { (char*) "/unaligned/uint64", test_unaligned_uint64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/unaligned/uint32", test_unaligned_uint64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/unaligned/uint16", test_unaligned_uint64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  /* { (char*) "/unaligned/int32/load", test_unaligned_int32, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }, */
+  { (char*) "/unaligned/uint32", test_unaligned_uint32, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/unaligned/uint16", test_unaligned_uint16, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
 
