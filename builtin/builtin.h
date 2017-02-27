@@ -1027,6 +1027,64 @@ PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset64, psnip_int64_t)
 #  endif
 #endif
 
+/*** shiftleft128 ***/
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(__shiftleft128, 14, 0) && defined(_M_AMD64)
+#  define psnip_intrin_shiftleft128(LowPart, HighPart, Shift) __shiftleft128(LowPart, HighPart, Shift)
+#else
+#  if defined(__SIZEOF_INT128__)
+PSNIP_BUILTIN_STATIC_INLINE
+psnip_uint64_t psnip_intrin_shiftleft128(psnip_uint64_t LowPart, psnip_uint64_t HighPart, unsigned char Shift) {
+  unsigned __int128 r = HighPart;
+  r <<= 64;
+  r |= LowPart;
+  r <<= Shift % 64;
+  return (psnip_uint64_t) (r >> 64);
+}
+#  else
+PSNIP_BUILTIN_STATIC_INLINE
+psnip_uint64_t psnip_intrin_shiftleft128(psnip_uint64_t LowPart, psnip_uint64_t HighPart, unsigned char Shift) {
+  Shift %= 64;
+  return PSNIP_BUILTIN_UNLIKELY(Shift == 0) ? HighPart : ((HighPart << Shift) | (LowPart >> (64 - Shift)));
+}
+#  endif
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define __shiftleft128(LowPart, HighPart, Shift) psnip_intrin_shiftleft128(LowPart, HighPart, Shift)
+#  endif
+#endif
+
+/*** shiftright128 ***/
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(__shiftright128, 14, 0) && defined(_M_AMD64)
+#  define psnip_intrin_shiftright128(LowPart, HighPart, Shift) __shiftright128(LowPart, HighPart, Shift)
+#else
+#  if defined(__SIZEOF_INT128__)
+PSNIP_BUILTIN_STATIC_INLINE
+psnip_uint64_t psnip_intrin_shiftright128(psnip_uint64_t LowPart, psnip_uint64_t HighPart, unsigned char Shift) {
+  unsigned __int128 r = HighPart;
+  r <<= 64;
+  r |= LowPart;
+  r >>= Shift % 64;
+  return (psnip_uint64_t) r;
+}
+#  else
+PSNIP_BUILTIN_STATIC_INLINE
+psnip_uint64_t psnip_intrin_shiftright128(psnip_uint64_t LowPart, psnip_uint64_t HighPart, unsigned char Shift) {
+  Shift %= 64;
+
+  if (PSNIP_BUILTIN_UNLIKELY(Shift == 0))
+    return LowPart;
+
+  return
+    (HighPart << (64 - Shift)) |
+    (LowPart >> Shift);
+}
+#  endif
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define __shiftright128(LowPart, HighPart, Shift) psnip_intrin_shiftright128(LowPart, HighPart, Shift)
+#  endif
+#endif
+
 /*** byteswap ***/
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_byteswap_ushort,13,10)

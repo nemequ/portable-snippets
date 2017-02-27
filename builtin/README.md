@@ -94,8 +94,8 @@ MSVC intrinsics:
  - [x] BitScanReverse64
  - [ ] mul128
  - [ ] umul128
- - [ ] shiftleft128
- - [ ] shiftright128
+ - [x] shiftleft128
+ - [x] shiftright128
  - [ ] mulh
  - [ ] umulh
  - [x] byteswap_uint64
@@ -118,9 +118,9 @@ an issue](https://github.com/nemequ/portable-snippets/issues).
 
 ## Alternatives & Supplements
 
-For bswap/byteswap functions, you should really use endian.h which
+For bswap/byteswap functions, you should really use [endian.h](../endian) which
 also handles endianness detection as well as providing easier to use
 APIs.
 
 For overflow-safe integer operations (i.e., `__builtin_*_overflow`),
-use safe-math.h.
+use [safe-math.h](../safe-math).
