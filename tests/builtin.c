@@ -1217,6 +1217,221 @@ test_gnu_addcll_native(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
+test_gnu_subcb(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  const struct { unsigned char x; unsigned char y; unsigned char ci; unsigned char r; unsigned char co; } test_vec[] = {
+    { 0xe7, 0xf8, 1, 0xee, 1 }, { 0x2d, 0x13, 1, 0x19, 0 },
+    { 0x11, 0xbc, 1, 0x54, 1 }, { 0x96, 0xb5, 1, 0xe0, 1 },
+    { 0xc7, 0xf2, 1, 0xd4, 1 }, { 0x16, 0xe4, 0, 0x32, 1 },
+    { 0x9b, 0x2b, 0, 0x70, 0 }, { 0xdf, 0xa5, 0, 0x3a, 0 },
+    { 0x03, 0xc0, 0, 0x43, 1 }, { 0x91, 0xd7, 1, 0xb9, 1 },
+    { 0x35, 0xbd, 0, 0x78, 1 }, { 0x4a, 0x42, 1, 0x07, 0 },
+    { 0xa5, 0xde, 0, 0xc7, 1 }, { 0x33, 0xbf, 0, 0x74, 1 },
+    { 0x12, 0x32, 0, 0xe0, 1 }, { 0x74, 0xfe, 1, 0x75, 1 },
+    { 0x0f, 0x54, 1, 0xba, 1 }, { 0xe1, 0xcd, 1, 0x13, 0 },
+    { 0x6a, 0x5d, 0, 0x0d, 0 }, { 0x0e, 0x12, 1, 0xfb, 1 },
+    { 0xb1, 0xea, 0, 0xc7, 1 }, { 0x43, 0x4b, 1, 0xf7, 1 },
+    { 0xb3, 0x43, 1, 0x6f, 0 }, { 0x83, 0xa4, 1, 0xde, 1 },
+    { 0x5a, 0x09, 1, 0x50, 0 }, { 0x92, 0x0c, 1, 0x85, 0 },
+    { 0xc5, 0x87, 1, 0x3d, 0 }, { 0x9a, 0xda, 1, 0xbf, 1 },
+    { 0x28, 0xe5, 1, 0x42, 1 }, { 0x13, 0xcd, 0, 0x46, 1 },
+    { 0x7f, 0x40, 1, 0x3e, 0 }, { 0xc3, 0x58, 0, 0x6b, 0 },
+  };
+
+  int i;
+  for (i = 0 ; i < (sizeof(test_vec) / sizeof(test_vec[0])) ; i++) {
+    unsigned char r, co;
+    r = psnip_builtin_subcb(test_vec[0].x, test_vec[0].y, test_vec[0].ci, &co);
+    munit_assert_uint8(r,  ==, test_vec[0].r);
+    munit_assert_uint8(co, ==, test_vec[0].co);
+  }
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_subcb_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned char x, y, ci, co1, co2, r1, r2;
+
+  munit_rand_memory(sizeof(x), (uint8_t*) &x);
+  munit_rand_memory(sizeof(y), (uint8_t*) &y);
+  ci = (unsigned char) munit_rand_int_range(0, 1);
+
+  r1 = psnip_builtin_subcb(x, y, ci, &co1);
+  r2 = __builtin_subcb(x, y, ci, &co2);
+
+  munit_assert_uint8(r1, ==, r2);
+  munit_assert_uint8(co1, ==, co2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_subcs(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned short co, r;
+
+  r = psnip_builtin_subcs(USHRT_MAX - 1, USHRT_MAX, 0, &co);
+  munit_assert_ushort(r,  ==, USHRT_MAX);
+  munit_assert_ushort(co, ==, 1);
+  r = psnip_builtin_subcs(USHRT_MAX, USHRT_MAX - 1, 0, &co);
+  munit_assert_ushort(r,  ==, 1);
+  munit_assert_ushort(co, ==, 0);
+  r = psnip_builtin_subcs(USHRT_MAX, USHRT_MAX, 0, &co);
+  munit_assert_ushort(r,  ==, 0);
+  munit_assert_ushort(co, ==, 0);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_subcs_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned short x, y, ci, co1, co2, r1, r2;
+
+  munit_rand_memory(sizeof(x), (uint8_t*) &x);
+  munit_rand_memory(sizeof(y), (uint8_t*) &y);
+  ci = (unsigned short) munit_rand_int_range(0, 1);
+
+  r1 = psnip_builtin_subcs(x, y, ci, &co1);
+  r2 = __builtin_subcs(x, y, ci, &co2);
+
+  munit_assert_uint8(r1, ==, r2);
+  munit_assert_uint8(co1, ==, co2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_subc(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned int co, r;
+
+  r = psnip_builtin_subc(UINT_MAX - 1, UINT_MAX, 0, &co);
+  munit_assert_uint(r,  ==, UINT_MAX);
+  munit_assert_uint(co, ==, 1);
+  r = psnip_builtin_subc(UINT_MAX, UINT_MAX - 1, 0, &co);
+  munit_assert_uint(r,  ==, 1);
+  munit_assert_uint(co, ==, 0);
+  r = psnip_builtin_subc(UINT_MAX, UINT_MAX, 0, &co);
+  munit_assert_uint(r,  ==, 0);
+  munit_assert_uint(co, ==, 0);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_subc_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned int x, y, ci, co1, co2, r1, r2;
+
+  munit_rand_memory(sizeof(x), (uint8_t*) &x);
+  munit_rand_memory(sizeof(y), (uint8_t*) &y);
+  ci = (unsigned int) munit_rand_int_range(0, 1);
+
+  r1 = psnip_builtin_subc(x, y, ci, &co1);
+  r2 = __builtin_subc(x, y, ci, &co2);
+
+  munit_assert_uint8(r1, ==, r2);
+  munit_assert_uint8(co1, ==, co2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_subcl(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long co, r;
+
+  r = psnip_builtin_subcl(ULONG_MAX - 1, ULONG_MAX, 0, &co);
+  munit_assert_ulong(r,  ==, ULONG_MAX);
+  munit_assert_ulong(co, ==, 1);
+  r = psnip_builtin_subcl(ULONG_MAX, ULONG_MAX - 1, 0, &co);
+  munit_assert_ulong(r,  ==, 1);
+  munit_assert_ulong(co, ==, 0);
+  r = psnip_builtin_subcl(ULONG_MAX, ULONG_MAX, 0, &co);
+  munit_assert_ulong(r,  ==, 0);
+  munit_assert_ulong(co, ==, 0);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_subcl_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long x, y, ci, co1, co2, r1, r2;
+
+  munit_rand_memory(sizeof(x), (uint8_t*) &x);
+  munit_rand_memory(sizeof(y), (uint8_t*) &y);
+  ci = (unsigned long) munit_rand_int_range(0, 1);
+
+  r1 = psnip_builtin_subcl(x, y, ci, &co1);
+  r2 = __builtin_subcl(x, y, ci, &co2);
+
+  munit_assert_uint8(r1, ==, r2);
+  munit_assert_uint8(co1, ==, co2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_subcll(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long long co, r;
+
+  r = psnip_builtin_subcll(ULLONG_MAX - 1, ULLONG_MAX, 0, &co);
+  munit_assert_ullong(r,  ==, ULLONG_MAX);
+  munit_assert_ullong(co, ==, 1);
+  r = psnip_builtin_subcll(ULLONG_MAX, ULLONG_MAX - 1, 0, &co);
+  munit_assert_ullong(r,  ==, 1);
+  munit_assert_ullong(co, ==, 0);
+  r = psnip_builtin_subcll(ULLONG_MAX, ULLONG_MAX, 0, &co);
+  munit_assert_ullong(r,  ==, 0);
+  munit_assert_ullong(co, ==, 0);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_subcll_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long long x, y, ci, co1, co2, r1, r2;
+
+  munit_rand_memory(sizeof(x), (uint8_t*) &x);
+  munit_rand_memory(sizeof(y), (uint8_t*) &y);
+  ci = (unsigned long long) munit_rand_int_range(0, 1);
+
+  r1 = psnip_builtin_subcll(x, y, ci, &co1);
+  r2 = __builtin_subcll(x, y, ci, &co2);
+
+  munit_assert_uint8(r1, ==, r2);
+  munit_assert_uint8(co1, ==, co2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
 test_msvc_rotl8(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -2019,6 +2234,11 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_BUILTIN(addc),
   PSNIP_TEST_BUILTIN(addcl),
   PSNIP_TEST_BUILTIN(addcll),
+  PSNIP_TEST_BUILTIN(subcb),
+  PSNIP_TEST_BUILTIN(subcs),
+  PSNIP_TEST_BUILTIN(subc),
+  PSNIP_TEST_BUILTIN(subcl),
+  PSNIP_TEST_BUILTIN(subcll),
 
   PSNIP_TEST_INTRIN(rotl8),
   PSNIP_TEST_INTRIN(rotl16),

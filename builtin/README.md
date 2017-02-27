@@ -72,11 +72,11 @@ Clang builtins:
  - [x] addc
  - [x] addcl
  - [x] addcll
- - [ ] subcb
- - [ ] subcs
- - [ ] subc
- - [ ] subcl
- - [ ] subcll
+ - [x] subcb
+ - [x] subcs
+ - [x] subc
+ - [x] subcl
+ - [x] subcll
 
 MSVC intrinsics:
 

@@ -24,10 +24,10 @@ function(psnip_add_tests)
   add_executable("${PSNIP_TEST_TARGET}" ${PSNIP_TEST_SOURCES})
   target_link_libraries("${PSNIP_TEST_TARGET}" munit)
 
-  if(PSNIP_TESTS)
+  if(PSNIP_TEST_TESTS)
     foreach(TEST ${PSNIP_TEST_TESTS})
       add_test(NAME "${TEST}"
-	COMMAND $<TARGET_FILE:${TARGET}> "${TEST}")
+	COMMAND $<TARGET_FILE:${PSNIP_TEST_TARGET}> "${TEST}")
     endforeach(TEST)
   else()
     add_test(NAME "/${PSNIP_TEST_TARGET}"
@@ -39,9 +39,7 @@ psnip_add_tests(TARGET endian
   SOURCES
     endian.c
   TESTS
-    "/endian/swap"
-    "/endian/from-le"
-    "/endian/from-be")
+    "/endian")
 
 psnip_add_tests(TARGET atomic
   SOURCES
