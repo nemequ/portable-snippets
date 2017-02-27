@@ -523,7 +523,7 @@ PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcountll, unsigned long long)
   int psnip_builtin_##f_n(T x) {                            \
     return (PSNIP_BUILTIN_UNLIKELY(x == -1) ?		    \
 	    (sizeof(x) * 8) :				    \
-	    __builtin_##clzfn((x < 0) ? ~x : x)) - 1;	    \
+	    psnip_builtin_##clzfn((x < 0) ? ~x : x)) - 1;   \
   }
 
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_clrsb, 4, 7)
@@ -588,17 +588,17 @@ PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t)
 /*** __builtin_addc ***/
 
 #define PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(f_n, T)	\
-  PSNIP_BUILTIN_STATIC_INLINE					\
-  T psnip_builtin_##f_n(T x, T y, T ci, T* co) {		\
-    const T max = ((T) 0) - 1;					\
-    T r = x + y;						\
-    *co = x > (max - y);					\
-    if (ci) {							\
-      if (r == max)						\
-	*co = 1;						\
-      r += ci;							\
-    }								\
-    return r;							\
+  PSNIP_BUILTIN_STATIC_INLINE				\
+  T psnip_builtin_##f_n(T x, T y, T ci, T* co) {	\
+    const T max = ((T) 0) - 1;				\
+    T r = x + y;					\
+    *co = x > (max - y);				\
+    if (ci) {						\
+      if (r == max)					\
+	*co = 1;					\
+      r += ci;						\
+    }							\
+    return r;						\
   }
 
 #if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_addc)
@@ -648,17 +648,17 @@ PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc64, psnip_uint64_t)
 
 /*** __builtin_subc ***/
 
-#define PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(f_n, T)		\
-  PSNIP_BUILTIN_STATIC_INLINE					\
-  T psnip_builtin_##f_n(T x, T y, T ci, T* co) {		\
-    T r = x - y;						\
-    *co = x < y;						\
-    if (ci) {							\
-      r--;							\
-      if (r == 0)						\
-	*co = 1;						\
-    }								\
-    return r;							\
+#define PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(f_n, T)	\
+  PSNIP_BUILTIN_STATIC_INLINE				\
+  T psnip_builtin_##f_n(T x, T y, T ci, T* co) {	\
+    T r = x - y;					\
+    *co = x < y;					\
+    if (ci) {						\
+      r--;						\
+      if (r == 0)					\
+	*co = 1;					\
+    }							\
+    return r;						\
   }
 
 #if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_subc)

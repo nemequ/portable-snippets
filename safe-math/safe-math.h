@@ -381,7 +381,7 @@ PSNIP_SAFE_DEFINE_LARGER_OPS(uint64_t, uint64)
   PSNIP_SAFE_STATIC_INLINE _Bool \
   psnip_safe_##name##_##op_name(T* res, T a, T b) { \
     const psnip_safe_##name##_larger r = psnip_safe_larger_##name##_##op_name(a, b); \
-    *res = r; \
+    *res = (T) r; \
     return (r <= max); \
   }
 
