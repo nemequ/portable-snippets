@@ -90,8 +90,8 @@ MSVC intrinsics:
  - [x] rotr64
  - [x] BitScanForward
  - [x] BitScanForward64
- - [ ] BitScanReverse
- - [ ] BitScanReverse64
+ - [x] BitScanReverse
+ - [x] BitScanReverse64
  - [ ] mul128
  - [ ] umul128
  - [ ] shiftleft128

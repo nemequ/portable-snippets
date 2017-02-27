@@ -893,6 +893,34 @@ unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_uint64_t
 #  endif
 #endif
 
+/*** _BitScanReverse ***/
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanReverse, 14, 0)
+#  define psnip_intrin_BitScanReverse(Index, Mask) _BitScanReverse(Index, Mask)
+#else
+PSNIP_BUILTIN_STATIC_INLINE
+unsigned char psnip_intrin_BitScanReverse(unsigned long* Index, unsigned long Mask) {
+  return (PSNIP_BUILTIN_UNLIKELY(Mask == 0)) ? 0 : ((*Index = ((sizeof(Mask) * CHAR_BIT) - 1) - psnip_builtin_clzl (Mask)), 1);
+}
+
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _BitScanReverse(Index, Mask) psnip_intrin_BitScanReverse(Index, Mask)
+#  endif
+#endif
+
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanReverse64, 14, 0) && (defined(_M_AMD64) || defined(_M_ARM))
+#  define psnip_intrin_BitScanReverse64(Index, Mask) _BitScanReverse64(Index, Mask)
+#else
+PSNIP_BUILTIN_STATIC_INLINE
+unsigned char psnip_intrin_BitScanReverse64(unsigned long* Index, psnip_uint64_t Mask) {
+  return (PSNIP_BUILTIN_UNLIKELY(Mask == 0)) ? 0 : ((*Index = ((sizeof(Mask) * CHAR_BIT) - 1) - psnip_builtin_clzll (Mask)), 1);
+}
+
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _BitScanReverse64(Index, Mask) psnip_intrin_BitScanReverse64(Index, Mask)
+#  endif
+#endif
+
 /*** bittest ***/
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittest, 14, 0)

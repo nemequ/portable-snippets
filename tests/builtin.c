@@ -1824,6 +1824,74 @@ test_msvc_BitScanForward64_native(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
+test_msvc_BitScanReverse(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long mask = 12;
+  unsigned long index;
+  unsigned char isNonzero;
+
+  isNonzero = psnip_intrin_BitScanReverse(&index, mask);
+  munit_assert_uint8(isNonzero, ==, 1);
+  munit_assert_long(index, ==, 3);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_BitScanReverse_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long mask;
+  unsigned long i1, i2;
+  unsigned char z1, z2;
+  munit_rand_memory(sizeof(mask), (unsigned char*) &mask);
+
+  z1 = _BitScanReverse(&i1, mask);
+  z2 = psnip_intrin_BitScanReverse(&i2, mask);
+  munit_assert_uint8(z1, ==, z2);
+  munit_assert_ulong(i1, ==, i2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_BitScanReverse64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long mask = 12;
+  unsigned long index;
+  unsigned char isNonzero;
+
+  isNonzero = psnip_intrin_BitScanReverse(&index, mask);
+  munit_assert_uint8(isNonzero, ==, 1);
+  munit_assert_long(index, ==, 3);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_msvc_BitScanReverse64_native(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  unsigned long mask;
+  unsigned long i1, i2;
+  unsigned char z1, z2;
+  munit_rand_memory(sizeof(mask), (unsigned char*) &mask);
+
+  z1 = _BitScanReverse(&i1, mask);
+  z2 = psnip_intrin_BitScanReverse(&i2, mask);
+  munit_assert_uint8(z1, ==, z2);
+  munit_assert_ulong(i1, ==, i2);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
 test_msvc_bittest(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -2250,6 +2318,8 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_INTRIN(rotr64),
   PSNIP_TEST_INTRIN(BitScanForward),
   PSNIP_TEST_INTRIN(BitScanForward64),
+  PSNIP_TEST_INTRIN(BitScanReverse),
+  PSNIP_TEST_INTRIN(BitScanReverse64),
   PSNIP_TEST_INTRIN(bittest),
   PSNIP_TEST_INTRIN(bittest64),
   PSNIP_TEST_INTRIN(bittestandcomplement),
