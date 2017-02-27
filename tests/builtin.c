@@ -241,6 +241,42 @@ test_gnu_clzll_native(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
+test_gnu_clz32(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_uint32_t v = UINT32_MAX;
+  int expected = 0;
+
+  do {
+    munit_assert_int(psnip_builtin_clz32(v), ==, expected);
+
+    v >>= 1;
+    expected += 1;
+  } while (v != 0);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_clz64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  psnip_uint64_t v = UINT64_MAX;
+  int expected = 0;
+
+  do {
+    munit_assert_int(psnip_builtin_clz64(v), ==, expected);
+
+    v >>= 1;
+    expected += 1;
+  } while (v != 0);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
 test_gnu_ctz(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -2270,6 +2306,8 @@ test_msvc_byteswap_uint64_native(const MunitParameter params[], void* data) {
 #define PSNIP_TEST_INTRIN(name) \
   { (char*) "/intrin/"#name, test_msvc_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }, \
   { (char*) "/intrin/"#name"/native", test_msvc_##name##_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
+#define PSNIP_TEST_WRAPPER(name) \
+  { (char*) "/wrapper/"#name, test_gnu_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }
 
 static MunitTest test_suite_tests[] = {
   PSNIP_TEST_BUILTIN(ffs),
@@ -2331,6 +2369,9 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_INTRIN(byteswap_ushort),
   PSNIP_TEST_INTRIN(byteswap_ulong),
   PSNIP_TEST_INTRIN(byteswap_uint64),
+
+  PSNIP_TEST_WRAPPER(clz32),
+  PSNIP_TEST_WRAPPER(clz64),
 
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

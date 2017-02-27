@@ -57,7 +57,8 @@ psnip_add_tests(TARGET builtin
     builtin.c
   TESTS
     "/builtin"
-    "/intrin")
+    "/intrin"
+    "/wrapper")
 
 psnip_add_tests(TARGET safe-math
   SOURCES

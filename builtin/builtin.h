@@ -88,71 +88,73 @@
 
 #include <limits.h>
 
+#define PSNIP_BUILTIN__GEN_NAME(name,suffix) psnip_builtin_##name##suffix
+
 #if INT_MIN == (-2147483647-1) && INT_MAX == 2147483647
-#  define PSNIP_BUILTIN__VARIANT_32(name) name
+#define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #elif LONG_MIN == (-2147483647-1) && LONG_MAX == 2147483647
-#  define PSNIP_BUILTIN__VARIANT_32(name) name##l
+#  define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #elif LLONG_MIN == (-2147483647-1) && LLONG_MAX == 2147483647
-#  define PSNIP_BUILTIN__VARIANT_32(name) name##ll
+#  define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #endif
 
 #if INT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__VARIANT_64(name) psnip_builtin_##name
+#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #elif LONG_MIN == (-9223372036854775807LL-1) && LONG_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__VARIANT_64(name) psnip_builtin_##name##l
+#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #elif LLONG_MIN == (-9223372036854775807LL-1) && LLONG_MAX == 922337203685477580LL
-#  define PSNIP_BUILTIN__VARIANT_64(name) psnip_builtin_##name##ll
+#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #endif
 
 /* Clang has some builtins that have "s" and "b" suffixes for short
    and byte (?). */
 
 #if CHAR_MIN == (-127-1) && INT_MAX == 127
-#  define PSNIP_BUILTIN__VARIANT2_8(name) name##b
+#  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,b)
 #elif SHORT_MIN == (-127-1) && INT_MAX == 127
-#  define PSNIP_BUILTIN__VARIANT2_8(name) name##s
+#  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,s)
 #elif INT_MIN == (-127-1) && INT_MAX == 127
-#  define PSNIP_BUILTIN__VARIANT2_8(name) name
+#  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #elif LONG_MIN == (-127-1) && LONG_MAX == 127
-#  define PSNIP_BUILTIN__VARIANT2_8(name) name##l
+#  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #elif LLONG_MIN == (-127-1) && LLONG_MAX == 127
-#  define PSNIP_BUILTIN__VARIANT2_8(name) name##ll
+#  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #endif
 
 #if CHAR_MIN == (-32767-1) && INT_MAX == 32767
-#  define PSNIP_BUILTIN__VARIANT2_16(name) name##b
+#  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,b)
 #elif SHORT_MIN == (-32767-1) && INT_MAX == 32767
-#  define PSNIP_BUILTIN__VARIANT2_16(name) name##s
+#  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,s)
 #elif INT_MIN == (-32767-1) && INT_MAX == 32767
-#  define PSNIP_BUILTIN__VARIANT2_16(name) name
+#  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #elif LONG_MIN == (-32767-1) && LONG_MAX == 32767
-#  define PSNIP_BUILTIN__VARIANT2_16(name) name##l
+#  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #elif LLONG_MIN == (-32767-1) && LLONG_MAX == 32767
-#  define PSNIP_BUILTIN__VARIANT2_16(name) name##ll
+#  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #endif
 
 #if CHAR_MIN == (-2147483647-1) && INT_MAX == 2147483647
-#  define PSNIP_BUILTIN__VARIANT2_32(name) name##b
+#  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,b)
 #elif SHORT_MIN == (-2147483647-1) && INT_MAX == 2147483647
-#  define PSNIP_BUILTIN__VARIANT2_32(name) name##s
+#  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,s)
 #elif INT_MIN == (-2147483647-1) && INT_MAX == 2147483647
-#  define PSNIP_BUILTIN__VARIANT2_32(name) name
+#  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #elif LONG_MIN == (-2147483647-1) && LONG_MAX == 2147483647
-#  define PSNIP_BUILTIN__VARIANT2_32(name) name##l
+#  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #elif LLONG_MIN == (-2147483647-1) && LLONG_MAX == 2147483647
-#  define PSNIP_BUILTIN__VARIANT2_32(name) name##ll
+#  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #endif
 
 #if CHAR_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__VARIANT2_64(name) name##b
+#  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,b)
 #elif SHORT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__VARIANT2_64(name) name##s
+#  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,s)
 #elif INT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__VARIANT2_64(name) name
+#  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #elif LONG_MIN == (-9223372036854775807LL-1) && LONG_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__VARIANT2_64(name) name##l
+#  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #elif LLONG_MIN == (-9223372036854775807LL-1) && LLONG_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__VARIANT2_64(name) name##ll
+#  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #endif
 
 /******
