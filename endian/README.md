@@ -5,11 +5,11 @@ perform swapping.  It provides 6 important functions:
 
 ```c
 psnip_uint16_t psnip_endian_le16(psnip_uint16_t v);
-psnip_uint32_t psnip_endian_le32(psnip_uint16_t v);
-psnip_uint64_t psnip_endian_le64(psnip_uint16_t v);
+psnip_uint32_t psnip_endian_le32(psnip_uint32_t v);
+psnip_uint64_t psnip_endian_le64(psnip_uint64_t v);
 psnip_uint16_t psnip_endian_be16(psnip_uint16_t v);
-psnip_uint32_t psnip_endian_be32(psnip_uint16_t v);
-psnip_uint64_t psnip_endian_be64(psnip_uint16_t v);
+psnip_uint32_t psnip_endian_be32(psnip_uint32_t v);
+psnip_uint64_t psnip_endian_be64(psnip_uint64_t v);
 ```
 
 These are usually implemented as macros, the prototypes above are
