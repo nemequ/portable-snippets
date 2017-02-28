@@ -71,12 +71,12 @@ struct PsnipClockTimespec {
 #  include <unistd.h>
 #endif
 
-#if defined(__GLIBC__) && defined(__GLIBC_MINOR__) && 0
+#if defined(__GLIBC__) && defined(__GLIBC_MINOR__)
 /* clock_gettime requires librt prior to 2.17 */
 #  if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 17)
 #    define PSNIP_CLOCK_HAVE_CLOCK_GETTIME
 #  endif
-#elif defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0) && 0
+#elif defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0)
 #  define PSNIP_CLOCK_HAVE_CLOCK_GETTIME
 #endif
 
