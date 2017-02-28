@@ -1,29 +1,29 @@
 # Built-Ins
 
-These snippets are intended to provide portable versions of many of
-GCC's built-ins and MSVC's intrinsics.  In general, the plan is to
-provide `psnip_builtin_*` functions which correspond to `__builtin_*`
-in GCC, and `psnip_intrin_*` which correspond to the `_*` intrinsics
-in MSVC.
+This module provides portable implementations of many compiler
+builtins and intrinsics, allowing you to use builtins and intrinsics
+on compilers which don't support them.  This includes other compilers
+(*e.g.*, GCC builtins on MSVC) and older versions of the same
+compiler.
 
-If `PSNIP_BUILTIN_EMULATE_NATIVE` is defined *before* `builtin.h` is
+We also provide exact-width variants of many builtins; no more calling
+different functions depending on the size of `int`, `long`, `long
+long`, etc.  These are typically just aliases for the appropriate
+function, but if we can't find an appropriate type a fully portable
+implementation will be used.
+
+If you define `PSNIP_BUILTIN_EMULATE_NATIVE` *before* `builtin.h` is
 included, this header will also define any missing native-style
 built-ins, allowing you to use the native names without regard for
-which compiler is actually in use (i.e., you can use `__builtin_ffs`
-directly in MSVC, or any other compiler).
+which compiler is actually in use (*i.e.*, you can use `__builtin_ffs`
+directly in MSVC, or any other compiler, including GCC < 3.3).
 
 If the compiler already has the builtin, the psnip function will
-simply be defined to that builtin, meaning there should be no
-performance penalty.  If the compiler does not have an implementation
-it will be implemented using either a built-in/intrinsic the compiler
-*does* support (i.e., using an MSVC intrinsic to implement a GCC
-built-in), or a fully-portable pure C implementation.
-
-For GCC-style builtins, the header will also define exact-width 32-
-and 64-bit variants in the form of `psnip_builtin_foo32` and
-`psnip_builtin_foo64`.  These are typically just aliases for the
-appropriate function, but if we can't find an appropriate type a fully
-portable implementation will be used.
+simply be defined to that builtin.  If the compiler does not have an
+implementation it will be implemented using either a
+built-in/intrinsic the compiler *does* support (i.e., using an MSVC
+intrinsic to implement a GCC built-in), or a fully-portable pure C
+implementation.
 
 For example, for GCC's `__builtin_ffs` builtin, we provide
 implementations which work everywhere (including versions of GCC prior
@@ -52,11 +52,11 @@ documentation only.
 
 ## Implementation Status
 
-Pretty much every generic builtin we can implement has been
-implemented.  This should work with almost anywhere (our biggest
-restriction is probably that we currently assume `CHAR_BIT == 8`), but
-every commit is tested before landing in the master branch on various
-versions of GCC, clang, MSVC, and PGI (thanks to [Travis
+Almost every generic builtin we can implement has been implemented.
+This should work with almost anywhere (our biggest restriction is
+probably that we currently assume `CHAR_BIT == 8`), but every commit
+is tested before landing in the master branch on various versions of
+GCC, clang, MSVC, and PGI (thanks to [Travis
 CI](https://travis-ci.org/nemequ/portable-snippets) and
 [AppVeyor](https://ci.appveyor.com/project/quixdb/portable-snippets)).
 Sporadic testing is also done on ICC and Oracle Developer Studio.
@@ -134,7 +134,7 @@ MSVC intrinsics:
  - [x] bittestandset
  - [x] bittestandset64
 
-For overflow-safe integer operations (i.e., `__builtin_*_overflow`),
+For overflow-safe integer operations (*i.e.*, `__builtin_*_overflow`),
 use [safe-math.h](../safe-math).
 
 If we are missing a function you feel should be included, please [file
@@ -151,15 +151,23 @@ For bswap/byteswap functions, you should really use
 [endian.h](../endian) which also handles endianness detection as well
 as providing easier to use APIs.
 
+For things which are effectively progressive enhancements (such as
+`__builtin_expect`) as opposed to hard requirements, see
+[Hedley](https://nemequ.github.io/hedley/).
+
 ## Areas for future work
 
 ### Optimization
 
 Performance should be pretty good but we're always open to shaving off
 a few operations, even if it means creating different variants for
-different compilers or architectures.  Creating implementations of one
-compiler's builtins using builtins from another is probably your best
-bet, here.
+different compilers or architectures.
+
+Creating implementations of one compiler's builtins using builtins
+from another is probably your best bet to improve performance.
+Another useful possibility is using architecure-specific builtins, or
+even embedded assembly, to accelerate portable versions when they are
+available.
 
 ### Architecture-specific builtins
 

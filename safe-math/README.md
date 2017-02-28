@@ -4,7 +4,7 @@ The safe-math.h header defines numerous functions for verifying that
 integer operations do not overflow.  Available implementations, in
 order of priority:
 
- * Compiler built-ins (i.e., `__builtin_*_overflow`).
+ * Compiler builtins (i.e., `__builtin_*_overflow`).
  * If a larger type is available, promote the inputs and verify the
    result falls within the range of the result type before casting to
    it.

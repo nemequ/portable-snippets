@@ -21,7 +21,7 @@ a 32-bit unsigned integer to/from little-endian.  If the machine is
 little-endian nothing will be done, but if it is big-endian then a
 swap will be performed.  It's a bit like `hton`/`ntoh`, except instead
 of host to/from network order, it's host to/from whatever order you
-say.
+want.
 
 If you wish to ignore the result of compile-time detection attempts,
 you may define `PSNIP_ENDIAN_FORCE_RT` prior to including this header
