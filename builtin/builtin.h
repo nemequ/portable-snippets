@@ -49,6 +49,25 @@
 #  include <intrin.h>
 #endif
 
+#if defined(__i386) || defined(_M_IX86) || \
+  defined(__amd64) || defined(_M_AMD64) || defined(__x86_64)
+#  if defined(_MSC_VER)
+#    define PSNIP_BUILTIN__ENABLE_X86
+#  elif defined(__GNUC__)
+#    define PSNIP_BUILTIN__ENABLE_X86
+#    include <x86intrin.h>
+#  endif
+#endif
+
+#if defined(__amd64) || defined(_M_AMD64) || defined(__x86_64)
+#  if defined(_MSC_VER)
+#    define PSNIP_BUILTIN__ENABLE_AMD64
+#  elif defined(__GNUC__)
+#    define PSNIP_BUILTIN__ENABLE_AMD64
+#    include <x86intrin.h>
+#  endif
+#endif
+
 #if \
   !defined(psnip_int64_t) || !defined(psnip_uint64_t) || \
   !defined(psnip_int32_t) || !defined(psnip_uint32_t) || \
@@ -88,72 +107,83 @@
 
 #include <limits.h>
 
+#define PSNIP_BUILTIN__CONCAT(a,b) a##b
 #define PSNIP_BUILTIN__GEN_NAME(name,suffix) psnip_builtin_##name##suffix
-
-#if INT_MIN == (-2147483647-1) && INT_MAX == 2147483647
-#define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,)
-#elif LONG_MIN == (-2147483647-1) && LONG_MAX == 2147483647
-#  define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,l)
-#elif LLONG_MIN == (-2147483647-1) && LLONG_MAX == 2147483647
-#  define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
-#endif
-
-#if INT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,)
-#elif LONG_MIN == (-9223372036854775807LL-1) && LONG_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,l)
-#elif LLONG_MIN == (-9223372036854775807LL-1) && LLONG_MAX == 922337203685477580LL
-#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
-#endif
 
 /* Clang has some builtins that have "s" and "b" suffixes for short
    and byte (?). */
 
 #if CHAR_MIN == (-127-1) && INT_MAX == 127
+#  define PSNIP_BUILTIN__CHAR_SIZE 8
 #  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,b)
-#elif SHORT_MIN == (-127-1) && INT_MAX == 127
+#elif SHRT_MIN == (-127-1) && INT_MAX == 127
+#  define PSNIP_BUILTIN__SHORT_SIZE 8
 #  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,s)
 #elif INT_MIN == (-127-1) && INT_MAX == 127
+#  define PSNIP_BUILTIN__INT_SIZE 8
 #  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #elif LONG_MIN == (-127-1) && LONG_MAX == 127
+#  define PSNIP_BUILTIN__LONG_SIZE 8
 #  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #elif LLONG_MIN == (-127-1) && LLONG_MAX == 127
+#  define PSNIP_BUILTIN__LLONG_SIZE 8
 #  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #endif
 
 #if CHAR_MIN == (-32767-1) && INT_MAX == 32767
+#  define PSNIP_BUILTIN__CHAR_SIZE 16
 #  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,b)
-#elif SHORT_MIN == (-32767-1) && INT_MAX == 32767
+#elif SHRT_MIN == (-32767-1) && INT_MAX == 32767
+#  define PSNIP_BUILTIN__SHORT_SIZE 16
 #  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,s)
 #elif INT_MIN == (-32767-1) && INT_MAX == 32767
+#  define PSNIP_BUILTIN__INT_SIZE 16
 #  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #elif LONG_MIN == (-32767-1) && LONG_MAX == 32767
+#  define PSNIP_BUILTIN__LONG_SIZE 16
 #  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #elif LLONG_MIN == (-32767-1) && LLONG_MAX == 32767
+#  define PSNIP_BUILTIN__LLONG_SIZE 16
 #  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #endif
 
 #if CHAR_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#  define PSNIP_BUILTIN__CHAR_SIZE 32
 #  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,b)
-#elif SHORT_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#elif SHRT_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#  define PSNIP_BUILTIN__SHORT_SIZE 32
 #  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,s)
 #elif INT_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#  define PSNIP_BUILTIN__INT_SIZE 32
+#  define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #elif LONG_MIN == (-2147483647-1) && LONG_MAX == 2147483647
+#  define PSNIP_BUILTIN__LONG_SIZE 32
+#  define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #elif LLONG_MIN == (-2147483647-1) && LLONG_MAX == 2147483647
+#  define PSNIP_BUILTIN__LLONG_SIZE 32
+#  define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #endif
 
 #if CHAR_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN_CHAR__SIZE 64
 #  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,b)
-#elif SHORT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#elif SHRT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN__SHORT_SIZE 64
 #  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,s)
 #elif INT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN__INT_SIZE 64
+#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,)
 #elif LONG_MIN == (-9223372036854775807LL-1) && LONG_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN__LONG_SIZE 64
+#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,l)
 #elif LLONG_MIN == (-9223372036854775807LL-1) && LLONG_MAX == 9223372036854775807LL
+#  define PSNIP_BUILTIN__LLONG_SIZE 64
+#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
 #endif
 
@@ -814,8 +844,12 @@ PSNIP_BUILTIN_ROTL_DEFINE(rotl64, psnip_uint64_t)
 #endif
 
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
-#    define _rotl(value, shift)   psnip_intrin_rotl(value, shift)
-#    define _rotl64(value, shift) psnip_intrin_rotl64(value, shift)
+#    if !defined(_rotl)
+#      define _rotl(value, shift)   psnip_intrin_rotl(value, shift)
+#    endif
+#    if !defined(_rotl64)
+#      define _rotl64(value, shift) psnip_intrin_rotl64(value, shift)
+#    endif
 #  endif
 #endif
 
@@ -862,8 +896,12 @@ PSNIP_BUILTIN_ROTR_DEFINE(rotr64, psnip_uint64_t)
 #endif
 
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
-#    define _rotr(value, shift)   psnip_intrin_rotr(value, shift)
-#    define _rotr64(value, shift) psnip_intrin_rotr64(value, shift)
+#    if !defined(_rotr)
+#      define _rotr(value, shift)   psnip_intrin_rotr(value, shift)
+#    endif
+#    if !defined(_rotr64)
+#      define _rotr64(value, shift) psnip_intrin_rotr64(value, shift)
+#    endif
 #  endif
 #endif
 
