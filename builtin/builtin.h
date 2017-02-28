@@ -37,9 +37,9 @@
 #  define PSNIP_BUILTIN_MSVC_HAS_INTRIN(intrin,major,minor) HEDLEY_MSVC_VERSION_CHECK(major,minor,0)
 #elif !defined(_MSC_VER)
 #  define PSNIP_BUILTIN_MSVC_HAS_INTRIN(intrin,major,minor) (0)
-#elif _MSC_VER >= 1400
+#elif defined(_MSC_VER) && (_MSC_VER >= 1400)
 #  define PSNIP_BUILTIN_MSVC_HAS_INTRIN(intrin,major,minor) (_MSC_FULL_VER >= ((major * 1000000) + (minor * 10000)))
-#elif _MSC_VER >= 1200
+#elif defined(_MSC_VER) && (_MSC_VER >= 1200)
 #  define PSNIP_BUILTIN_MSVC_HAS_INTRIN(intrin,major,minor) (_MSC_FULL_VER >= ((major * 100000) + (minor * 1000)))
 #else
 #  define PSNIP_BUILTIN_MSVC_HAS_INTRIN(intrin,major,minor) (_MSC_VER >= ((major * 100) + (minor)))
@@ -623,8 +623,8 @@ PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t)
   PSNIP_BUILTIN_STATIC_INLINE				\
   T psnip_builtin_##f_n(T x, T y, T ci, T* co) {	\
     const T max = ((T) 0) - 1;				\
-    T r = x + y;					\
-    *co = x > (max - y);				\
+    T r = (T) x + y;					\
+    *co = (T) (x > (max - y));				\
     if (ci) {						\
       if (r == max)					\
 	*co = 1;					\

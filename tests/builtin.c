@@ -1788,16 +1788,16 @@ test_msvc_BitScanForward(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  unsigned long index;
+  unsigned long idx;
   unsigned char isNonzero;
 
-  munit_assert_uint8(psnip_intrin_BitScanForward(&index, 0), ==, 0);
+  munit_assert_uint8(psnip_intrin_BitScanForward(&idx, 0), ==, 0);
 
   int i;
   for (i = 0 ; i < 32 ; i++) {
-    isNonzero = psnip_intrin_BitScanForward(&index, ULONG_MAX << i);
+    isNonzero = psnip_intrin_BitScanForward(&idx, ULONG_MAX << i);
     munit_assert_uint8(isNonzero, ==, 1);
-    munit_assert_ulong(index, ==, i);
+    munit_assert_ulong(idx, ==, i);
   }
 
   return MUNIT_OK;
@@ -1827,16 +1827,16 @@ test_msvc_BitScanForward64(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  unsigned long index;
+  unsigned long idx;
   unsigned char isNonzero;
 
-  munit_assert_uint8(psnip_intrin_BitScanForward64(&index, 0), ==, 0);
+  munit_assert_uint8(psnip_intrin_BitScanForward64(&idx, 0), ==, 0);
 
   int i;
   for (i = 0 ; i < 64 ; i++) {
-    isNonzero = psnip_intrin_BitScanForward64(&index, ULLONG_MAX << i);
+    isNonzero = psnip_intrin_BitScanForward64(&idx, ULLONG_MAX << i);
     munit_assert_uint8(isNonzero, ==, 1);
-    munit_assert_ulong(index, ==, i);
+    munit_assert_ulong(idx, ==, i);
   }
 
   return MUNIT_OK;
@@ -1867,12 +1867,12 @@ test_msvc_BitScanReverse(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned long mask = 12;
-  unsigned long index;
+  unsigned long idx;
   unsigned char isNonzero;
 
-  isNonzero = psnip_intrin_BitScanReverse(&index, mask);
+  isNonzero = psnip_intrin_BitScanReverse(&idx, mask);
   munit_assert_uint8(isNonzero, ==, 1);
-  munit_assert_long(index, ==, 3);
+  munit_assert_long(idx, ==, 3);
 
   return MUNIT_OK;
 }
@@ -1902,12 +1902,12 @@ test_msvc_BitScanReverse64(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned long mask = 12;
-  unsigned long index;
+  unsigned long idx;
   unsigned char isNonzero;
 
-  isNonzero = psnip_intrin_BitScanReverse(&index, mask);
+  isNonzero = psnip_intrin_BitScanReverse(&idx, mask);
   munit_assert_uint8(isNonzero, ==, 1);
-  munit_assert_long(index, ==, 3);
+  munit_assert_long(idx, ==, 3);
 
   return MUNIT_OK;
 }

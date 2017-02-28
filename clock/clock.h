@@ -224,11 +224,11 @@ static psnip_uint32_t
 psnip_clock_wall_get_precision (void) {
 #if !defined(PSNIP_CLOCK_WALL_METHOD)
   return 0;
-#elif PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
+#elif defined(PSNIP_CLOCK_WALL_METHOD) && PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
   return psnip_clock__clock_getres(PSNIP_CLOCK_CLOCK_GETTIME_WALL);
-#elif PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_GETTIMEOFDAY
+#elif defined(PSNIP_CLOCK_WALL_METHOD) && PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_GETTIMEOFDAY
   return 1000000;
-#elif PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_TIME
+#elif defined(PSNIP_CLOCK_WALL_METHOD) && PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_TIME
   return 1;
 #else
   return 0;
@@ -241,12 +241,12 @@ psnip_clock_wall_get_time (struct PsnipClockTimespec* res) {
 
 #if !defined(PSNIP_CLOCK_WALL_METHOD)
   return -2;
-#elif PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
+#elif defined(PSNIP_CLOCK_WALL_METHOD) && PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
   return psnip_clock__clock_gettime(PSNIP_CLOCK_CLOCK_GETTIME_WALL, res);
-#elif PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_TIME
+#elif defined(PSNIP_CLOCK_WALL_METHOD) && PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_TIME
   res->seconds = time(NULL);
   res->nanoseconds = 0;
-#elif PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_GETTIMEOFDAY
+#elif defined(PSNIP_CLOCK_WALL_METHOD) && PSNIP_CLOCK_WALL_METHOD == PSNIP_CLOCK_METHOD_GETTIMEOFDAY
   struct timeval tv;
 
   if (gettimeofday(&tv, NULL) != 0)
@@ -265,11 +265,11 @@ static psnip_uint32_t
 psnip_clock_cpu_get_precision (void) {
 #if !defined(PSNIP_CLOCK_CPU_METHOD)
   return 0;
-#elif PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
+#elif defined(PSNIP_CLOCK_CPU_METHOD) && PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
   return psnip_clock__clock_getres(PSNIP_CLOCK_CLOCK_GETTIME_CPU);
-#elif PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_CLOCK
+#elif defined(PSNIP_CLOCK_CPU_METHOD) && PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_CLOCK
   return CLOCKS_PER_SEC;
-#elif PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_GETPROCESSTIMES
+#elif defined(PSNIP_CLOCK_CPU_METHOD) && PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_GETPROCESSTIMES
   return PSNIP_CLOCK_NSEC_PER_SEC / 100;
 #else
   return 0;
@@ -282,15 +282,15 @@ psnip_clock_cpu_get_time (struct PsnipClockTimespec* res) {
 
 #if !defined(PSNIP_CLOCK_CPU_METHOD)
   return -2;
-#elif PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
+#elif defined(PSNIP_CLOCK_CPU_METHOD) && PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
   return psnip_clock__clock_gettime(PSNIP_CLOCK_CLOCK_GETTIME_CPU, res);
-#elif PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_CLOCK
+#elif defined(PSNIP_CLOCK_CPU_METHOD) && PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_CLOCK
   clock_t t = clock();
   if (t == ((clock_t) -1))
     return -5;
   res->seconds = t / CLOCKS_PER_SEC;
   res->nanoseconds = (t % CLOCKS_PER_SEC) * (PSNIP_CLOCK_NSEC_PER_SEC / CLOCKS_PER_SEC);
-#elif PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_GETPROCESSTIMES
+#elif defined(PSNIP_CLOCK_CPU_METHOD) && PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_GETPROCESSTIMES
   FILETIME CreationTime, ExitTime, KernelTime, UserTime;
   if (!GetProcessTimes(GetCurrentProcess(), &CreationTime, &ExitTime, &KernelTime, &UserTime))
     return -7;
@@ -322,11 +322,11 @@ static psnip_uint32_t
 psnip_clock_monotonic_get_precision (void) {
 #if !defined(PSNIP_CLOCK_MONOTONIC_METHOD)
   return 0;
-#elif PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
+#elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
   return psnip_clock__clock_getres(PSNIP_CLOCK_CLOCK_GETTIME_MONOTONIC);
-#elif PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_GETTICKCOUNT64
+#elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_GETTICKCOUNT64
   return 1000;
-#elif PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_QUERYPERFORMANCECOUNTER
+#elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_QUERYPERFORMANCECOUNTER
   LARGE_INTEGER Frequency;
   QueryPerformanceFrequency(&Frequency);
   return (psnip_uint32_t) ((Frequency.QuadPart > PSNIP_CLOCK_NSEC_PER_SEC) ? PSNIP_CLOCK_NSEC_PER_SEC : Frequency.QuadPart);
@@ -341,9 +341,9 @@ psnip_clock_monotonic_get_time (struct PsnipClockTimespec* res) {
 
 #if !defined(PSNIP_CLOCK_MONOTONIC_METHOD)
   return -2;
-#elif PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
+#elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
   return psnip_clock__clock_gettime(PSNIP_CLOCK_CLOCK_GETTIME_MONOTONIC, res);
-#elif PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_MACH_ABSOLUTE_TIME
+#elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_MACH_ABSOLUTE_TIME
   psnip_uint64_t nsec = mach_absolute_time();
   static psnip_uint64_t multiplier = 0;
   static mach_timebase_info_data_t tbi = { 0, };
@@ -352,7 +352,7 @@ psnip_clock_monotonic_get_time (struct PsnipClockTimespec* res) {
   nsec *= ((psnip_uint64_t) tbi.numer) / ((psnip_uint64_t) tbi.denom);
   res->seconds = nsec / PSNIP_CLOCK_NSEC_PER_SEC;
   res->nanoseconds = nsec % PSNIP_CLOCK_NSEC_PER_SEC;
-#elif PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_QUERYPERFORMANCECOUNTER
+#elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_QUERYPERFORMANCECOUNTER
   LARGE_INTEGER t, f;
   if (QueryPerformanceCounter(&t) == 0)
     return -12;
@@ -364,7 +364,7 @@ psnip_clock_monotonic_get_time (struct PsnipClockTimespec* res) {
     res->nanoseconds /= f.QuadPart / PSNIP_CLOCK_NSEC_PER_SEC;
   else
     res->nanoseconds *= PSNIP_CLOCK_NSEC_PER_SEC / f.QuadPart;
-#elif PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_GETTICKCOUNT64
+#elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_GETTICKCOUNT64
   const ULONGLONG msec = GetTickCount64();
   res->seconds = msec / 1000;
   res->nanoseconds = sec % 1000;
