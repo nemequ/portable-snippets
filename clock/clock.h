@@ -203,7 +203,7 @@ psnip_clock__clock_getres (clockid_t clk_id) {
   if (r != 0)
     return 0;
 
-  return (uint32_t) (PSNIP_CLOCK_NSEC_PER_SEC / res.tv_nsec);
+  return (psnip_uint32_t) (PSNIP_CLOCK_NSEC_PER_SEC / res.tv_nsec);
 }
 
 static int

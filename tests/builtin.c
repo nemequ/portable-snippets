@@ -1816,7 +1816,8 @@ test_msvc_BitScanForward_native(const MunitParameter params[], void* data) {
   z1 = _BitScanForward(&i1, mask);
   z2 = psnip_intrin_BitScanForward(&i2, mask);
   munit_assert_uint8(z1, ==, z2);
-  munit_assert_ulong(i1, ==, i2);
+  if (z1 != 0)
+    munit_assert_ulong(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -1854,7 +1855,8 @@ test_msvc_BitScanForward64_native(const MunitParameter params[], void* data) {
   z1 = _BitScanForward64(&i1, mask);
   z2 = psnip_intrin_BitScanForward64(&i2, mask);
   munit_assert_uint8(z1, ==, z2);
-  munit_assert_ulong(i1, ==, i2);
+  if (z1 != 0)
+    munit_assert_ulong(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -1888,7 +1890,8 @@ test_msvc_BitScanReverse_native(const MunitParameter params[], void* data) {
   z1 = _BitScanReverse(&i1, mask);
   z2 = psnip_intrin_BitScanReverse(&i2, mask);
   munit_assert_uint8(z1, ==, z2);
-  munit_assert_ulong(i1, ==, i2);
+  if (z1 != 0)
+    munit_assert_ulong(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -1915,7 +1918,7 @@ test_msvc_BitScanReverse64_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned long mask;
-  unsigned long i1, i2;
+  unsigned long i1 = 0, i2 = 0;
   unsigned char z1, z2;
   munit_rand_memory(sizeof(mask), (unsigned char*) &mask);
 
