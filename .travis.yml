@@ -174,10 +174,10 @@ matrix:
           - cmake
           - cmake-data
 
-    ###
-    ## OS X
-    ###
-    - os: osx
+    # ###
+    # ## OS X
+    # ###
+    # - os: osx
 
 before_install:
 ###
