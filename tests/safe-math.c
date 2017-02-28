@@ -181,7 +181,7 @@ static MunitTest psnip_safe_test_suite_tests[] = {
   DEFINE_PSNIP_SAFE_TEST_ENTRIES(uint64),
 #endif /* !defined(PSNIP_SAFE_NO_FIXED) */
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
-  { "/generic", test_safe_generic, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/generic", test_safe_generic, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 #endif
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

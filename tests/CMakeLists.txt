@@ -6,6 +6,66 @@ enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
+include (CheckCCompilerFlag)
+if(ENABLE_AGGRESSIVE_WARNINGS)
+
+  foreach (flag -Wall
+      -Waggregate-return
+      -Wcast-align
+      -Wclobbered
+      -Wempty-body
+      -Werror=format=2
+      -Werror=format-security
+      -Werror=implicit-function-declaration
+      -Werror=init-self
+      -Werror=missing-include-dirs
+      -Werror=missing-prototypes
+      -Werror=pointer-arith
+      -Wextra
+      -Wformat-nonliteral
+      -Wformat-security
+      -Wignored-qualifiers
+      -Winit-self
+      -Winvalid-pch
+      -Wlogical-op
+      -Wmissing-declarations
+      -Wmissing-format-attribute
+      -Wmissing-include-dirs
+      -Wmissing-noreturn
+      -Wmissing-parameter-type
+      -Wmissing-prototypes
+      -Wnested-externs
+      -Wno-missing-field-initializers
+      -Wno-strict-aliasing
+      -Wno-uninitialized
+      -Wno-unused-parameter
+      -Wold-style-definition
+      -Woverride-init
+      -Wpacked
+      -Wpointer-arith
+      -Wredundant-decls
+      -Wreturn-type
+      -Wshadow
+      -Wsign-compare
+      -Wstrict-prototypes
+      -Wswitch-enum
+      -Wsync-nand
+      -Wtype-limits
+      -Wundef
+      -Wuninitialized
+      -WUnsafe-loop-optimizations
+      -Wwrite-strings
+      -Wsuggest-attribute=format
+      -Minform=inform)
+    string (REGEX REPLACE "[^a-zA-Z0-9]+" "_" test_name "CFLAG_${flag}")
+    CHECK_C_COMPILER_FLAG ("${flag}" ${test_name})
+
+    if (${test_name})
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}")
+    endif ()
+  endforeach (flag)
+endif()
+
 add_library(munit munit/munit.c)
 find_package(ClockGettime)
 if(ClockGettime_FOUND)
