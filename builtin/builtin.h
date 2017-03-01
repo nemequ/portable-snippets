@@ -419,10 +419,10 @@ PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clzll, unsigned long long)
     do {						\
       r = (x >> s) & 0xff;				\
       if (r != 0)					\
-        return psnip_builtin_ctz_lookup[r] + s;		\
+        return psnip_builtin_ctz_lookup[r] + (char) s;	\
     } while ((s += 8) < (sizeof(T) * 8));		\
 							\
-    return sizeof(T) - 1;				\
+    return (int) sizeof(T) - 1;				\
   }
 
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_ctz, 3, 4)
@@ -622,7 +622,7 @@ PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t)
 #define PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(f_n, T)	\
   PSNIP_BUILTIN_STATIC_INLINE				\
   T psnip_builtin_##f_n(T x, T y, T ci, T* co) {	\
-    const T max = ((T) 0) - 1;				\
+    const T max = (T) (((T) 0) - 1);			\
     T r = (T) x + y;					\
     *co = (T) (x > (max - y));				\
     if (ci) {						\
@@ -655,25 +655,25 @@ PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addcll, unsigned long long)
 #endif
 
 #if defined(PSNIP_BUILTIN__VARIANT2_8)
-#  define psnip_builtin_addc8(x) (PSNIP_BUILTIN__VARIANT2_8(addc)(x))
+#  define psnip_builtin_addc8(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_8(addc)(x, y, ci, co))
 #else
 PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc8, psnip_uint8_t)
 #endif
 
 #if defined(PSNIP_BUILTIN__VARIANT2_16)
-#  define psnip_builtin_addc16(x) (PSNIP_BUILTIN__VARIANT2_16(addc)(x))
+#  define psnip_builtin_addc16(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_16(addc)(x, y, ci, co))
 #else
 PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc16, psnip_uint16_t)
 #endif
 
 #if defined(PSNIP_BUILTIN__VARIANT2_32)
-#  define psnip_builtin_addc32(x) (PSNIP_BUILTIN__VARIANT2_32(addc)(x))
+#  define psnip_builtin_addc32(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_32(addc)(x, y, ci, co))
 #else
 PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc32, psnip_uint32_t)
 #endif
 
 #if defined(PSNIP_BUILTIN__VARIANT2_64)
-#  define psnip_builtin_addc64(x) (PSNIP_BUILTIN__VARIANT2_64(addc)(x))
+#  define psnip_builtin_addc64(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_64(addc)(x, y, ci, co))
 #else
 PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc64, psnip_uint64_t)
 #endif
@@ -715,25 +715,25 @@ PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subcll, unsigned long long)
 #endif
 
 #if defined(PSNIP_BUILTIN__VARIANT2_8)
-#  define psnip_builtin_subc8(x) (PSNIP_BUILTIN__VARIANT2_8(subc)(x))
+#  define psnip_builtin_subc8(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_8(subc)(x, y, ci, co))
 #else
 PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc8, psnip_uint8_t)
 #endif
 
 #if defined(PSNIP_BUILTIN__VARIANT2_16)
-#  define psnip_builtin_subc16(x) (PSNIP_BUILTIN__VARIANT2_16(subc)(x))
+#  define psnip_builtin_subc16(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_16(subc)(x, y, ci, co))
 #else
 PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc16, psnip_uint16_t)
 #endif
 
 #if defined(PSNIP_BUILTIN__VARIANT2_32)
-#  define psnip_builtin_subc32(x) (PSNIP_BUILTIN__VARIANT2_32(subc)(x))
+#  define psnip_builtin_subc32(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_32(subc)(x, y, ci, co))
 #else
 PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc32, psnip_uint32_t)
 #endif
 
 #if defined(PSNIP_BUILTIN__VARIANT2_64)
-#  define psnip_builtin_subc64(x) (PSNIP_BUILTIN__VARIANT2_64(subc)(x))
+#  define psnip_builtin_subc64(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_64(subc)(x, y, ci, co))
 #else
 PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc64, psnip_uint64_t)
 #endif

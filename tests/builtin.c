@@ -6,6 +6,9 @@
 #define PSNIP_BUILTIN_EMULATE_NATIVE
 #include "../builtin/builtin.h"
 
+#define PSNIP_SIGNED_TYPE_MAX(T) ((T) (1ULL << ((sizeof(T) * CHAR_BIT) - 1)))
+#define PSNIP_UNSIGNED_TYPE_MAX(T) (~((T) 0))
+
 static MunitResult
 test_gnu_ffs(const MunitParameter params[], void* data) {
   (void) params;
@@ -245,7 +248,7 @@ test_gnu_clz32(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  psnip_uint32_t v = UINT32_MAX;
+  psnip_uint32_t v = PSNIP_UNSIGNED_TYPE_MAX(uint32_t);
   int expected = 0;
 
   do {
@@ -263,7 +266,7 @@ test_gnu_clz64(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  psnip_uint64_t v = UINT64_MAX;
+  psnip_uint64_t v = PSNIP_UNSIGNED_TYPE_MAX(uint64_t);
   int expected = 0;
 
   do {
@@ -521,7 +524,7 @@ test_gnu_popcount_native(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  unsigned long long v;
+  unsigned int v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
@@ -553,7 +556,7 @@ test_gnu_popcountl_native(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  unsigned long long v;
+  unsigned long v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
@@ -763,7 +766,7 @@ test_gnu_bswap64_native(const MunitParameter params[], void* data) {
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
-  munit_assert_int(psnip_builtin_bswap64(v), ==, __builtin_bswap64(v));
+  munit_assert_uint64(psnip_builtin_bswap64(v), ==, __builtin_bswap64(v));
 
   return MUNIT_OK;
 }
@@ -775,7 +778,7 @@ test_gnu_bitreverse8(const MunitParameter params[], void* data) {
 
   psnip_uint8_t v = 182;
 
-  munit_assert_uint16(psnip_builtin_bitreverse8(v), ==, 109);
+  munit_assert_uint8(psnip_builtin_bitreverse8(v), ==, 109);
 
   return MUNIT_OK;
 }
@@ -785,11 +788,11 @@ test_gnu_bitreverse8_native(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  uint16_t v;
+  uint8_t v;
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
-  munit_assert_int(psnip_builtin_bitreverse8(v), ==, __builtin_bitreverse8(v));
+  munit_assert_uint8(psnip_builtin_bitreverse8(v), ==, __builtin_bitreverse8(v));
 
   return MUNIT_OK;
 }
@@ -991,42 +994,57 @@ test_gnu_bitreverse64_native(const MunitParameter params[], void* data) {
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
-  munit_assert_int(psnip_builtin_bitreverse64(v), ==, __builtin_bitreverse64(v));
+  munit_assert_uint64(psnip_builtin_bitreverse64(v), ==, __builtin_bitreverse64(v));
 
   return MUNIT_OK;
 }
 
-#if defined(__SIZEOF_INT128__)
-typedef unsigned __int128 psnip_uint_big;
-#else
-typedef psnip_uint64_t psnip_uint_big;
-#endif
-
 static MunitResult
-test_gnu_addcb(const MunitParameter params[], void* data) {
+test_gnu_addc8(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  if (sizeof(unsigned char) < sizeof(psnip_uint_big)) {
-    unsigned char r, x, y, ci, co;
-    psnip_uint_big R, X, Y, Rp;
+  const struct { psnip_uint8_t x; psnip_uint8_t y; unsigned char ci; unsigned char co; psnip_uint8_t r; } test_vec[] = {
+    { UINT8_C(0x15), UINT8_C(0x0d), 1, 0, UINT8_C(0x23) },
+    { UINT8_C(0x1e), UINT8_C(0x32), 1, 0, UINT8_C(0x51) },
+    { UINT8_C(0x85), UINT8_C(0x8a), 0, 1, UINT8_C(0x0f) },
+    { UINT8_C(0xe0), UINT8_C(0xb5), 0, 1, UINT8_C(0x95) },
+    { UINT8_C(0x33), UINT8_C(0x34), 1, 0, UINT8_C(0x68) },
+    { UINT8_C(0x17), UINT8_C(0x30), 0, 0, UINT8_C(0x47) },
+    { UINT8_C(0x83), UINT8_C(0x39), 1, 0, UINT8_C(0xbd) },
+    { UINT8_C(0xb5), UINT8_C(0xed), 0, 1, UINT8_C(0xa2) },
+    { UINT8_C(0xab), UINT8_C(0xa0), 1, 1, UINT8_C(0x4c) },
+    { UINT8_C(0x0a), UINT8_C(0x20), 1, 0, UINT8_C(0x2b) },
+    { UINT8_C(0xb8), UINT8_C(0xe1), 0, 1, UINT8_C(0x99) },
+    { UINT8_C(0x33), UINT8_C(0x5e), 1, 0, UINT8_C(0x92) },
+    { UINT8_C(0xa1), UINT8_C(0xf9), 0, 1, UINT8_C(0x9a) },
+    { UINT8_C(0xfb), UINT8_C(0xe7), 1, 1, UINT8_C(0xe3) },
+    { UINT8_C(0x69), UINT8_C(0xad), 0, 1, UINT8_C(0x16) },
+    { UINT8_C(0xa0), UINT8_C(0x87), 1, 1, UINT8_C(0x28) },
+    { UINT8_C(0xd9), UINT8_C(0x87), 1, 1, UINT8_C(0x61) },
+    { UINT8_C(0x71), UINT8_C(0xeb), 0, 1, UINT8_C(0x5c) },
+    { UINT8_C(0x5f), UINT8_C(0x85), 0, 0, UINT8_C(0xe4) },
+    { UINT8_C(0x10), UINT8_C(0x00), 1, 0, UINT8_C(0x11) },
+    { UINT8_C(0x0c), UINT8_C(0x0c), 1, 0, UINT8_C(0x19) },
+    { UINT8_C(0xf7), UINT8_C(0xba), 1, 1, UINT8_C(0xb2) },
+    { UINT8_C(0x12), UINT8_C(0xdc), 0, 0, UINT8_C(0xee) },
+    { UINT8_C(0xa1), UINT8_C(0x84), 1, 1, UINT8_C(0x26) },
+    { UINT8_C(0x6b), UINT8_C(0xe4), 1, 1, UINT8_C(0x50) },
+    { UINT8_C(0x9e), UINT8_C(0x2a), 1, 0, UINT8_C(0xc9) },
+    { UINT8_C(0x60), UINT8_C(0xa4), 1, 1, UINT8_C(0x05) },
+    { UINT8_C(0xbc), UINT8_C(0x79), 1, 1, UINT8_C(0x36) },
+    { UINT8_C(0x7c), UINT8_C(0xc2), 1, 1, UINT8_C(0x3f) },
+    { UINT8_C(0x74), UINT8_C(0xf2), 1, 1, UINT8_C(0x67) },
+    { UINT8_C(0xa8), UINT8_C(0x93), 0, 1, UINT8_C(0x3b) },
+    { UINT8_C(0xc1), UINT8_C(0xd9), 1, 1, UINT8_C(0x9b) },
+  };
 
-    munit_rand_memory(sizeof(x), (uint8_t*) &x);
-    munit_rand_memory(sizeof(y), (uint8_t*) &y);
-    ci = 0;
-
-    r = psnip_builtin_addcb(x, y, ci, &co);
-    Rp = co;
-    Rp <<= sizeof(r) * CHAR_BIT;
-    Rp |= r;
-
-    X = x;
-    Y = y;
-    R = X + Y;
-
-    munit_assert_uint64(R, ==, Rp);
-  } else {
-    return MUNIT_SKIP;
+  psnip_uint8_t r, co;
+  size_t i;
+  for(i = 0 ; i < (sizeof(test_vec) / sizeof(test_vec[0])) ; i++) {
+    r = psnip_builtin_addc8(test_vec[i].x, test_vec[i].y, test_vec[i].ci, &co);
+    munit_assert_uint8(r, ==, test_vec[i].r);
+    munit_assert_uint8(co, ==, test_vec[i].co);
   }
 
   return MUNIT_OK;
@@ -1053,30 +1071,51 @@ test_gnu_addcb_native(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_addcs(const MunitParameter params[], void* data) {
+test_gnu_addc16(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  if (sizeof(unsigned short) < sizeof(psnip_uint_big)) {
-    unsigned short r, x, y, ci, co;
-    psnip_uint_big R, X, Y, Rp;
+  const struct { psnip_uint16_t x; psnip_uint16_t y; unsigned char ci; unsigned char co; psnip_uint16_t r; } test_vec[] = {
+    { UINT16_C(0x0500), UINT16_C(0x088b), 0, 0, UINT16_C(0x0d8b) },
+    { UINT16_C(0xe9e9), UINT16_C(0xc711), 1, 1, UINT16_C(0xb0fb) },
+    { UINT16_C(0xcf1b), UINT16_C(0xcf1d), 0, 1, UINT16_C(0x9e38) },
+    { UINT16_C(0x0372), UINT16_C(0x0460), 1, 0, UINT16_C(0x07d3) },
+    { UINT16_C(0xcd54), UINT16_C(0xfcdc), 0, 1, UINT16_C(0xca30) },
+    { UINT16_C(0xf25d), UINT16_C(0xb728), 1, 1, UINT16_C(0xa986) },
+    { UINT16_C(0xa671), UINT16_C(0x0295), 1, 0, UINT16_C(0xa907) },
+    { UINT16_C(0x2f37), UINT16_C(0x1fed), 1, 0, UINT16_C(0x4f25) },
+    { UINT16_C(0x13de), UINT16_C(0x4a7b), 0, 0, UINT16_C(0x5e59) },
+    { UINT16_C(0x5fbc), UINT16_C(0x70c5), 0, 0, UINT16_C(0xd081) },
+    { UINT16_C(0xd6a1), UINT16_C(0x917a), 0, 1, UINT16_C(0x681b) },
+    { UINT16_C(0x8220), UINT16_C(0xef59), 0, 1, UINT16_C(0x7179) },
+    { UINT16_C(0x3cde), UINT16_C(0xd462), 0, 1, UINT16_C(0x1140) },
+    { UINT16_C(0xd5a4), UINT16_C(0xb4e5), 1, 1, UINT16_C(0x8a8a) },
+    { UINT16_C(0x142e), UINT16_C(0x76d1), 0, 0, UINT16_C(0x8aff) },
+    { UINT16_C(0xa233), UINT16_C(0xa397), 1, 1, UINT16_C(0x45cb) },
+    { UINT16_C(0x0b1f), UINT16_C(0xe8e0), 0, 0, UINT16_C(0xf3ff) },
+    { UINT16_C(0x2e4c), UINT16_C(0x27a2), 1, 0, UINT16_C(0x55ef) },
+    { UINT16_C(0x29bd), UINT16_C(0x21c0), 0, 0, UINT16_C(0x4b7d) },
+    { UINT16_C(0x71fa), UINT16_C(0x3a02), 1, 0, UINT16_C(0xabfd) },
+    { UINT16_C(0x3eff), UINT16_C(0x1636), 1, 0, UINT16_C(0x5536) },
+    { UINT16_C(0x205f), UINT16_C(0x0fcc), 0, 0, UINT16_C(0x302b) },
+    { UINT16_C(0x00c5), UINT16_C(0x2caf), 1, 0, UINT16_C(0x2d75) },
+    { UINT16_C(0xc338), UINT16_C(0xc71d), 1, 1, UINT16_C(0x8a56) },
+    { UINT16_C(0xbd8b), UINT16_C(0xa8f0), 1, 1, UINT16_C(0x667c) },
+    { UINT16_C(0xa3fd), UINT16_C(0xb222), 1, 1, UINT16_C(0x5620) },
+    { UINT16_C(0xeb27), UINT16_C(0xe539), 1, 1, UINT16_C(0xd061) },
+    { UINT16_C(0x473d), UINT16_C(0x799b), 1, 0, UINT16_C(0xc0d9) },
+    { UINT16_C(0xf835), UINT16_C(0x6b22), 1, 1, UINT16_C(0x6358) },
+    { UINT16_C(0x1423), UINT16_C(0xa1ee), 1, 0, UINT16_C(0xb612) },
+    { UINT16_C(0x29d6), UINT16_C(0xcfa1), 0, 0, UINT16_C(0xf977) },
+    { UINT16_C(0xc7be), UINT16_C(0x89f4), 1, 1, UINT16_C(0x51b3) }
+  };
 
-    munit_rand_memory(sizeof(x), (uint8_t*) &x);
-    munit_rand_memory(sizeof(y), (uint8_t*) &y);
-    ci = 0;
-
-    r = psnip_builtin_addcs(x, y, ci, &co);
-    Rp = co;
-    Rp <<= sizeof(r) * CHAR_BIT;
-    Rp |= r;
-
-    X = x;
-    Y = y;
-    R = X + Y;
-
-    munit_assert_uint64(R, ==, Rp);
-  } else {
-    return MUNIT_SKIP;
+  psnip_uint16_t r, co;
+  size_t i;
+  for(i = 0 ; i < (sizeof(test_vec) / sizeof(test_vec[0])) ; i++) {
+    r = psnip_builtin_addc16(test_vec[i].x, test_vec[i].y, test_vec[i].ci, &co);
+    munit_assert_uint16(r, ==, test_vec[i].r);
+    munit_assert_uint16(co, ==, test_vec[i].co);
   }
 
   return MUNIT_OK;
@@ -1096,37 +1135,58 @@ test_gnu_addcs_native(const MunitParameter params[], void* data) {
   r1 = psnip_builtin_addcs(x, y, ci, &co1);
   r2 = __builtin_addcs(x, y, ci, &co2);
 
-  munit_assert_uint8(r1, ==, r2);
-  munit_assert_uint8(co1, ==, co2);
+  munit_assert_ushort(r1, ==, r2);
+  munit_assert_ushort(co1, ==, co2);
 
   return MUNIT_OK;
 }
 
 static MunitResult
-test_gnu_addc(const MunitParameter params[], void* data) {
+test_gnu_addc32(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  if (sizeof(unsigned int) < sizeof(psnip_uint_big)) {
-    unsigned int r, x, y, ci, co;
-    psnip_uint_big R, X, Y, Rp;
+  const struct { psnip_uint32_t x; psnip_uint32_t y; unsigned char ci; unsigned char co; psnip_uint32_t r; } test_vec[] = {
+    { UINT32_C(0xd6e28399), UINT32_C(0x07b88c6c), 0, 0, UINT32_C(0xde9b1005) },
+    { UINT32_C(0x643e007d), UINT32_C(0x43474188), 0, 0, UINT32_C(0xa7854205) },
+    { UINT32_C(0xeaf1d0a1), UINT32_C(0x34e5c499), 1, 1, UINT32_C(0x1fd7953b) },
+    { UINT32_C(0xc94ffb33), UINT32_C(0xac13b02d), 1, 1, UINT32_C(0x7563ab61) },
+    { UINT32_C(0x283e0221), UINT32_C(0x210b98a3), 0, 0, UINT32_C(0x49499ac4) },
+    { UINT32_C(0x39cb9609), UINT32_C(0x6dd59214), 0, 0, UINT32_C(0xa7a1281d) },
+    { UINT32_C(0x9690ee1b), UINT32_C(0x80cc70bb), 1, 1, UINT32_C(0x175d5ed7) },
+    { UINT32_C(0xa2d053d9), UINT32_C(0x7d3bea72), 1, 1, UINT32_C(0x200c3e4c) },
+    { UINT32_C(0x5b09a768), UINT32_C(0x77400f87), 1, 0, UINT32_C(0xd249b6f0) },
+    { UINT32_C(0xa8118df8), UINT32_C(0x84c23c91), 0, 1, UINT32_C(0x2cd3ca89) },
+    { UINT32_C(0xfcabb614), UINT32_C(0xf9c7e062), 0, 1, UINT32_C(0xf6739676) },
+    { UINT32_C(0x56cc2b0a), UINT32_C(0x341f8c12), 1, 0, UINT32_C(0x8aebb71d) },
+    { UINT32_C(0x1e14adba), UINT32_C(0xc0744d37), 0, 0, UINT32_C(0xde88faf1) },
+    { UINT32_C(0xa20417cc), UINT32_C(0x3e357de9), 0, 0, UINT32_C(0xe03995b5) },
+    { UINT32_C(0xc639cb32), UINT32_C(0xacd318b0), 1, 1, UINT32_C(0x730ce3e3) },
+    { UINT32_C(0x25b7fbdc), UINT32_C(0x5f3da123), 0, 0, UINT32_C(0x84f59cff) },
+    { UINT32_C(0x689ed95a), UINT32_C(0xcd952021), 1, 1, UINT32_C(0x3633f97c) },
+    { UINT32_C(0xb83126ca), UINT32_C(0x9030dac4), 0, 1, UINT32_C(0x4862018e) },
+    { UINT32_C(0x0e0c8854), UINT32_C(0x7f209293), 0, 0, UINT32_C(0x8d2d1ae7) },
+    { UINT32_C(0x7ff47a40), UINT32_C(0xb955c586), 1, 1, UINT32_C(0x394a3fc7) },
+    { UINT32_C(0xb30a7021), UINT32_C(0x5a01b676), 1, 1, UINT32_C(0x0d0c2698) },
+    { UINT32_C(0x5d312656), UINT32_C(0xb5b6696d), 1, 1, UINT32_C(0x12e78fc4) },
+    { UINT32_C(0x206382ae), UINT32_C(0xfecd03af), 1, 1, UINT32_C(0x1f30865e) },
+    { UINT32_C(0xe8059049), UINT32_C(0xb17468c8), 0, 1, UINT32_C(0x9979f911) },
+    { UINT32_C(0x7145adde), UINT32_C(0x6e8d3468), 1, 0, UINT32_C(0xdfd2e247) },
+    { UINT32_C(0x79ccd8f1), UINT32_C(0x439c869d), 1, 0, UINT32_C(0xbd695f8f) },
+    { UINT32_C(0x2518026c), UINT32_C(0xbf87c59b), 0, 0, UINT32_C(0xe49fc807) },
+    { UINT32_C(0xa1ec05c4), UINT32_C(0xd0351014), 0, 1, UINT32_C(0x722115d8) },
+    { UINT32_C(0xad89d7d9), UINT32_C(0xfe7d3513), 0, 1, UINT32_C(0xac070cec) },
+    { UINT32_C(0x858bb940), UINT32_C(0xae803776), 1, 1, UINT32_C(0x340bf0b7) },
+    { UINT32_C(0x9b9e137a), UINT32_C(0xc7a3ba74), 0, 1, UINT32_C(0x6341cdee) },
+    { UINT32_C(0x90dc3555), UINT32_C(0x8482c34c), 0, 1, UINT32_C(0x155ef8a1) }
+  };
 
-    munit_rand_memory(sizeof(x), (uint8_t*) &x);
-    munit_rand_memory(sizeof(y), (uint8_t*) &y);
-    ci = 0;
-
-    r = psnip_builtin_addc(x, y, ci, &co);
-    Rp = co;
-    Rp <<= sizeof(r) * CHAR_BIT;
-    Rp |= r;
-
-    X = x;
-    Y = y;
-    R = X + Y;
-
-    munit_assert_uint64(R, ==, Rp);
-  } else {
-    return MUNIT_SKIP;
+  psnip_uint32_t r, co;
+  size_t i;
+  for(i = 0 ; i < (sizeof(test_vec) / sizeof(test_vec[0])) ; i++) {
+    r = psnip_builtin_addc32(test_vec[i].x, test_vec[i].y, test_vec[i].ci, &co);
+    munit_assert_uint32(r, ==, test_vec[i].r);
+    munit_assert_uint32(co, ==, test_vec[i].co);
   }
 
   return MUNIT_OK;
@@ -1146,87 +1206,58 @@ test_gnu_addc_native(const MunitParameter params[], void* data) {
   r1 = psnip_builtin_addc(x, y, ci, &co1);
   r2 = __builtin_addc(x, y, ci, &co2);
 
-  munit_assert_uint8(r1, ==, r2);
-  munit_assert_uint8(co1, ==, co2);
+  munit_assert_uint(r1, ==, r2);
+  munit_assert_uint(co1, ==, co2);
 
   return MUNIT_OK;
 }
 
 static MunitResult
-test_gnu_addcl(const MunitParameter params[], void* data) {
+test_gnu_addc64(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  if (sizeof(unsigned long) < sizeof(psnip_uint_big)) {
-    unsigned long r, x, y, ci, co;
-    psnip_uint_big R, X, Y, Rp;
+  const struct { psnip_uint64_t x; psnip_uint64_t y; unsigned char ci; unsigned char co; psnip_uint64_t r; } test_vec[] = {
+    { UINT64_C(0x87f34d2d7c62e0d2), UINT64_C(0xd4c4e0156a93356b), 1, 1, UINT64_C(0x5cb82d42e6f6163e) },
+    { UINT64_C(0x00efff1769bd8f59), UINT64_C(0xc777482ac2f64491), 1, 0, UINT64_C(0xc86747422cb3d3eb) },
+    { UINT64_C(0x993775bf564adc9e), UINT64_C(0xf39a41d4215b71f4), 1, 1, UINT64_C(0x8cd1b79377a64e93) },
+    { UINT64_C(0xe2ea05bd4fa343d0), UINT64_C(0xd94eaec8b8a6705f), 0, 1, UINT64_C(0xbc38b4860849b42f) },
+    { UINT64_C(0x83f531f4f7775d16), UINT64_C(0x11c1da2c369570f0), 1, 0, UINT64_C(0x95b70c212e0cce07) },
+    { UINT64_C(0xe9a06ff3e145fa12), UINT64_C(0x8a15e641e99809d1), 1, 1, UINT64_C(0x73b65635cade03e4) },
+    { UINT64_C(0x23a6a4caf35aa045), UINT64_C(0x67fb3424f9e35c29), 0, 0, UINT64_C(0x8ba1d8efed3dfc6e) },
+    { UINT64_C(0x543a677f003fe9de), UINT64_C(0x98ef222553a62c0a), 1, 0, UINT64_C(0xed2989a453e615e9) },
+    { UINT64_C(0x31abdb425f41e936), UINT64_C(0xe5347243906067ed), 0, 1, UINT64_C(0x16e04d85efa25123) },
+    { UINT64_C(0xe7bc4f347af75d31), UINT64_C(0x086301897e918285), 0, 0, UINT64_C(0xf01f50bdf988dfb6) },
+    { UINT64_C(0xbd242b87dd79ad87), UINT64_C(0x75e7e8220c017586), 0, 1, UINT64_C(0x330c13a9e97b230d) },
+    { UINT64_C(0x8bc2b96c29f22baa), UINT64_C(0x43d23d476e43ded1), 0, 0, UINT64_C(0xcf94f6b398360a7b) },
+    { UINT64_C(0xc9ef618f647672a4), UINT64_C(0xa237503de7b99143), 0, 1, UINT64_C(0x6c26b1cd4c3003e7) },
+    { UINT64_C(0x6f49c49aad18e783), UINT64_C(0xf10bd265ccc5fc53), 1, 1, UINT64_C(0x6055970079dee3d7) },
+    { UINT64_C(0x96edea38864740e8), UINT64_C(0xc4472c59d3142c88), 0, 1, UINT64_C(0x5b351692595b6d70) },
+    { UINT64_C(0xc28945c921220907), UINT64_C(0x5d5b13bf1e0a75db), 0, 1, UINT64_C(0x1fe459883f2c7ee2) },
+    { UINT64_C(0x0c51752efe44cdfd), UINT64_C(0xccb8624452f97aca), 0, 0, UINT64_C(0xd909d773513e48c7) },
+    { UINT64_C(0x857dbe02ad4dd1fe), UINT64_C(0x77e6ffb32dc670e5), 0, 0, UINT64_C(0xfd64bdb5db1442e3) },
+    { UINT64_C(0xda165ac60b628275), UINT64_C(0x2d199cd8336f6a3d), 1, 1, UINT64_C(0x072ff79e3ed1ecb3) },
+    { UINT64_C(0x3b4196f7dcec2617), UINT64_C(0xe37bc8e0eef114ba), 1, 1, UINT64_C(0x1ebd5fd8cbdd3ad2) },
+    { UINT64_C(0xf26da63ff8979eee), UINT64_C(0xb583bc60b66f32d7), 1, 1, UINT64_C(0xa7f162a0af06d1c6) },
+    { UINT64_C(0xb943a896bed9adeb), UINT64_C(0x8e82416eb329b0ec), 0, 1, UINT64_C(0x47c5ea0572035ed7) },
+    { UINT64_C(0xd13b561ef4c2d6b4), UINT64_C(0x04417152716190e9), 0, 0, UINT64_C(0xd57cc7716624679d) },
+    { UINT64_C(0x47b6a3af5ea1bed1), UINT64_C(0xee804be33ebbcab1), 1, 1, UINT64_C(0x3636ef929d5d8983) },
+    { UINT64_C(0xc787c8d692984d2f), UINT64_C(0x63c4fa3653a9329b), 0, 1, UINT64_C(0x2b4cc30ce6417fca) },
+    { UINT64_C(0x299f2bf181ca874c), UINT64_C(0x36a42c37dfa2da55), 0, 0, UINT64_C(0x60435829616d61a1) },
+    { UINT64_C(0x853d2f98532f31d1), UINT64_C(0x91c6f369b7e0f644), 1, 1, UINT64_C(0x170423020b102816) },
+    { UINT64_C(0xbc06c8ecdfeed660), UINT64_C(0x56050235e8b9d548), 0, 1, UINT64_C(0x120bcb22c8a8aba8) },
+    { UINT64_C(0x6e995efd5c0e4161), UINT64_C(0xe6f28bd7b620215c), 0, 1, UINT64_C(0x558bead5122e62bd) },
+    { UINT64_C(0x3da1e5684ae63e6f), UINT64_C(0xb74ac37e297276c3), 0, 0, UINT64_C(0xf4eca8e67458b532) },
+    { UINT64_C(0x81ced8eddc8c79f2), UINT64_C(0xabc69e6c5b44c02d), 0, 1, UINT64_C(0x2d95775a37d13a1f) },
+    { UINT64_C(0x8fe6ae84b79bd7f0), UINT64_C(0x2fb0254a05534cc5), 0, 0, UINT64_C(0xbf96d3cebcef24b5) }
+  };
 
-    munit_rand_memory(sizeof(x), (uint8_t*) &x);
-    munit_rand_memory(sizeof(y), (uint8_t*) &y);
-    ci = 0;
-
-    r = psnip_builtin_addcl(x, y, ci, &co);
-    Rp = co;
-    Rp <<= sizeof(r) * CHAR_BIT;
-    Rp |= r;
-
-    X = x;
-    Y = y;
-    R = X + Y;
-
-    munit_assert_uint64(R, ==, Rp);
-  } else {
-    return MUNIT_SKIP;
-  }
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_addcl_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long x, y, ci, co1, co2, r1, r2;
-
-  munit_rand_memory(sizeof(x), (uint8_t*) &x);
-  munit_rand_memory(sizeof(y), (uint8_t*) &y);
-  ci = (unsigned long) munit_rand_int_range(0, 1);
-
-  r1 = psnip_builtin_addcl(x, y, ci, &co1);
-  r2 = __builtin_addcl(x, y, ci, &co2);
-
-  munit_assert_uint8(r1, ==, r2);
-  munit_assert_uint8(co1, ==, co2);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_addcll(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  if (sizeof(unsigned long long) < sizeof(psnip_uint_big)) {
-    unsigned long long r, x, y, ci, co;
-    psnip_uint_big R, X, Y, Rp;
-
-    munit_rand_memory(sizeof(x), (uint8_t*) &x);
-    munit_rand_memory(sizeof(y), (uint8_t*) &y);
-    ci = 0;
-
-    r = psnip_builtin_addcll(x, y, ci, &co);
-    Rp = co;
-    Rp <<= sizeof(r) * CHAR_BIT;
-    Rp |= r;
-
-    X = x;
-    Y = y;
-    R = X + Y;
-
-    munit_assert_uint64(R, ==, Rp);
-  } else {
-    return MUNIT_SKIP;
+  psnip_uint64_t r, co;
+  size_t i;
+  for(i = 0 ; i < (sizeof(test_vec) / sizeof(test_vec[0])) ; i++) {
+    r = psnip_builtin_addc64(test_vec[i].x, test_vec[i].y, test_vec[i].ci, &co);
+    munit_assert_uint64(r, ==, test_vec[i].r);
+    munit_assert_uint64(co, ==, test_vec[i].co);
   }
 
   return MUNIT_OK;
@@ -1246,8 +1277,8 @@ test_gnu_addcll_native(const MunitParameter params[], void* data) {
   r1 = psnip_builtin_addcll(x, y, ci, &co1);
   r2 = __builtin_addcll(x, y, ci, &co2);
 
-  munit_assert_uint8(r1, ==, r2);
-  munit_assert_uint8(co1, ==, co2);
+  munit_assert_ullong(r1, ==, r2);
+  munit_assert_ullong(co1, ==, co2);
 
   return MUNIT_OK;
 }
@@ -1479,8 +1510,8 @@ test_msvc_rotl8(const MunitParameter params[], void* data) {
     0x14, 0x28, 0x50, 0xa0
   };
 
-  size_t i;
-  for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
+  unsigned char i;
+  for (i = 0; i < ((unsigned char) sizeof(v) * CHAR_BIT); i++)
     munit_assert_uchar(psnip_intrin_rotl8(v, i), ==, expected[i]);
 
   return MUNIT_OK;
@@ -1492,7 +1523,7 @@ test_msvc_rotl8_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned char v;
-  const unsigned char s = munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1515,8 +1546,8 @@ test_msvc_rotl16(const MunitParameter params[], void* data) {
     0x2001, 0x4002, 0x8004, 0x0009
   };
 
-  size_t i;
-  for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
+  unsigned char i;
+  for (i = 0; i < ((unsigned char) sizeof(v) * CHAR_BIT); i++)
     munit_assert_ushort(psnip_intrin_rotl16(v, i), ==, expected[i]);
 
   return MUNIT_OK;
@@ -1528,7 +1559,7 @@ test_msvc_rotl16_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned short v;
-  const unsigned char s = munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1557,7 +1588,7 @@ test_msvc_rotl(const MunitParameter params[], void* data) {
 
   size_t i;
   for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
-    munit_assert_uint(psnip_intrin_rotl(v, i), ==, expected[i]);
+    munit_assert_uint(psnip_intrin_rotl(v, (int) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1605,7 +1636,7 @@ test_msvc_rotl64(const MunitParameter params[], void* data) {
 
   size_t i;
   for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
-    munit_assert_uint64(psnip_intrin_rotl64(v, i), ==, expected[i]);
+    munit_assert_uint64(psnip_intrin_rotl64(v, (int) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1616,7 +1647,7 @@ test_msvc_rotl64_native(const MunitParameter params[], void* data) {
   (void) data;
 
   uint64_t v;
-  const unsigned char s = munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1639,7 +1670,7 @@ test_msvc_rotr8(const MunitParameter params[], void* data) {
 
   size_t i;
   for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
-    munit_assert_uchar(psnip_intrin_rotr8(v, i), ==, expected[i]);
+    munit_assert_uchar(psnip_intrin_rotr8(v, (unsigned char) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1650,7 +1681,7 @@ test_msvc_rotr8_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned char v;
-  const unsigned char s = munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1675,7 +1706,7 @@ test_msvc_rotr16(const MunitParameter params[], void* data) {
 
   size_t i;
   for (i = 0; i < sizeof(unsigned short) * CHAR_BIT; i++)
-    munit_assert_ushort(psnip_intrin_rotr16(v, i), ==, expected[i]);
+    munit_assert_ushort(psnip_intrin_rotr16(v, (unsigned char) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1686,7 +1717,7 @@ test_msvc_rotr16_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned short v;
-  const unsigned char s = munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1715,7 +1746,7 @@ test_msvc_rotr(const MunitParameter params[], void* data) {
 
   size_t i;
   for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
-    munit_assert_uint(psnip_intrin_rotr(v, i), ==, expected[i]);
+    munit_assert_uint(psnip_intrin_rotr(v, (int) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1726,7 +1757,7 @@ test_msvc_rotr_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned short v;
-  const unsigned char s = munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1763,7 +1794,7 @@ test_msvc_rotr64(const MunitParameter params[], void* data) {
 
   size_t i;
   for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
-    munit_assert_uint64(psnip_intrin_rotr64(v, i), ==, expected[i]);
+    munit_assert_uint64(psnip_intrin_rotr64(v, (int) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1774,7 +1805,7 @@ test_msvc_rotr64_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned short v;
-  const unsigned char s = munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1939,12 +1970,12 @@ test_msvc_bittest(const MunitParameter params[], void* data) {
    * Microsoft's example on
    * https://msdn.microsoft.com/en-us/library/h65k4tze.aspx */
 
-  int num = 78002;
+  long num = 78002;
   const char bits[] = "0100110100001100100000000000000";
 
-  int nBit;
+  long nBit;
   for (nBit = 0 ; nBit < 31 ; nBit++)
-    munit_assert_uint8(bits[nBit] == '1', ==, psnip_intrin_bittest(&num, nBit));
+    munit_assert_uint8((psnip_uint8_t) (bits[nBit] == '1'), ==, psnip_intrin_bittest(&num, nBit));
 
   return MUNIT_OK;
 }
@@ -2051,11 +2082,11 @@ test_msvc_bittestandcomplement64(const MunitParameter params[], void* data) {
 
   result = psnip_intrin_bittestandcomplement64(&i, 1);
   munit_assert_uint8(result, ==, 0);
-  munit_assert_long(i, ==, 3);
+  munit_assert_uint64(i, ==, 3);
 
   result = psnip_intrin_bittestandcomplement64(&i, 1);
   munit_assert_uint8(result, ==, 1);
-  munit_assert_long(i, ==, 1);
+  munit_assert_int64(i, ==, 1);
 
   return MUNIT_OK;
 }
@@ -2075,8 +2106,8 @@ test_msvc_bittestandcomplement64_native(const MunitParameter params[], void* dat
   r1 = psnip_intrin_bittestandcomplement64(&i1, p);
   r2 = _bittestandcomplement64(&i2, p);
 
-  munit_assert_int(r1, ==, r2);
-  munit_assert_long(i1, ==, i2);
+  munit_assert_int64(r1, ==, r2);
+  munit_assert_int64(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -2148,7 +2179,7 @@ test_msvc_bittestandreset64_native(const MunitParameter params[], void* data) {
   r2 = _bittestandreset64(&i2, p);
 
   munit_assert_int(r1, ==, r2);
-  munit_assert_long(i1, ==, i2);
+  munit_assert_int64(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -2194,12 +2225,25 @@ test_msvc_bittestandset64(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  long i = LONG_MAX - 111;
-  unsigned char result;
+  psnip_int64_t s, d, t;
+  int i;
+  size_t p;
 
-  result = psnip_intrin_bittestandset64(&i, (sizeof(i) * 8) - 1);
-  munit_assert_uint8(result, ==, 0);
-  munit_assert_long(i, ==, -112);
+  for (i = 0 ; i < 128 ; i++) {
+    munit_rand_memory(sizeof(s), (uint8_t*) &s);
+    d = 0;
+    t = s;
+
+    for (p = 0; p < (sizeof(s) * CHAR_BIT) ; p++) {
+      if ((t & 1) == 1) {
+	unsigned char r = psnip_intrin_bittestandset64(&d, p);
+	munit_assert_uint8(r, ==, 0);
+      }
+      t >>= 1;
+    }
+
+    munit_assert_int64(d, ==, s);
+  }
 
   return MUNIT_OK;
 }
@@ -2209,7 +2253,7 @@ test_msvc_bittestandset64_native(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  long i1, i2, p;
+  psnip_int64_t i1, i2, p;
   unsigned char r1, r2;
 
   munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
@@ -2219,8 +2263,8 @@ test_msvc_bittestandset64_native(const MunitParameter params[], void* data) {
   r1 = psnip_intrin_bittestandset64(&i1, p);
   r2 = _bittestandset64(&i2, p);
 
-  munit_assert_int(r1, ==, r2);
-  munit_assert_long(i1, ==, i2);
+  munit_assert_int64(r1, ==, r2);
+  munit_assert_int64(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -2436,12 +2480,15 @@ test_msvc_byteswap_uint64_native(const MunitParameter params[], void* data) {
 
   munit_rand_memory(sizeof(v), (uint8_t*) &v);
 
-  munit_assert_int(psnip_intrin_byteswap_uint64(v), ==, _byteswap_uint64(v));
+  munit_assert_uint64(psnip_intrin_byteswap_uint64(v), ==, _byteswap_uint64(v));
 
   return MUNIT_OK;
 }
 
-#define PSNIP_TEST_BUILTIN(name) \
+#define PSNIP_TEST_BUILTIN_MIXED(name1,name2)				\
+  { (char*) "/builtin/"#name1, test_gnu_##name1, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }, \
+  { (char*) "/builtin/"#name2"/native", test_gnu_##name2##_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
+#define PSNIP_TEST_BUILTIN(name)					\
   { (char*) "/builtin/"#name, test_gnu_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }, \
   { (char*) "/builtin/"#name"/native", test_gnu_##name##_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 #define PSNIP_TEST_INTRIN(name) \
@@ -2476,11 +2523,10 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_BUILTIN(bitreverse16),
   PSNIP_TEST_BUILTIN(bitreverse32),
   PSNIP_TEST_BUILTIN(bitreverse64),
-  PSNIP_TEST_BUILTIN(addcb),
-  PSNIP_TEST_BUILTIN(addcs),
-  PSNIP_TEST_BUILTIN(addc),
-  PSNIP_TEST_BUILTIN(addcl),
-  PSNIP_TEST_BUILTIN(addcll),
+  PSNIP_TEST_BUILTIN_MIXED(addc8,addcb),
+  PSNIP_TEST_BUILTIN_MIXED(addc16,addcs),
+  PSNIP_TEST_BUILTIN_MIXED(addc32,addc),
+  PSNIP_TEST_BUILTIN_MIXED(addc64,addcll),
   PSNIP_TEST_BUILTIN(subcb),
   PSNIP_TEST_BUILTIN(subcs),
   PSNIP_TEST_BUILTIN(subc),

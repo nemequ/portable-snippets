@@ -18,7 +18,7 @@ before_build:
       cd tests
       mkdir build
       cd build
-      cmake -G "$env:GENERATOR" ..
+      cmake -G "$env:GENERATOR" .. -DENABLE_AGGRESSIVE_WARNINGS=yes
 
 build_script:
   - ps: |

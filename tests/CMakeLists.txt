@@ -8,7 +8,16 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 include (CheckCCompilerFlag)
 if(ENABLE_AGGRESSIVE_WARNINGS)
-  foreach (flag -Wall
+  if(MSVC)
+    set(EXTRA_WARNING_FLAGS
+      /W4)
+
+    if(FATAL_WARNINGS)
+      list(APPEND EXTRA_WARNING_FLAGS /WX)
+    endif()
+  else()
+    set (EXTRA_WARNING_FLAGS
+      -Wall
       -Waggregate-return
       -Wcast-align
       -Wclobbered
@@ -56,6 +65,13 @@ if(ENABLE_AGGRESSIVE_WARNINGS)
       -Wwrite-strings
       -Wsuggest-attribute=format
       -Minform=inform)
+
+    if(FATAL_WARNINGS)
+      list(APPEND EXTRA_WARNING_FLAGS -Werror)
+    endif()
+  endif()
+
+  foreach (flag ${EXTRA_WARNING_FLAGS})
     string (REGEX REPLACE "[^a-zA-Z0-9]+" "_" test_name "CFLAG_${flag}")
     CHECK_C_COMPILER_FLAG ("${flag}" ${test_name})
 
