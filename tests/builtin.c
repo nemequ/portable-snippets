@@ -14,7 +14,7 @@ test_gnu_ffs(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  unsigned int v = ~0;
+  unsigned int v = ~0U;
   int expected = 1;
 
   do {
@@ -50,7 +50,7 @@ test_gnu_ffsl(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  unsigned long v = ~0L;
+  unsigned long v = ~0UL;
   int expected = 1;
 
   do {
@@ -1636,7 +1636,7 @@ test_msvc_rotl64(const MunitParameter params[], void* data) {
 
   size_t i;
   for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
-    munit_assert_uint(psnip_intrin_rotl64(v, (int) i), ==, expected[i - 1]);
+    munit_assert_uint64(psnip_intrin_rotl64(v, (int) i), ==, expected[i - 1]);
 
   return MUNIT_OK;
 }
@@ -1794,7 +1794,7 @@ test_msvc_rotr64(const MunitParameter params[], void* data) {
 
   size_t i;
   for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
-    munit_assert_uint(psnip_intrin_rotr64(v, (int) i), ==, expected[i - 1]);
+    munit_assert_uint64(psnip_intrin_rotr64(v, (int) i), ==, expected[i - 1]);
 
   return MUNIT_OK;
 }

@@ -590,9 +590,9 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
 #define PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(f_n, T, UT)	\
   PSNIP_BUILTIN_STATIC_INLINE					\
   T psnip_builtin_##f_n(T x) {					\
-    UT v = x;							\
-    unsigned int s = sizeof(x) * CHAR_BIT;			\
-    UT mask = ~0;						\
+    UT v = (UT) x;						\
+    size_t s = sizeof(x) * CHAR_BIT;				\
+    UT mask = (UT) ~((UT) 0U);					\
     while ((s >>= 1) > 0) {					\
       mask ^= (mask << s);					\
       v = ((v >> s) & mask) | ((v << s) & ~mask);		\
