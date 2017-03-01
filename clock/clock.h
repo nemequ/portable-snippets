@@ -71,13 +71,16 @@ struct PsnipClockTimespec {
 #  include <unistd.h>
 #endif
 
-#if defined(__GLIBC__) && defined(__GLIBC_MINOR__)
-/* clock_gettime requires librt prior to 2.17 */
-#  if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 17)
+#if defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0)
+/* These are known to work without librt.  If you know of others
+ * please let us know so we can add them. */
+#  if \
+  (defined(__GLIBC__) && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 17))) || \
+  (defined(__FreeBSD__))
+#    define PSNIP_CLOCK_HAVE_CLOCK_GETTIME
+#  elif !defined(PSNIP_CLOCK_NO_LIBRT)
 #    define PSNIP_CLOCK_HAVE_CLOCK_GETTIME
 #  endif
-#elif defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0)
-#  define PSNIP_CLOCK_HAVE_CLOCK_GETTIME
 #endif
 
 #if defined(_WIN32)
@@ -113,13 +116,15 @@ struct PsnipClockTimespec {
 #    endif
 #  endif
 #  if !defined(PSNIP_CLOCK_MONOTONIC_METHOD)
-#    if defined(_POSIX_MONOTONIC_CLOCK) || defined(CLOCK_MONOTONIC)
+#    if defined(CLOCK_MONOTONIC_RAW)
+#      define PSNIP_CLOCK_MONOTONIC_METHOD PSNIP_CLOCK_METHOD_CLOCK_GETTIME
+#      define PSNIP_CLOCK_CLOCK_GETTIME_MONOTONIC CLOCK_MONOTONIC
+#    elif defined(_POSIX_MONOTONIC_CLOCK) || defined(CLOCK_MONOTONIC)
 #      define PSNIP_CLOCK_MONOTONIC_METHOD PSNIP_CLOCK_METHOD_CLOCK_GETTIME
 #      define PSNIP_CLOCK_CLOCK_GETTIME_MONOTONIC CLOCK_MONOTONIC
 #    endif
 #  endif
 #endif
-
 
 #if defined(_POSIX_VERSION) && (_POSIX_VERSION >= 200112L)
 #  if !defined(PSNIP_CLOCK_WALL_METHOD)

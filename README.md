@@ -27,7 +27,7 @@ ready for deployment, but would benefit greatly from testing:
 
  * [clock](https://github.com/nemequ/portable-snippets/tree/master/clock) —
    cross-platform wall clock, CPU time, and monotonic time
- * [unaligend](https://github.com/nemequ/portable-snippets/tree/master/unaligned) —
+ * [unaligned](https://github.com/nemequ/portable-snippets/tree/master/unaligned) —
    fast unaligned loads & stores
 
 Please don't be shy about filing issues about any of these; if you

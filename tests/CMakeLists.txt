@@ -8,7 +8,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 include (CheckCCompilerFlag)
 if(ENABLE_AGGRESSIVE_WARNINGS)
-
   foreach (flag -Wall
       -Waggregate-return
       -Wcast-align
