@@ -587,16 +587,17 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
 
 /*** __builtin_bitreverse ***/
 
-#define PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(f_n, T)	\
+#define PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(f_n, T, UT)	\
   PSNIP_BUILTIN_STATIC_INLINE					\
   T psnip_builtin_##f_n(T x) {					\
+    UT v = x;							\
     unsigned int s = sizeof(x) * CHAR_BIT;			\
-    T mask = ~0;						\
+    UT mask = ~0;						\
     while ((s >>= 1) > 0) {					\
       mask ^= (mask << s);					\
-      x = ((x >> s) & mask) | ((x << s) & ~mask);		\
+      v = ((v >> s) & mask) | ((v << s) & ~mask);		\
     }								\
-    return x;							\
+    return (T) v;						\
   }
 
 #if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_bitreverse64)
@@ -605,10 +606,10 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
 #  define psnip_builtin_bitreverse32(x) __builtin_bitreverse32(x)
 #  define psnip_builtin_bitreverse64(x) __builtin_bitreverse64(x)
 #else
-PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse8,  psnip_int8_t)
-PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse16, psnip_int16_t)
-PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse32, psnip_int32_t)
-PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t)
+PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse8,  psnip_int8_t,  psnip_uint8_t)
+PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse16, psnip_int16_t, psnip_uint16_t)
+PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse32, psnip_int32_t, psnip_uint32_t)
+PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t, psnip_uint64_t)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define __builtin_bitreverse8(x)  psnip_builtin_bitreverse8(x)
 #    define __builtin_bitreverse16(x) psnip_builtin_bitreverse16(x)
@@ -803,24 +804,27 @@ psnip_builtin_bswap64(psnip_uint64_t v) {
 
 /*** _rotl ***/
 
-#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotl8, 14, 0)
-#  define psnip_intrin_rotl8(value, shift) _rotl8(value, shift)
-#  define psnip_intrin_rotl16(value, shift) _rotl16(value, shift)
-#else
-#define PSNIP_BUILTIN_ROTL_DEFINE(f_n, T)               \
+#define PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(f_n, T, ST)	\
   PSNIP_BUILTIN_STATIC_INLINE				\
-  T psnip_intrin_##f_n(T value, unsigned char shift) {	\
+  T psnip_intrin_##f_n(T value, ST shift) {		\
     return						\
       (value >> ((sizeof(T) * 8) - shift)) |		\
       (value << shift);					\
   }
 
-PSNIP_BUILTIN_ROTL_DEFINE(rotl8, unsigned char)
-PSNIP_BUILTIN_ROTL_DEFINE(rotl16, unsigned short)
-
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotl8, 14, 0)
+#  define psnip_intrin_rotl8(value, shift) _rotl8(value, shift)
+#  define psnip_intrin_rotl16(value, shift) _rotl16(value, shift)
+#else
+  PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl8, unsigned char, unsigned char)
+  PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl16, unsigned short, unsigned char)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
-#    define _rotl8(value, shift)  psnip_intrin_rotl8(value, shift)
-#    define _rotl16(value, shift) psnip_intrin_rotl16(value, shift)
+#    if !defined(_rotl8)
+#      define _rotl8(value, shift)  psnip_intrin_rotl8(value, shift)
+#    endif
+#    if !defined(_rotl16)
+#      define _rotl16(value, shift) psnip_intrin_rotl16(value, shift)
+#    endif
 #  endif
 #endif
 
@@ -828,19 +832,11 @@ PSNIP_BUILTIN_ROTL_DEFINE(rotl16, unsigned short)
 #  define psnip_intrin_rotl(value, shift) _rotl(value, shift)
 #  define psnip_intrin_rotl64(value, shift) _rotl64(value, shift)
 #else
-#define PSNIP_BUILTIN_ROTL_LARGE_DEFINE(f_n, T)		\
-  PSNIP_BUILTIN_STATIC_INLINE				\
-  T psnip_intrin_##f_n(T value, int shift) {		\
-    return						\
-      (value >> ((sizeof(T) * 8) - shift)) |		\
-      (value << shift);					\
-  }
-
-PSNIP_BUILTIN_ROTL_DEFINE(rotl, unsigned int)
+  PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl, unsigned int, int)
 #if defined(_MSC_VER)
-PSNIP_BUILTIN_ROTL_DEFINE(rotl64, unsigned __int64)
+  PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl64, unsigned __int64, int)
 #else
-PSNIP_BUILTIN_ROTL_DEFINE(rotl64, psnip_uint64_t)
+  PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl64, psnip_uint64_t, int)
 #endif
 
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
@@ -855,21 +851,21 @@ PSNIP_BUILTIN_ROTL_DEFINE(rotl64, psnip_uint64_t)
 
 /*** _rotr ***/
 
-#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotr8, 14, 0)
-#  define psnip_intrin_rotr8(value, shift) _rotr8(value, shift)
-#  define psnip_intrin_rotr16(value, shift) _rotr16(value, shift)
-#else
-#define PSNIP_BUILTIN_ROTR_DEFINE(f_n, T)               \
+#define PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(f_n, T, ST)	\
   PSNIP_BUILTIN_STATIC_INLINE				\
-  T psnip_intrin_##f_n(T value, unsigned char shift) {	\
+  T psnip_intrin_##f_n(T value, ST shift) {		\
     return						\
       (value << ((sizeof(T) * 8) - shift)) |		\
       (value >> shift);					\
   }
 
-PSNIP_BUILTIN_ROTR_DEFINE(rotr8, unsigned char)
-PSNIP_BUILTIN_ROTR_DEFINE(rotr16, unsigned short)
+PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr8, unsigned char, unsigned char)
+PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr16, unsigned short, unsigned char)
 
+#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotr8, 14, 0)
+#  define psnip_intrin_rotr8(value, shift) _rotr8(value, shift)
+#  define psnip_intrin_rotr16(value, shift) _rotr16(value, shift)
+#else
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _rotr8(value, shift)  psnip_intrin_rotr8(value, shift)
 #    define _rotr16(value, shift) psnip_intrin_rotr16(value, shift)
@@ -880,21 +876,12 @@ PSNIP_BUILTIN_ROTR_DEFINE(rotr16, unsigned short)
 #  define psnip_intrin_rotr(value, shift) _rotr(value, shift)
 #  define psnip_intrin_rotr64(value, shift) _rotr64(value, shift)
 #else
-#define PSNIP_BUILTIN_ROTR_LARGE_DEFINE(f_n, T)		\
-  PSNIP_BUILTIN_STATIC_INLINE				\
-  T psnip_intrin_##f_n(T value, int shift) {		\
-    return						\
-      (value << ((sizeof(T) * 8) - shift)) |		\
-      (value >> shift);					\
-  }
-
-PSNIP_BUILTIN_ROTR_DEFINE(rotr, unsigned int)
+PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr, unsigned int, int)
 #if defined(_MSC_VER)
-PSNIP_BUILTIN_ROTR_DEFINE(rotr64, unsigned __int64)
+PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr64, unsigned __int64, int)
 #else
-PSNIP_BUILTIN_ROTR_DEFINE(rotr64, psnip_uint64_t)
+PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr64, psnip_uint64_t, int)
 #endif
-
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    if !defined(_rotr)
 #      define _rotr(value, shift)   psnip_intrin_rotr(value, shift)
@@ -983,18 +970,18 @@ unsigned char psnip_intrin_BitScanReverse64(unsigned long* Index, psnip_uint64_t
 
 /*** bittestandcomplement ***/
 
-#define PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(f_n, T)	\
+#define PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(f_n, T, UT)	\
   PSNIP_BUILTIN_STATIC_INLINE						\
   unsigned char psnip_intrin_##f_n(T* a, T b) {				\
     const char r = (*a >> b) & 1;					\
-    *a ^= ((T) 1) << b;							\
+    *a ^= ((UT) 1) << b;						\
     return r;								\
   }
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandcomplement, 14, 0)
 #  define psnip_intrin_bittestandcomplement(a, b) _bittestandcomplement(a, b)
 #else
-PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement, long)
+PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement, long, unsigned long)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _bittestandcomplement(a, b) psnip_intrin_bittestandcomplement(a, b)
 #  endif
@@ -1003,7 +990,7 @@ PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement, long)
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandcomplement64, 14, 0) && defined(_M_AMD64)
 #  define psnip_intrin_bittestandcomplement64(a, b) _bittestandcomplement64(a, b)
 #else
-PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement64, psnip_int64_t)
+PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement64, psnip_int64_t, psnip_uint64_t)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _bittestandcomplement64(a, b) psnip_intrin_bittestandcomplement64(a, b)
 #  endif
@@ -1011,18 +998,18 @@ PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement64, psni
 
 /*** bittestandreset ***/
 
-#define PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(f_n, T)	\
-  PSNIP_BUILTIN_STATIC_INLINE					\
-  unsigned char psnip_intrin_##f_n(T* a, T b) {			\
-    const char r = (*a >> b) & 1;				\
-    *a &= ~(((T) 1) << b);					\
-    return r;							\
+#define PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(f_n, T, UT)	\
+  PSNIP_BUILTIN_STATIC_INLINE						\
+  unsigned char psnip_intrin_##f_n(T* a, T b) {				\
+    const char r = (*a >> b) & 1;					\
+    *a &= ~(((UT) 1) << b);						\
+    return r;								\
   }
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandreset, 14, 0)
 #  define psnip_intrin_bittestandreset(a, b) _bittestandreset(a, b)
 #else
-PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset, long)
+PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset, long, unsigned long)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _bittestandreset(a, b) psnip_intrin_bittestandreset(a, b)
 #  endif
@@ -1031,7 +1018,7 @@ PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset, long)
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandreset64, 14, 0) && (defined(_M_AMD64) || defined(_M_IA64))
 #  define psnip_intrin_bittestandreset64(a, b) _bittestandreset64(a, b)
 #else
-PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset64, psnip_int64_t)
+PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset64, psnip_int64_t, psnip_uint64_t)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _bittestandreset64(a, b) psnip_intrin_bittestandreset64(a, b)
 #  endif
@@ -1039,18 +1026,18 @@ PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset64, psnip_int64_t)
 
 /*** bittestandset ***/
 
-#define PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(f_n, T)	\
-  PSNIP_BUILTIN_STATIC_INLINE					\
-  unsigned char psnip_intrin_##f_n(T* a, T b) {			\
-    const char r = (*a >> b) & 1;				\
-    *a |= ((T) 1) << b;						\
-    return r;							\
+#define PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(f_n, T, UT)	\
+  PSNIP_BUILTIN_STATIC_INLINE						\
+  unsigned char psnip_intrin_##f_n(T* a, T b) {				\
+    const char r = (*a >> b) & 1;					\
+    *a |= ((UT) 1) << b;						\
+    return r;								\
   }
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandset, 14, 0)
 #  define psnip_intrin_bittestandset(a, b) _bittestandset(a, b)
 #else
-PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset, long)
+PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset, long, unsigned long)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _bittestandset(a, b) psnip_intrin_bittestandset(a, b)
 #  endif
@@ -1059,7 +1046,7 @@ PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset, long)
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandset64, 14, 0) && defined(_M_AMD64)
 #  define psnip_intrin_bittestandset64(a, b) _bittestandset64(a, b)
 #else
-PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset64, psnip_int64_t)
+PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset64, psnip_int64_t, psnip_uint64_t)
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _bittestandset64(a, b) psnip_intrin_bittestandset64(a, b)
 #  endif

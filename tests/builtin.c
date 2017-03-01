@@ -14,11 +14,11 @@ test_gnu_ffs(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  int v = (int) (~0U);
+  unsigned int v = ~0;
   int expected = 1;
 
   do {
-    munit_assert_int(psnip_builtin_ffs(v), ==, expected);
+    munit_assert_int(psnip_builtin_ffs((int) v), ==, expected);
 
     v <<= 1;
     expected += 1;
@@ -50,11 +50,11 @@ test_gnu_ffsl(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  long v = (long) (~0UL);
+  unsigned long v = ~0L;
   int expected = 1;
 
   do {
-    munit_assert_int(psnip_builtin_ffsl(v), ==, expected);
+    munit_assert_int(psnip_builtin_ffsl((long) v), ==, expected);
 
     v <<= 1;
     expected += 1;
@@ -86,11 +86,11 @@ test_gnu_ffsll(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  long long v = (long long) (~0ULL);
+  unsigned long long v = ~0ULL;
   int expected = 1;
 
   do {
-    munit_assert_int(psnip_builtin_ffsll(v), ==, expected);
+    munit_assert_int(psnip_builtin_ffsll((long long) v), ==, expected);
 
     v <<= 1;
     expected += 1;
@@ -192,7 +192,7 @@ test_gnu_clzl_native(const MunitParameter params[], void* data) {
 
     /* Unset a random number of the most significant bits, otherwise
        we're heavily biased towards low results. */
-    const unsigned int m = (~0U) >> munit_rand_int_range(0, (sizeof(v) * 8) - 1);
+    const unsigned long m = (~0UL) >> munit_rand_int_range(0, (sizeof(v) * 8) - 1);
     v &= m;
   } while (v == 0);
 
@@ -234,7 +234,7 @@ test_gnu_clzll_native(const MunitParameter params[], void* data) {
 
     /* Unset a random number of the most significant bits, otherwise
        we're heavily biased towards low results. */
-    const unsigned int m = (~0U) >> munit_rand_int_range(0, (sizeof(v) * 8) - 1);
+    const unsigned long long m = (~0ULL) >> munit_rand_int_range(0, (sizeof(v) * 8) - 1);
     v &= m;
   } while (v == 0);
 
@@ -354,7 +354,7 @@ test_gnu_ctzl_native(const MunitParameter params[], void* data) {
 
     /* Unset a random number of the most significant bits, otherwise
        we're heavily biased towards low results. */
-    const unsigned int m = (~0U) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
+    const unsigned long m = (~0UL) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
     v &= m;
   } while (v == 0);
 
@@ -396,7 +396,7 @@ test_gnu_ctzll_native(const MunitParameter params[], void* data) {
 
     /* Unset a random number of the most significant bits, otherwise
        we're heavily biased towards low results. */
-    const unsigned int m = (~0U) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
+    const unsigned long long m = (~0ULL) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
     v &= m;
   } while (v == 0);
 
@@ -602,11 +602,11 @@ test_gnu_clrsb(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  int v = ~0;
+  unsigned int v = ~0U;
   int expected = (sizeof(v) * 8) - 1;
 
   do {
-    munit_assert_int(psnip_builtin_clrsb(v), ==, expected);
+    munit_assert_int(psnip_builtin_clrsb((int) v), ==, expected);
 
     v <<= 1;
     expected -= 1;
@@ -634,11 +634,11 @@ test_gnu_clrsbl(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  long v = ~(0L);
+  unsigned long v = ~(0UL);
   int expected = (sizeof(v) * 8) - 1;
 
   do {
-    munit_assert_int(psnip_builtin_clrsbl(v), ==, expected);
+    munit_assert_int(psnip_builtin_clrsbl((long) v), ==, expected);
 
     v <<= 1;
     expected -= 1;
@@ -666,11 +666,11 @@ test_gnu_clrsbll(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  long long v = ~(0LL);
+  unsigned long long v = ~(0ULL);
   int expected = (sizeof(v) * 8) - 1;
 
   do {
-    munit_assert_int(psnip_builtin_clrsbll(v), ==, expected);
+    munit_assert_int(psnip_builtin_clrsbll((long long) v), ==, expected);
 
     v <<= 1;
     expected -= 1;
@@ -1506,13 +1506,13 @@ test_msvc_rotl8(const MunitParameter params[], void* data) {
   const unsigned char v = 'A';
 
   const unsigned char expected[] = {
-    0x41, 0x82, 0x05, 0x0a,
-    0x14, 0x28, 0x50, 0xa0
+          0x82, 0x05, 0x0a,
+    0x14, 0x28, 0x50
   };
 
-  unsigned char i;
-  for (i = 0; i < ((unsigned char) sizeof(v) * CHAR_BIT); i++)
-    munit_assert_uchar(psnip_intrin_rotl8(v, i), ==, expected[i]);
+  size_t i;
+  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint(psnip_intrin_rotl8(v, (unsigned char) i), ==, expected[i - 1]);
 
   return MUNIT_OK;
 }
@@ -1523,7 +1523,7 @@ test_msvc_rotl8_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned char v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1540,15 +1540,15 @@ test_msvc_rotl16(const MunitParameter params[], void* data) {
   const unsigned short v = 0x12;
 
   const unsigned short expected[] = {
-    0x0012, 0x0024, 0x0048, 0x0090,
+            0x0024, 0x0048, 0x0090,
     0x0120, 0x0240, 0x0480, 0x0900,
     0x1200, 0x2400, 0x4800, 0x9000,
-    0x2001, 0x4002, 0x8004, 0x0009
+    0x2001, 0x4002, 0x8004
   };
 
-  unsigned char i;
-  for (i = 0; i < ((unsigned char) sizeof(v) * CHAR_BIT); i++)
-    munit_assert_ushort(psnip_intrin_rotl16(v, i), ==, expected[i]);
+  size_t i;
+  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint(psnip_intrin_rotl16(v, (unsigned char) i), ==, expected[i - 1]);
 
   return MUNIT_OK;
 }
@@ -1559,7 +1559,7 @@ test_msvc_rotl16_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned short v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1573,22 +1573,22 @@ test_msvc_rotl(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  const unsigned int v = 0x0fd93;
+  const unsigned int v = 0xfd93U;
 
   const unsigned int expected[] = {
-    0x0000fd93, 0x0001fb26, 0x0003f64c, 0x0007ec98,
+                0x0001fb26, 0x0003f64c, 0x0007ec98,
     0x000fd930, 0x001fb260, 0x003f64c0, 0x007ec980,
     0x00fd9300, 0x01fb2600, 0x03f64c00, 0x07ec9800,
     0x0fd93000, 0x1fb26000, 0x3f64c000, 0x7ec98000,
     0xfd930000, 0xfb260001, 0xf64c0003, 0xec980007,
     0xd930000f, 0xb260001f, 0x64c0003f, 0xc980007e,
     0x930000fd, 0x260001fb, 0x4c0003f6, 0x980007ec,
-    0x30000fd9, 0x60001fb2, 0xc0003f64, 0x80007ec9
+    0x30000fd9, 0x60001fb2, 0xc0003f64
   };
 
   size_t i;
-  for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
-    munit_assert_uint(psnip_intrin_rotl(v, (int) i), ==, expected[i]);
+  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint(psnip_intrin_rotl(v, (int) i), ==, expected[i - 1]);
 
   return MUNIT_OK;
 }
@@ -1599,7 +1599,7 @@ test_msvc_rotl_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned int v;
-  const int s = munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const int s = munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1616,7 +1616,7 @@ test_msvc_rotl64(const MunitParameter params[], void* data) {
   const uint64_t v = UINT64_C(0x3db5195091e98f9d);
 
   const uint64_t expected[] = {
-    UINT64_C(0x3db5195091e98f9d), UINT64_C(0x7b6a32a123d31f3a), UINT64_C(0xf6d4654247a63e74), UINT64_C(0xeda8ca848f4c7ce9),
+                                  UINT64_C(0x7b6a32a123d31f3a), UINT64_C(0xf6d4654247a63e74), UINT64_C(0xeda8ca848f4c7ce9),
     UINT64_C(0xdb5195091e98f9d3), UINT64_C(0xb6a32a123d31f3a7), UINT64_C(0x6d4654247a63e74f), UINT64_C(0xda8ca848f4c7ce9e),
     UINT64_C(0xb5195091e98f9d3d), UINT64_C(0x6a32a123d31f3a7b), UINT64_C(0xd4654247a63e74f6), UINT64_C(0xa8ca848f4c7ce9ed),
     UINT64_C(0x5195091e98f9d3db), UINT64_C(0xa32a123d31f3a7b6), UINT64_C(0x4654247a63e74f6d), UINT64_C(0x8ca848f4c7ce9eda),
@@ -1631,12 +1631,12 @@ test_msvc_rotl64(const MunitParameter params[], void* data) {
     UINT64_C(0x8f9d3db5195091e9), UINT64_C(0x1f3a7b6a32a123d3), UINT64_C(0x3e74f6d4654247a6), UINT64_C(0x7ce9eda8ca848f4c),
     UINT64_C(0xf9d3db5195091e98), UINT64_C(0xf3a7b6a32a123d31), UINT64_C(0xe74f6d4654247a63), UINT64_C(0xce9eda8ca848f4c7),
     UINT64_C(0x9d3db5195091e98f), UINT64_C(0x3a7b6a32a123d31f), UINT64_C(0x74f6d4654247a63e), UINT64_C(0xe9eda8ca848f4c7c),
-    UINT64_C(0xd3db5195091e98f9), UINT64_C(0xa7b6a32a123d31f3), UINT64_C(0x4f6d4654247a63e7), UINT64_C(0x9eda8ca848f4c7ce)
+    UINT64_C(0xd3db5195091e98f9), UINT64_C(0xa7b6a32a123d31f3), UINT64_C(0x4f6d4654247a63e7)
   };
 
   size_t i;
-  for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
-    munit_assert_uint64(psnip_intrin_rotl64(v, (int) i), ==, expected[i]);
+  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint(psnip_intrin_rotl64(v, (int) i), ==, expected[i - 1]);
 
   return MUNIT_OK;
 }
@@ -1647,7 +1647,7 @@ test_msvc_rotl64_native(const MunitParameter params[], void* data) {
   (void) data;
 
   uint64_t v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1664,13 +1664,13 @@ test_msvc_rotr8(const MunitParameter params[], void* data) {
   const unsigned char v = 'A';
 
   const unsigned char expected[] = {
-    0x41, 0xa0, 0x50, 0x28,
-    0x14, 0x0a, 0x05, 0x82
+          0xa0, 0x50, 0x28,
+    0x14, 0x0a, 0x05
   };
 
   size_t i;
-  for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
-    munit_assert_uchar(psnip_intrin_rotr8(v, (unsigned char) i), ==, expected[i]);
+  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint(psnip_intrin_rotr8(v, (unsigned char) i), ==, expected[i - 1]);
 
   return MUNIT_OK;
 }
@@ -1681,7 +1681,7 @@ test_msvc_rotr8_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned char v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1698,15 +1698,15 @@ test_msvc_rotr16(const MunitParameter params[], void* data) {
   const unsigned short v = 0x12;
 
   const unsigned short expected[] = {
-    0x0012, 0x0009, 0x8004, 0x4002,
+            0x0009, 0x8004, 0x4002,
     0x2001, 0x9000, 0x4800, 0x2400,
     0x1200, 0x0900, 0x0480, 0x0240,
-    0x0120, 0x0090, 0x0048, 0x0024
+    0x0120, 0x0090, 0x0048
   };
 
   size_t i;
-  for (i = 0; i < sizeof(unsigned short) * CHAR_BIT; i++)
-    munit_assert_ushort(psnip_intrin_rotr16(v, (unsigned char) i), ==, expected[i]);
+  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint(psnip_intrin_rotr16(v, (unsigned char) i), ==, expected[i - 1]);
 
   return MUNIT_OK;
 }
@@ -1717,7 +1717,7 @@ test_msvc_rotr16_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned short v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1734,19 +1734,19 @@ test_msvc_rotr(const MunitParameter params[], void* data) {
   const unsigned int v = 0x0fd93;
 
   const unsigned int expected[] = {
-    UINT32_C(0x0000fd93), UINT32_C(0x80007ec9), UINT32_C(0xc0003f64), UINT32_C(0x60001fb2),
+                          UINT32_C(0x80007ec9), UINT32_C(0xc0003f64), UINT32_C(0x60001fb2),
     UINT32_C(0x30000fd9), UINT32_C(0x980007ec), UINT32_C(0x4c0003f6), UINT32_C(0x260001fb),
     UINT32_C(0x930000fd), UINT32_C(0xc980007e), UINT32_C(0x64c0003f), UINT32_C(0xb260001f),
     UINT32_C(0xd930000f), UINT32_C(0xec980007), UINT32_C(0xf64c0003), UINT32_C(0xfb260001),
     UINT32_C(0xfd930000), UINT32_C(0x7ec98000), UINT32_C(0x3f64c000), UINT32_C(0x1fb26000),
     UINT32_C(0x0fd93000), UINT32_C(0x07ec9800), UINT32_C(0x03f64c00), UINT32_C(0x01fb2600),
     UINT32_C(0x00fd9300), UINT32_C(0x007ec980), UINT32_C(0x003f64c0), UINT32_C(0x001fb260),
-    UINT32_C(0x000fd930), UINT32_C(0x0007ec98), UINT32_C(0x0003f64c), UINT32_C(0x0001fb26)
+    UINT32_C(0x000fd930), UINT32_C(0x0007ec98), UINT32_C(0x0003f64c)
   };
 
   size_t i;
-  for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
-    munit_assert_uint(psnip_intrin_rotr(v, (int) i), ==, expected[i]);
+  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint(psnip_intrin_rotr(v, (int) i), ==, expected[i - 1]);
 
   return MUNIT_OK;
 }
@@ -1757,7 +1757,7 @@ test_msvc_rotr_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned short v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -1774,7 +1774,7 @@ test_msvc_rotr64(const MunitParameter params[], void* data) {
   const uint64_t v = UINT64_C(0x3db5195091e98f9d);
 
   const uint64_t expected[] = {
-    UINT64_C(0x3db5195091e98f9d), UINT64_C(0x9eda8ca848f4c7ce), UINT64_C(0x4f6d4654247a63e7), UINT64_C(0xa7b6a32a123d31f3),
+                                  UINT64_C(0x9eda8ca848f4c7ce), UINT64_C(0x4f6d4654247a63e7), UINT64_C(0xa7b6a32a123d31f3),
     UINT64_C(0xd3db5195091e98f9), UINT64_C(0xe9eda8ca848f4c7c), UINT64_C(0x74f6d4654247a63e), UINT64_C(0x3a7b6a32a123d31f),
     UINT64_C(0x9d3db5195091e98f), UINT64_C(0xce9eda8ca848f4c7), UINT64_C(0xe74f6d4654247a63), UINT64_C(0xf3a7b6a32a123d31),
     UINT64_C(0xf9d3db5195091e98), UINT64_C(0x7ce9eda8ca848f4c), UINT64_C(0x3e74f6d4654247a6), UINT64_C(0x1f3a7b6a32a123d3),
@@ -1789,12 +1789,12 @@ test_msvc_rotr64(const MunitParameter params[], void* data) {
     UINT64_C(0x195091e98f9d3db5), UINT64_C(0x8ca848f4c7ce9eda), UINT64_C(0x4654247a63e74f6d), UINT64_C(0xa32a123d31f3a7b6),
     UINT64_C(0x5195091e98f9d3db), UINT64_C(0xa8ca848f4c7ce9ed), UINT64_C(0xd4654247a63e74f6), UINT64_C(0x6a32a123d31f3a7b),
     UINT64_C(0xb5195091e98f9d3d), UINT64_C(0xda8ca848f4c7ce9e), UINT64_C(0x6d4654247a63e74f), UINT64_C(0xb6a32a123d31f3a7),
-    UINT64_C(0xdb5195091e98f9d3), UINT64_C(0xeda8ca848f4c7ce9), UINT64_C(0xf6d4654247a63e74), UINT64_C(0x7b6a32a123d31f3a)
+    UINT64_C(0xdb5195091e98f9d3), UINT64_C(0xeda8ca848f4c7ce9), UINT64_C(0xf6d4654247a63e74)
   };
 
   size_t i;
-  for (i = 0; i < sizeof(v) * CHAR_BIT; i++)
-    munit_assert_uint64(psnip_intrin_rotr64(v, (int) i), ==, expected[i]);
+  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint(psnip_intrin_rotr64(v, (int) i), ==, expected[i - 1]);
 
   return MUNIT_OK;
 }
@@ -1805,7 +1805,7 @@ test_msvc_rotr64_native(const MunitParameter params[], void* data) {
   (void) data;
 
   unsigned short v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(0, (sizeof(v) * CHAR_BIT) - 1);
+  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
 
   munit_rand_memory(sizeof(v), (unsigned char*) &v);
 
@@ -2061,7 +2061,7 @@ test_msvc_bittestandcomplement_native(const MunitParameter params[], void* data)
 
   munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
   i2 = i1;
-  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
+  p = munit_rand_int_range(1, (sizeof(i1) * 8) - 1);
 
   r1 = psnip_intrin_bittestandcomplement(&i1, p);
   r2 = _bittestandcomplement(&i2, p);
@@ -2101,7 +2101,7 @@ test_msvc_bittestandcomplement64_native(const MunitParameter params[], void* dat
 
   munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
   i2 = i1;
-  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
+  p = munit_rand_int_range(1, (sizeof(i1) * 8) - 1);
 
   r1 = psnip_intrin_bittestandcomplement64(&i1, p);
   r2 = _bittestandcomplement64(&i2, p);
