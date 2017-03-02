@@ -87,17 +87,25 @@
 #endif
 
 #if !defined(PSNIP_BUILTIN_STATIC_INLINE)
-#  if defined(HEDLEY_INLINE)
-#    define PSNIP_BUILTIN_STATIC_INLINE static HEDLEY_INLINE
-#  elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#    define PSNIP_BUILTIN_STATIC_INLINE static inline
-#  elif defined(__GNUC_STDC_INLINE__)
-#    define PSNIP_BUILTIN_STATIC_INLINE static __inline__
-#  elif defined(_MSC_VER) && _MSC_VER >= 1200
-#    define PSNIP_BUILTIN_STATIC_INLINE static __inline
+#  if defined(__GNUC__)
+#    define PSNIP_BUILTIN__COMPILER_ATTRIBUTES __attribute__((__unused__))
 #  else
-#    define PSNIP_BUILTIN_STATIC_INLINE static
+#    define PSNIP_BUILTIN__COMPILER_ATTRIBUTES
 #  endif
+
+#  if defined(HEDLEY_INLINE)
+#    define PSNIP_BUILTIN__INLINE HEDLEY_INLINE
+#  elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#    define PSNIP_BUILTIN__INLINE inline
+#  elif defined(__GNUC_STDC_INLINE__)
+#    define PSNIP_BUILTIN__INLINE __inline__
+#  elif defined(_MSC_VER) && _MSC_VER >= 1200
+#    define PSNIP_BUILTIN__INLINE __inline
+#  else
+#    define PSNIP_BUILTIN__INLINE
+#  endif
+
+#  define PSNIP_BUILTIN__FUNCTION PSNIP_BUILTIN__COMPILER_ATTRIBUTES static PSNIP_BUILTIN__INLINE
 #endif
 
 /* Many GCC-style builtins exist for int, long, and long long
@@ -194,7 +202,7 @@
 /*** __builtin_ffs ***/
 
 #define PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(f_n, T)	\
-  PSNIP_BUILTIN_STATIC_INLINE				\
+  PSNIP_BUILTIN__FUNCTION				\
   int psnip_builtin_##f_n(T x) {			\
     static const char psnip_builtin_ffs_lookup[256] = { \
       0, 1, 2, 1, 3, 1, 2, 1, 4, 1, 2, 1, 3, 1, 2, 1,	\
@@ -235,7 +243,7 @@
 #  define psnip_builtin_ffsll(x) __builtin_ffsll(x)
 #else
 #  if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward, 14, 0)
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 int psnip_builtin_ffsll(long long v) {
   unsigned long r;
 #    if defined(_M_AMD64) || defined(_M_ARM)
@@ -252,7 +260,7 @@ int psnip_builtin_ffsll(long long v) {
   return 0;
 }
 
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 int psnip_builtin_ffsl(long v) {
   unsigned long r;
   if (_BitScanForward(&r, (unsigned long) v)) {
@@ -261,7 +269,7 @@ int psnip_builtin_ffsl(long v) {
   return 0;
 }
 
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 int psnip_builtin_ffs(int v) {
   return psnip_builtin_ffsl(v);
 }
@@ -292,7 +300,7 @@ PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffsll, long long)
 /*** __builtin_clz ***/
 
 #define PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(f_n, T)	\
-  PSNIP_BUILTIN_STATIC_INLINE				\
+  PSNIP_BUILTIN__FUNCTION				\
   int psnip_builtin_##f_n(T x) {			\
     static const char psnip_builtin_clz_lookup[256] = {	\
       7, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,	\
@@ -335,7 +343,7 @@ PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffsll, long long)
 #  define psnip_builtin_clzll(x) __builtin_clzll(x)
 #else
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanReverse,14,0)
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 int psnip_builtin_clzll(unsigned long long v) {
   unsigned long r = 0;
 #if defined(_M_AMD64) || defined(_M_ARM)
@@ -352,7 +360,7 @@ int psnip_builtin_clzll(unsigned long long v) {
   return 63;
 }
 
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 int psnip_builtin_clzl(unsigned long v) {
   unsigned long r = 0;
   if (_BitScanReverse(&r, v)) {
@@ -361,7 +369,7 @@ int psnip_builtin_clzl(unsigned long v) {
   return 31;
 }
 
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 int psnip_builtin_clz(unsigned int v) {
   return psnip_builtin_clzl(v);
 }
@@ -393,7 +401,7 @@ PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clzll, unsigned long long)
 /*** __builtin_ctz ***/
 
 #define PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(f_n, T)	\
-  PSNIP_BUILTIN_STATIC_INLINE				\
+  PSNIP_BUILTIN__FUNCTION				\
   int psnip_builtin_##f_n(T x) {			\
     static const char psnip_builtin_ctz_lookup[256] = {	\
       0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,	\
@@ -455,7 +463,7 @@ PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctzll, unsigned long long)
 /*** __builtin_parity ***/
 
 #define PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(f_n, T)		\
-  PSNIP_BUILTIN_STATIC_INLINE					\
+  PSNIP_BUILTIN__FUNCTION					\
   int psnip_builtin_##f_n(T x) {				\
     static const char psnip_builtin_parity_lookup[256] = {	\
       0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
@@ -513,7 +521,7 @@ PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(parityll, unsigned long long)
 /*** __builtin_popcount ***/
 
 #define PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(f_n, T)	    \
-  PSNIP_BUILTIN_STATIC_INLINE                               \
+  PSNIP_BUILTIN__FUNCTION                               \
   int psnip_builtin_##f_n(T x) {                            \
     x = x - ((x >> 1) & (T)~(T)0/3);                        \
     x = (x & (T)~(T)0/15*3) + ((x >> 2) & (T)~(T)0/15*3);   \
@@ -551,7 +559,7 @@ PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcountll, unsigned long long)
 /*** __builtin_clrsb ***/
 
 #define PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(f_n, clzfn, T) \
-  PSNIP_BUILTIN_STATIC_INLINE                               \
+  PSNIP_BUILTIN__FUNCTION                               \
   int psnip_builtin_##f_n(T x) {                            \
     return (PSNIP_BUILTIN_UNLIKELY(x == -1) ?		    \
 	    (sizeof(x) * 8) :				    \
@@ -588,7 +596,7 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
 /*** __builtin_bitreverse ***/
 
 #define PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(f_n, T, UT)	\
-  PSNIP_BUILTIN_STATIC_INLINE					\
+  PSNIP_BUILTIN__FUNCTION					\
   T psnip_builtin_##f_n(T x) {					\
     UT v = (UT) x;						\
     size_t s = sizeof(x) * CHAR_BIT;				\
@@ -621,7 +629,7 @@ PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t, psnip_uin
 /*** __builtin_addc ***/
 
 #define PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(f_n, T)	\
-  PSNIP_BUILTIN_STATIC_INLINE				\
+  PSNIP_BUILTIN__FUNCTION				\
   T psnip_builtin_##f_n(T x, T y, T ci, T* co) {	\
     const T max = (T) (((T) 0) - 1);			\
     T r = (T) x + y;					\
@@ -682,7 +690,7 @@ PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc64, psnip_uint64_t)
 /*** __builtin_subc ***/
 
 #define PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(f_n, T)	\
-  PSNIP_BUILTIN_STATIC_INLINE				\
+  PSNIP_BUILTIN__FUNCTION				\
   T psnip_builtin_##f_n(T x, T y, T ci, T* co) {	\
     T r = x - y;					\
     *co = x < y;					\
@@ -747,7 +755,7 @@ PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc64, psnip_uint64_t)
 #  if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_byteswap_ushort,13,10)
 #    define psnip_builtin_bswap16(x) _byteswap_ushort(x)
 #  else
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 psnip_uint16_t
 psnip_builtin_bswap16(psnip_uint16_t v) {
   return
@@ -768,7 +776,7 @@ psnip_builtin_bswap16(psnip_uint16_t v) {
 #    define psnip_builtin_bswap32(x) _byteswap_ulong(x)
 #    define psnip_builtin_bswap64(x) _byteswap_uint64(x)
 #  else
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 psnip_uint32_t
 psnip_builtin_bswap32(psnip_uint32_t v) {
   return
@@ -778,7 +786,7 @@ psnip_builtin_bswap32(psnip_uint32_t v) {
     ((v & (((psnip_uint32_t) 0xff)      )) << 24);
 }
 
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 psnip_uint64_t
 psnip_builtin_bswap64(psnip_uint64_t v) {
   return
@@ -805,7 +813,7 @@ psnip_builtin_bswap64(psnip_uint64_t v) {
 /*** _rotl ***/
 
 #define PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(f_n, T, ST)	\
-  PSNIP_BUILTIN_STATIC_INLINE				\
+  PSNIP_BUILTIN__FUNCTION				\
   T psnip_intrin_##f_n(T value, ST shift) {		\
     return						\
       (value >> ((sizeof(T) * 8) - shift)) |		\
@@ -852,7 +860,7 @@ psnip_builtin_bswap64(psnip_uint64_t v) {
 /*** _rotr ***/
 
 #define PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(f_n, T, ST)	\
-  PSNIP_BUILTIN_STATIC_INLINE				\
+  PSNIP_BUILTIN__FUNCTION				\
   T psnip_intrin_##f_n(T value, ST shift) {		\
     return						\
       (value << ((sizeof(T) * 8) - shift)) |		\
@@ -897,7 +905,7 @@ PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr64, psnip_uint64_t, int)
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward, 14, 0)
 #  define psnip_intrin_BitScanForward(Index, Mask) _BitScanForward(Index, Mask)
 #else
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 unsigned char psnip_intrin_BitScanForward(unsigned long* Index, unsigned long Mask) {
   return PSNIP_BUILTIN_UNLIKELY(Mask == 0) ? 0 : ((*Index = psnip_builtin_ctzl (Mask)), 1);
 }
@@ -910,7 +918,7 @@ unsigned char psnip_intrin_BitScanForward(unsigned long* Index, unsigned long Ma
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward64, 14, 0) && (defined(_M_AMD64) || defined(_M_ARM))
 #  define psnip_intrin_BitScanForward64(Index, Mask) _BitScanForward64(Index, Mask)
 #else
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_uint64_t Mask) {
   return PSNIP_BUILTIN_UNLIKELY(Mask == 0) ? 0 : ((*Index = psnip_builtin_ctzll (Mask)), 1);
 }
@@ -925,7 +933,7 @@ unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_uint64_t
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanReverse, 14, 0)
 #  define psnip_intrin_BitScanReverse(Index, Mask) _BitScanReverse(Index, Mask)
 #else
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 unsigned char psnip_intrin_BitScanReverse(unsigned long* Index, unsigned long Mask) {
   return (PSNIP_BUILTIN_UNLIKELY(Mask == 0)) ? 0 : ((*Index = ((sizeof(Mask) * CHAR_BIT) - 1) - psnip_builtin_clzl (Mask)), 1);
 }
@@ -938,7 +946,7 @@ unsigned char psnip_intrin_BitScanReverse(unsigned long* Index, unsigned long Ma
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanReverse64, 14, 0) && (defined(_M_AMD64) || defined(_M_ARM))
 #  define psnip_intrin_BitScanReverse64(Index, Mask) _BitScanReverse64(Index, Mask)
 #else
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 unsigned char psnip_intrin_BitScanReverse64(unsigned long* Index, psnip_uint64_t Mask) {
   return (PSNIP_BUILTIN_UNLIKELY(Mask == 0)) ? 0 : ((*Index = ((sizeof(Mask) * CHAR_BIT) - 1) - psnip_builtin_clzll (Mask)), 1);
 }
@@ -971,7 +979,7 @@ unsigned char psnip_intrin_BitScanReverse64(unsigned long* Index, psnip_uint64_t
 /*** bittestandcomplement ***/
 
 #define PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(f_n, T, UT)	\
-  PSNIP_BUILTIN_STATIC_INLINE						\
+  PSNIP_BUILTIN__FUNCTION						\
   unsigned char psnip_intrin_##f_n(T* a, T b) {				\
     const char r = (*a >> b) & 1;					\
     *a ^= ((UT) 1) << b;						\
@@ -999,7 +1007,7 @@ PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement64, psni
 /*** bittestandreset ***/
 
 #define PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(f_n, T, UT)	\
-  PSNIP_BUILTIN_STATIC_INLINE						\
+  PSNIP_BUILTIN__FUNCTION						\
   unsigned char psnip_intrin_##f_n(T* a, T b) {				\
     const char r = (*a >> b) & 1;					\
     *a &= ~(((UT) 1) << b);						\
@@ -1027,7 +1035,7 @@ PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset64, psnip_int64_t,
 /*** bittestandset ***/
 
 #define PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(f_n, T, UT)	\
-  PSNIP_BUILTIN_STATIC_INLINE						\
+  PSNIP_BUILTIN__FUNCTION						\
   unsigned char psnip_intrin_##f_n(T* a, T b) {				\
     const char r = (*a >> b) & 1;					\
     *a |= ((UT) 1) << b;						\
@@ -1058,7 +1066,7 @@ PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset64, psnip_int64_t, psn
 #  define psnip_intrin_shiftleft128(LowPart, HighPart, Shift) __shiftleft128(LowPart, HighPart, Shift)
 #else
 #  if defined(__SIZEOF_INT128__)
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 psnip_uint64_t psnip_intrin_shiftleft128(psnip_uint64_t LowPart, psnip_uint64_t HighPart, unsigned char Shift) {
   unsigned __int128 r = HighPart;
   r <<= 64;
@@ -1067,7 +1075,7 @@ psnip_uint64_t psnip_intrin_shiftleft128(psnip_uint64_t LowPart, psnip_uint64_t 
   return (psnip_uint64_t) (r >> 64);
 }
 #  else
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 psnip_uint64_t psnip_intrin_shiftleft128(psnip_uint64_t LowPart, psnip_uint64_t HighPart, unsigned char Shift) {
   Shift %= 64;
   return PSNIP_BUILTIN_UNLIKELY(Shift == 0) ? HighPart : ((HighPart << Shift) | (LowPart >> (64 - Shift)));
@@ -1084,7 +1092,7 @@ psnip_uint64_t psnip_intrin_shiftleft128(psnip_uint64_t LowPart, psnip_uint64_t 
 #  define psnip_intrin_shiftright128(LowPart, HighPart, Shift) __shiftright128(LowPart, HighPart, Shift)
 #else
 #  if defined(__SIZEOF_INT128__)
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 psnip_uint64_t psnip_intrin_shiftright128(psnip_uint64_t LowPart, psnip_uint64_t HighPart, unsigned char Shift) {
   unsigned __int128 r = HighPart;
   r <<= 64;
@@ -1093,7 +1101,7 @@ psnip_uint64_t psnip_intrin_shiftright128(psnip_uint64_t LowPart, psnip_uint64_t
   return (psnip_uint64_t) r;
 }
 #  else
-PSNIP_BUILTIN_STATIC_INLINE
+PSNIP_BUILTIN__FUNCTION
 psnip_uint64_t psnip_intrin_shiftright128(psnip_uint64_t LowPart, psnip_uint64_t HighPart, unsigned char Shift) {
   Shift %= 64;
 

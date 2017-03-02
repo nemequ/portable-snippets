@@ -15,6 +15,16 @@
 #  include "../exact-int/exact-int.h"
 #endif
 
+#if !defined(PSNIP_CLOCK_STATIC_INLINE)
+#  if defined(__GNUC__)
+#    define PSNIP_CLOCK__COMPILER_ATTRIBUTES __attribute__((__unused__))
+#  else
+#    define PSNIP_CLOCK__COMPILER_ATTRIBUTES
+#  endif
+
+#  define PSNIP_CLOCK__FUNCTION PSNIP_CLOCK__COMPILER_ATTRIBUTES static
+#endif
+
 enum PsnipClockType {
   /* This clock provides the current time, in units since 1970-01-01
    * 00:00:00 UTC not including leap seconds.  In other words, UNIX
@@ -202,7 +212,7 @@ struct PsnipClockTimespec {
   (defined(PSNIP_CLOCK_CPU_METHOD)       && (PSNIP_CLOCK_CPU_METHOD       == PSNIP_CLOCK_METHOD_CLOCK_GETTIME)) || \
   (defined(PSNIP_CLOCK_WALL_METHOD)      && (PSNIP_CLOCK_WALL_METHOD      == PSNIP_CLOCK_METHOD_CLOCK_GETTIME)) || \
   (defined(PSNIP_CLOCK_MONOTONIC_METHOD) && (PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME))
-static psnip_uint32_t
+PSNIP_CLOCK__FUNCTION psnip_uint32_t
 psnip_clock__clock_getres (clockid_t clk_id) {
   struct timespec res;
   int r;
@@ -214,7 +224,7 @@ psnip_clock__clock_getres (clockid_t clk_id) {
   return (psnip_uint32_t) (PSNIP_CLOCK_NSEC_PER_SEC / res.tv_nsec);
 }
 
-static int
+PSNIP_CLOCK__FUNCTION int
 psnip_clock__clock_gettime (clockid_t clk_id, struct PsnipClockTimespec* res) {
   struct timespec ts;
 
@@ -228,7 +238,7 @@ psnip_clock__clock_gettime (clockid_t clk_id, struct PsnipClockTimespec* res) {
 }
 #endif
 
-static psnip_uint32_t
+PSNIP_CLOCK__FUNCTION psnip_uint32_t
 psnip_clock_wall_get_precision (void) {
 #if !defined(PSNIP_CLOCK_WALL_METHOD)
   return 0;
@@ -243,7 +253,7 @@ psnip_clock_wall_get_precision (void) {
 #endif
 }
 
-static int
+PSNIP_CLOCK__FUNCTION int
 psnip_clock_wall_get_time (struct PsnipClockTimespec* res) {
   (void) res;
 
@@ -269,7 +279,7 @@ psnip_clock_wall_get_time (struct PsnipClockTimespec* res) {
   return 0;
 }
 
-static psnip_uint32_t
+PSNIP_CLOCK__FUNCTION psnip_uint32_t
 psnip_clock_cpu_get_precision (void) {
 #if !defined(PSNIP_CLOCK_CPU_METHOD)
   return 0;
@@ -284,7 +294,7 @@ psnip_clock_cpu_get_precision (void) {
 #endif
 }
 
-static int
+PSNIP_CLOCK__FUNCTION int
 psnip_clock_cpu_get_time (struct PsnipClockTimespec* res) {
   (void) res;
 
@@ -326,7 +336,7 @@ psnip_clock_cpu_get_time (struct PsnipClockTimespec* res) {
   return 0;
 }
 
-static psnip_uint32_t
+PSNIP_CLOCK__FUNCTION psnip_uint32_t
 psnip_clock_monotonic_get_precision (void) {
 #if !defined(PSNIP_CLOCK_MONOTONIC_METHOD)
   return 0;
@@ -343,7 +353,7 @@ psnip_clock_monotonic_get_precision (void) {
 #endif
 }
 
-static int
+PSNIP_CLOCK__FUNCTION int
 psnip_clock_monotonic_get_time (struct PsnipClockTimespec* res) {
   (void) res;
 
@@ -395,7 +405,7 @@ psnip_clock_monotonic_get_time (struct PsnipClockTimespec* res) {
  * Note that different clocks on the same system often have a
  * different precisions.
  */
-static psnip_uint32_t
+PSNIP_CLOCK__FUNCTION psnip_uint32_t
 psnip_clock_get_precision (enum PsnipClockType clock_type) {
   switch (clock_type) {
     case PSNIP_CLOCK_TYPE_MONOTONIC:
@@ -412,7 +422,7 @@ psnip_clock_get_precision (enum PsnipClockType clock_type) {
 
 /* Set the provided timespec to the requested time.  Returns 0 on
  * success, or a negative value on failure. */
-static int
+PSNIP_CLOCK__FUNCTION int
 psnip_clock_get_time (enum PsnipClockType clock_type, struct PsnipClockTimespec* res) {
   assert(res != NULL);
 

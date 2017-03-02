@@ -62,17 +62,25 @@
 #endif
 
 #if !defined(PSNIP_UNALIGNED_STATIC_INLINE)
-#  if defined(HEDLEY_INLINE)
-#    define PSNIP_UNALIGNED_STATIC_INLINE static HEDLEY_INLINE
-#  elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#    define PSNIP_UNALIGNED_STATIC_INLINE static inline
-#  elif defined(__GNUC_STDC_INLINE__)
-#    define PSNIP_UNALIGNED_STATIC_INLINE static __inline__
-#  elif defined(_MSC_VER) && _MSC_VER >= 1200
-#    define PSNIP_UNALIGNED_STATIC_INLINE static __inline
+#  if defined(__GNUC__)
+#    define PSNIP_UNALIGNED__COMPILER_ATTRIBUTES __attribute__((__unused__))
 #  else
-#    define PSNIP_UNALIGNED_STATIC_INLINE static
+#    define PSNIP_UNALIGNED__COMPILER_ATTRIBUTES
 #  endif
+
+#  if defined(HEDLEY_INLINE)
+#    define PSNIP_UNALIGNED__INLINE HEDLEY_INLINE
+#  elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#    define PSNIP_UNALIGNED__INLINE inline
+#  elif defined(__GNUC_STDC_INLINE__)
+#    define PSNIP_UNALIGNED__INLINE __inline__
+#  elif defined(_MSC_VER) && _MSC_VER >= 1200
+#    define PSNIP_UNALIGNED__INLINE __inline
+#  else
+#    define PSNIP_UNALIGNED__INLINE
+#  endif
+
+#  define PSNIP_UNALIGNED__FUNCTION PSNIP_UNALIGNED__COMPILER_ATTRIBUTES static PSNIP_UNALIGNED__INLINE
 #endif
 
 /* http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.faqs/4972.html */
@@ -85,37 +93,37 @@
 #if PSNIP_UNALIGNED_IMPL == PSNIP_UNALIGNED_IMPL_MEMCPY
 #  include <string.h>
 #  define PSNIP_UNALIGNED_LOAD_DEFINE(name, T)				\
-  PSNIP_UNALIGNED_STATIC_INLINE						\
+  PSNIP_UNALIGNED__FUNCTION						\
   T name(const void* src) {						\
     T r;								\
     memcpy(&r, (PSNIP_UNALIGNED__PACKED const void*) src, sizeof(T));	\
     return r;								\
   }
 #  define PSNIP_UNALIGNED_STORE_DEFINE(name, T)				\
-  PSNIP_UNALIGNED_STATIC_INLINE						\
+  PSNIP_UNALIGNED__FUNCTION						\
   void name(void* dest, T src) {					\
     memcpy((PSNIP_UNALIGNED__PACKED void*) &dest, &src, sizeof(T));	\
   }
 #elif PSNIP_UNALIGNED_IMPL == PSNIP_UNALIGNED_IMPL_DEREF
 #  if defined(__cplusplus)
 #    define PSNIP_UNALIGNED_LOAD_DEFINE(name, T)		\
-  PSNIP_UNALIGNED_STATIC_INLINE					\
+  PSNIP_UNALIGNED__FUNCTION					\
   T name(const void* src) {					\
     return *static_cast<PSNIP_UNALIGNED__PACKED T*>(src);	\
   }
 #    define PSNIP_UNALIGNED_STORE_DEFINE(name, T)	\
-  PSNIP_UNALIGNED_STATIC_INLINE				\
+  PSNIP_UNALIGNED__FUNCTION				\
   void name(void* dest, T src) {			\
     *static_cast<PSNIP_UNALIGNED__PACKED T*> = src;	\
   }
 #  else
 #    define PSNIP_UNALIGNED_LOAD_DEFINE(name, T)	\
-  PSNIP_UNALIGNED_STATIC_INLINE				\
+  PSNIP_UNALIGNED__FUNCTION				\
   T name(const void* src) {				\
     return *((PSNIP_UNALIGNED__PACKED T*) src);		\
   }
 #    define PSNIP_UNALIGNED_STORE_DEFINE(name, T)	\
-  PSNIP_UNALIGNED_STATIC_INLINE				\
+  PSNIP_UNALIGNED__FUNCTION				\
   void name(void* dest, T src) {			\
     *((PSNIP_UNALIGNED__PACKED T*) dest) = src;		\
   }
@@ -132,12 +140,12 @@
   __attribute__((packed))
 #  endif
 #  define PSNIP_UNALIGNED_LOAD_DEFINE(name, T)		\
-  PSNIP_UNALIGNED_STATIC_INLINE				\
+  PSNIP_UNALIGNED__FUNCTION				\
   T name(const void* src) {				\
     return ((PSNIP_UNALIGNED__UNION_T(T) *) src)->v;	\
   }
 #  define PSNIP_UNALIGNED_STORE_DEFINE(name, T)	\
-  PSNIP_UNALIGNED_STATIC_INLINE				\
+  PSNIP_UNALIGNED__FUNCTION				\
   void name(void* dest, T src) {			\
     ((PSNIP_UNALIGNED__UNION_T(T) *) dest)->v = src;	\
   }

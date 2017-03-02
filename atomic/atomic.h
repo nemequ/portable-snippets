@@ -52,6 +52,28 @@
 #  include "../exact-int/exact-int.h"
 #endif
 
+#if !defined(PSNIP_ATOMIC_STATIC_INLINE)
+#  if defined(__GNUC__)
+#    define PSNIP_ATOMIC__COMPILER_ATTRIBUTES __attribute__((__unused__))
+#  else
+#    define PSNIP_ATOMIC__COMPILER_ATTRIBUTES
+#  endif
+
+#  if defined(HEDLEY_INLINE)
+#    define PSNIP_ATOMIC__INLINE HEDLEY_INLINE
+#  elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#    define PSNIP_ATOMIC__INLINE inline
+#  elif defined(__GNUC_STDC_INLINE__)
+#    define PSNIP_ATOMIC__INLINE __inline__
+#  elif defined(_MSC_VER) && _MSC_VER >= 1200
+#    define PSNIP_ATOMIC__INLINE __inline
+#  else
+#    define PSNIP_ATOMIC__INLINE
+#  endif
+
+#  define PSNIP_ATOMIC__FUNCTION PSNIP_ATOMIC__COMPILER_ATTRIBUTES static PSNIP_ATOMIC__INLINE
+#endif
+
 #if defined(__has_feature)
 #  define PSNIP_ATOMIC_HAS_FEATURE(feature) __has_feature(feature)
 #else
@@ -174,14 +196,14 @@ typedef psnip_int32_t psnip_atomic_int32;
 typedef psnip_int64_t psnip_atomic_int64;
 typedef psnip_int32_t psnip_atomic_int32;
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 psnip_int64_t
 psnip_atomic_int64_load(psnip_atomic_int64* object) {
   __sync_synchronize();
   return (psnip_int64_t) *object;
 }
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 void
 psnip_atomic_int64_store(psnip_atomic_int64* object, psnip_int64_t desired) {
   *object = desired;
@@ -195,14 +217,14 @@ psnip_atomic_int64_store(psnip_atomic_int64* object, psnip_int64_t desired) {
 #define psnip_atomic_int64_sub(object, operand) \
   __sync_fetch_and_sub(object, operand)
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 psnip_int32_t
 psnip_atomic_int32_load(psnip_atomic_int32* object) {
   __sync_synchronize();
   return (psnip_int32_t) *object;
 }
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 void
 psnip_atomic_int32_store(psnip_atomic_int32* object, psnip_int32_t desired) {
   *object = desired;
@@ -282,7 +304,7 @@ psnip_atomic_int32_store_(psnip_atomic_int32* object, psnip_int32_t desired) {
 typedef psnip_int64_t psnip_atomic_int64;
 typedef psnip_int32_t psnip_atomic_int32;
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 psnip_int64_t
 psnip_atomic_int64_load(psnip_atomic_int64* object) {
   psnip_int64_t ret;
@@ -291,14 +313,14 @@ psnip_atomic_int64_load(psnip_atomic_int64* object) {
   return ret;
 }
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 void
 psnip_atomic_int64_store(psnip_atomic_int64* object, psnip_int64_t desired) {
 #pragma omp critical(psnip_atomic)
   *object = desired;
 }
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 int
 psnip_atomic_int64_compare_exchange_(psnip_atomic_int64* object, psnip_int64_t* expected, psnip_int64_t desired) {
   int ret;
@@ -310,7 +332,7 @@ psnip_atomic_int64_compare_exchange_(psnip_atomic_int64* object, psnip_int64_t* 
 #define psnip_atomic_int64_compare_exchange(object, expected, desired) \
   psnip_atomic_int64_compare_exchange_(object, expected, desired)
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 psnip_int64_t
 psnip_atomic_int64_add(psnip_atomic_int64* object, psnip_int64_t operand) {
   int ret;
@@ -319,7 +341,7 @@ psnip_atomic_int64_add(psnip_atomic_int64* object, psnip_int64_t operand) {
   return ret;
 }
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 psnip_int64_t
 psnip_atomic_int64_sub(psnip_atomic_int64* object, psnip_int64_t operand) {
   int ret;
@@ -327,7 +349,7 @@ psnip_atomic_int64_sub(psnip_atomic_int64* object, psnip_int64_t operand) {
   *object = (ret = *object) - operand;
   return ret;
 }
-static inline
+PSNIP_ATOMIC__FUNCTION
 psnip_int32_t
 psnip_atomic_int32_load(psnip_atomic_int32* object) {
   psnip_int32_t ret;
@@ -336,14 +358,14 @@ psnip_atomic_int32_load(psnip_atomic_int32* object) {
   return ret;
 }
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 void
 psnip_atomic_int32_store(psnip_atomic_int32* object, psnip_int32_t desired) {
 #pragma omp critical(psnip_atomic)
   *object = desired;
 }
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 int
 psnip_atomic_int32_compare_exchange_(psnip_atomic_int32* object, psnip_int32_t* expected, psnip_int32_t desired) {
   int ret = 1;
@@ -355,7 +377,7 @@ psnip_atomic_int32_compare_exchange_(psnip_atomic_int32* object, psnip_int32_t* 
 #define psnip_atomic_int32_compare_exchange(object, expected, desired) \
   psnip_atomic_int32_compare_exchange_(object, expected, desired)
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 psnip_int32_t
 psnip_atomic_int32_add(psnip_atomic_int32* object, psnip_int32_t operand) {
   int ret;
@@ -364,7 +386,7 @@ psnip_atomic_int32_add(psnip_atomic_int32* object, psnip_int32_t operand) {
   return ret;
 }
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 psnip_int32_t
 psnip_atomic_int32_sub(psnip_atomic_int32* object, psnip_int32_t operand) {
   int ret;
@@ -373,7 +395,7 @@ psnip_atomic_int32_sub(psnip_atomic_int32* object, psnip_int32_t operand) {
   return ret;
 }
 
-static inline
+PSNIP_ATOMIC__FUNCTION
 void
 psnip_atomic_fence() {
 #pragma omp critical(psnip_atomic)

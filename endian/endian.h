@@ -22,14 +22,26 @@
 #  include "../builtin/builtin.h"
 #endif
 
-#if defined(HEDLEY_INLINE)
-#  define PSNIP_ENDIAN_INLINE HEDLEY_INLINE
-#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#  define PSNIP_ENDIAN_INLINE inline
-#elif defined(__GNUC__) || defined(_MSC_VER)
-#  define PSNIP_ENDIAN_INLINE __inline
-#else
-#  define PSNIP_ENDIAN_INLINE
+#if !defined(PSNIP_ENDIAN_STATIC_INLINE)
+#  if defined(__GNUC__)
+#    define PSNIP_ENDIAN__COMPILER_ATTRIBUTES __attribute__((__unused__))
+#  else
+#    define PSNIP_ENDIAN__COMPILER_ATTRIBUTES
+#  endif
+
+#  if defined(HEDLEY_INLINE)
+#    define PSNIP_ENDIAN__INLINE HEDLEY_INLINE
+#  elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#    define PSNIP_ENDIAN__INLINE inline
+#  elif defined(__GNUC_STDC_INLINE__)
+#    define PSNIP_ENDIAN__INLINE __inline__
+#  elif defined(_MSC_VER) && _MSC_VER >= 1200
+#    define PSNIP_ENDIAN__INLINE __inline
+#  else
+#    define PSNIP_ENDIAN__INLINE
+#  endif
+
+#  define PSNIP_ENDIAN__FUNCTION PSNIP_ENDIAN__COMPILER_ATTRIBUTES static PSNIP_ENDIAN__INLINE
 #endif
 
 #if !defined(PSNIP_ENDIAN_LITTLE)
@@ -135,13 +147,13 @@ static const union {
 #define PSNIP_RT_BYTE_ORDER (PSNIP_RT_BYTE_ORDER_IS_LE ? PSNIP_ENDIAN_LITTLE : PSNIP_ENDIAN_BIG)
 
 #define PSNIP_ENDIAN__DEFINE_LE_FUNC(siz) \
-  static PSNIP_ENDIAN_INLINE \
+  static PSNIP_ENDIAN__FUNCTION \
   psnip_uint##siz##_t psnip_endian_le##siz(psnip_uint##siz##_t v) { \
     return PSNIP_RT_BYTE_ORDER_IS_LE ? v : psnip_builtin_bswap##siz(v); \
   }
 
 #define PSNIP_ENDIAN__DEFINE_BE_FUNC(siz) \
-  static PSNIP_ENDIAN_INLINE \
+  static PSNIP_ENDIAN__FUNCTION \
   psnip_uint##siz##_t psnip_endian_le##siz(psnip_uint##siz##_t v) { \
     return PSNIP_RT_BYTE_ORDER_IS_BE ? v : psnip_builtin_bswap##siz(v); \
   }
