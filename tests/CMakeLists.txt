@@ -6,6 +6,28 @@ enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
+if(ENABLE_OPENMP)
+  find_package(OpenMP REQUIRED)
+endif()
+
+include(CheckFunctionExists)
+check_function_exists(clock_gettime CLOCK_GETTIME_RES)
+if(CLOCK_GETTIME_RES)
+  set(CLOCK_GETTIME_EXISTS yes)
+else()
+  set(orig_req_libs "${CMAKE_REQUIRED_LIBRARIES}")
+  set(CMAKE_REQUIRED_LIBRARIES "${CMAKE_REQUIRED_LIBRARIES};rt")
+
+  check_function_exists(clock_gettime CLOCK_GETTIME_LIBRT_RES)
+  if(CLOCK_GETTIME_LIBRT_RES)
+    set(CLOCK_GETTIME_EXISTS yes)
+    set(CLOCK_GETTIME_LIBRARY "rt")
+  endif()
+
+  set(CMAKE_REQUIRED_LIBRARIES "${orig_req_libs}")
+  unset(orig_req_libs)
+endif()
+
 include (CheckCCompilerFlag)
 if(ENABLE_AGGRESSIVE_WARNINGS)
   if(MSVC)
@@ -81,24 +103,6 @@ if(ENABLE_AGGRESSIVE_WARNINGS)
   endforeach (flag)
 endif()
 
-include(CheckFunctionExists)
-check_function_exists(clock_gettime CLOCK_GETTIME_RES)
-if(CLOCK_GETTIME_RES)
-  set(CLOCK_GETTIME_EXISTS yes)
-else()
-  set(orig_req_libs "${CMAKE_REQUIRED_LIBRARIES}")
-  set(CMAKE_REQUIRED_LIBRARIES "${CMAKE_REQUIRED_LIBRARIES};rt")
-
-  check_function_exists(clock_gettime CLOCK_GETTIME_LIBRT_RES)
-  if(CLOCK_GETTIME_LIBRT_RES)
-    set(CLOCK_GETTIME_EXISTS yes)
-    set(CLOCK_GETTIME_LIBRARY "rt")
-  endif()
-
-  set(CMAKE_REQUIRED_LIBRARIES "${orig_req_libs}")
-  unset(orig_req_libs)
-endif()
-
 add_library(munit munit/munit.c)
 set_property(TARGET munit PROPERTY C_STANDARD "99")
 if("${CLOCK_GETTIME_EXISTS}")
@@ -135,7 +139,6 @@ psnip_add_tests(TARGET atomic
     atomic.c)
 
 if(ENABLE_OPENMP)
-  find_package(OpenMP REQUIRED)
   target_compile_options(atomic PRIVATE ${OpenMP_C_FLAGS})
 endif()
 
