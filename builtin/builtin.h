@@ -559,10 +559,10 @@ PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcountll, unsigned long long)
 /*** __builtin_clrsb ***/
 
 #define PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(f_n, clzfn, T) \
-  PSNIP_BUILTIN__FUNCTION                               \
+  PSNIP_BUILTIN__FUNCTION				    \
   int psnip_builtin_##f_n(T x) {                            \
     return (PSNIP_BUILTIN_UNLIKELY(x == -1) ?		    \
-	    (sizeof(x) * 8) :				    \
+	    ((int) sizeof(x) * 8) :			    \
 	    psnip_builtin_##clzfn((x < 0) ? ~x : x)) - 1;   \
   }
 
