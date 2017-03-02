@@ -22,22 +22,22 @@ test_atomic_int64(const MunitParameter params[], void* data) {
   v = v * v * v;
   psnip_atomic_int64_store(&value64, v);
   v = psnip_atomic_int64_load(&value64);
-  munit_assert_int64(value64, ==, 729);
+  munit_assert_int64(v, ==, 729);
 
   psnip_atomic_int64_add(&value64, 1000);
   v = psnip_atomic_int64_load(&value64);
-  munit_assert_int64(value64, ==, 1729);
+  munit_assert_int64(v, ==, 1729);
 
   psnip_atomic_int64_sub(&value64, 729);
   v = psnip_atomic_int64_load(&value64);
-  munit_assert_int64(value64, ==, 1000);
+  munit_assert_int64(v, ==, 1000);
 
   do {
     expected = psnip_atomic_int64_load(&value64);
     v = expected * expected;
   } while (!psnip_atomic_int64_compare_exchange(&value64, &expected, v));
   v = psnip_atomic_int64_load(&value64);
-  munit_assert_int64(value64, ==, 1000 * 1000);
+  munit_assert_int64(v, ==, 1000 * 1000);
 
   return MUNIT_OK;
 #else
@@ -59,22 +59,22 @@ test_atomic_int32(const MunitParameter params[], void* data) {
   v = v * v * v;
   psnip_atomic_int32_store(&value32, v);
   v = psnip_atomic_int32_load(&value32);
-  munit_assert_int32(value32, ==, 729);
+  munit_assert_int32(v, ==, 729);
 
   psnip_atomic_int32_add(&value32, 1000);
   v = psnip_atomic_int32_load(&value32);
-  munit_assert_int32(value32, ==, 1729);
+  munit_assert_int32(v, ==, 1729);
 
   psnip_atomic_int32_sub(&value32, 729);
   v = psnip_atomic_int32_load(&value32);
-  munit_assert_int32(value32, ==, 1000);
+  munit_assert_int32(v, ==, 1000);
 
   do {
     expected = psnip_atomic_int32_load(&value32);
     v = expected * expected;
   } while (!psnip_atomic_int32_compare_exchange(&value32, &expected, v));
   v = psnip_atomic_int32_load(&value32);
-  munit_assert_int32(value32, ==, 1000 * 1000);
+  munit_assert_int32(v, ==, 1000 * 1000);
 
   return MUNIT_OK;
 #else
