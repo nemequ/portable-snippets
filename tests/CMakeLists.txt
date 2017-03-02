@@ -81,14 +81,30 @@ if(ENABLE_AGGRESSIVE_WARNINGS)
   endforeach (flag)
 endif()
 
-add_library(munit munit/munit.c)
-find_package(ClockGettime)
-if(ClockGettime_FOUND)
-	set_property(TARGET munit
-		APPEND PROPERTY COMPILE_DEFINITIONS MUNIT_ALLOW_CLOCK_GETTIME)
-  target_link_libraries(munit ${ClockGettime_LIBRARIES})
+include(CheckFunctionExists)
+check_function_exists(clock_gettime CLOCK_GETTIME_RES)
+if(CLOCK_GETTIME_RES)
+  set(CLOCK_GETTIME_EXISTS yes)
+else()
+  set(orig_req_libs "${CMAKE_REQUIRED_LIBRARIES}")
+  set(CMAKE_REQUIRED_LIBRARIES "${CMAKE_REQUIRED_LIBRARIES};rt")
+
+  check_function_exists(clock_gettime CLOCK_GETTIME_LIBRT_RES)
+  if(CLOCK_GETTIME_LIBRT_RES)
+    set(CLOCK_GETTIME_EXISTS yes)
+    set(CLOCK_GETTIME_LIBRARY "rt")
+  endif()
+
+  set(CMAKE_REQUIRED_LIBRARIES "${orig_req_libs}")
+  unset(orig_req_libs)
 endif()
-set_property (TARGET munit PROPERTY C_STANDARD "99")
+
+add_library(munit munit/munit.c)
+set_property(TARGET munit PROPERTY C_STANDARD "99")
+if("${CLOCK_GETTIME_EXISTS}")
+  target_compile_definitions(munit PRIVATE "MUNIT_ALLOW_CLOCK_GETTIME")
+  target_link_libraries(munit "${CLOCK_GETTIME_LIBRARY}")
+endif()
 
 function(psnip_add_tests)
   set(options)
@@ -142,3 +158,9 @@ psnip_add_tests(TARGET unaligned
 psnip_add_tests(TARGET clock
   SOURCES
     clock.c)
+
+if("${CLOCK_GETTIME_EXISTS}")
+  target_link_libraries(clock "${CLOCK_GETTIME_LIBRARY}")
+else()
+  target_compile_definitions(clock PRIVATE "PSNIP_CLOCK_NO_LIBRT")
+endif()
