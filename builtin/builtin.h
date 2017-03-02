@@ -48,6 +48,7 @@
 #if defined(_MSC_VER)
 #  include <intrin.h>
 #endif
+#include <limits.h>
 
 #if defined(__i386) || defined(_M_IX86) || \
   defined(__amd64) || defined(_M_AMD64) || defined(__x86_64)
@@ -108,91 +109,81 @@
 #  define PSNIP_BUILTIN__FUNCTION PSNIP_BUILTIN__COMPILER_ATTRIBUTES static PSNIP_BUILTIN__INLINE
 #endif
 
-/* Many GCC-style builtins exist for int, long, and long long
-   variants, but *not* for exact sizes.  This tries to determine the
-   connect mapping of exact-width sizes to builtin suffixes ("", "l",
-   "ll") so we can provide 32- and 64-bit variants. */
-
-#include <limits.h>
-
-#define PSNIP_BUILTIN__CONCAT(a,b) a##b
-#define PSNIP_BUILTIN__GEN_NAME(name,suffix) psnip_builtin_##name##suffix
-
-/* Clang has some builtins that have "s" and "b" suffixes for short
-   and byte (?). */
-
-#if CHAR_MIN == (-127-1) && INT_MAX == 127
-#  define PSNIP_BUILTIN__CHAR_SIZE 8
-#  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,b)
-#elif SHRT_MIN == (-127-1) && INT_MAX == 127
-#  define PSNIP_BUILTIN__SHORT_SIZE 8
-#  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,s)
-#elif INT_MIN == (-127-1) && INT_MAX == 127
-#  define PSNIP_BUILTIN__INT_SIZE 8
-#  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,)
-#elif LONG_MIN == (-127-1) && LONG_MAX == 127
-#  define PSNIP_BUILTIN__LLONG_SIZE 8
-#  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
-#elif LLONG_MIN == (-127-1) && LLONG_MAX == 127
-#  define PSNIP_BUILTIN__LONG_SIZE 8
-#  define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,l)
-#endif
-
-#if CHAR_MIN == (-32767-1) && INT_MAX == 32767
-#  define PSNIP_BUILTIN__CHAR_SIZE 16
-#  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,b)
-#elif SHRT_MIN == (-32767-1) && INT_MAX == 32767
-#  define PSNIP_BUILTIN__SHORT_SIZE 16
-#  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,s)
-#elif INT_MIN == (-32767-1) && INT_MAX == 32767
-#  define PSNIP_BUILTIN__INT_SIZE 16
-#  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,)
-#elif LONG_MIN == (-32767-1) && LONG_MAX == 32767
-#  define PSNIP_BUILTIN__LLONG_SIZE 16
-#  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
-#elif LLONG_MIN == (-32767-1) && LLONG_MAX == 32767
-#  define PSNIP_BUILTIN__LONG_SIZE 16
-#  define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,l)
-#endif
-
-#if CHAR_MIN == (-2147483647-1) && INT_MAX == 2147483647
-#  define PSNIP_BUILTIN__CHAR_SIZE 32
-#  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,b)
-#elif SHRT_MIN == (-2147483647-1) && INT_MAX == 2147483647
-#  define PSNIP_BUILTIN__SHORT_SIZE 32
-#  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,s)
-#elif INT_MIN == (-2147483647-1) && INT_MAX == 2147483647
-#  define PSNIP_BUILTIN__INT_SIZE 32
-#  define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,)
-#  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,)
-#elif LONG_MIN == (-2147483647-1) && LONG_MAX == 2147483647
-#  define PSNIP_BUILTIN__LLONG_SIZE 32
-#  define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
-#  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
-#elif LLONG_MIN == (-2147483647-1) && LLONG_MAX == 2147483647
-#  define PSNIP_BUILTIN__LONG_SIZE 32
-#  define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,l)
-#  define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,l)
-#endif
-
-#if CHAR_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN_CHAR__SIZE 64
-#  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,b)
-#elif SHRT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__SHORT_SIZE 64
-#  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,s)
-#elif INT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__INT_SIZE 64
-#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,)
-#  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,)
-#elif LONG_MIN == (-9223372036854775807LL-1) && LONG_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__LLONG_SIZE 64
-#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
-#  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
-#elif LLONG_MIN == (-9223372036854775807LL-1) && LLONG_MAX == 9223372036854775807LL
-#  define PSNIP_BUILTIN__LONG_SIZE 64
-#  define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,l)
-#  define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,l)
+#if (__GNUC__ > 3 || (3 == __GNUC__ && __GNUC_MINOR__ >= 1))
+#  define PSNIP_BUILTIN__CHOOSE_VARIANT(prefix,name,type) __builtin_choose_expr(__builtin_types_compatible_p(long long, type), prefix##_builtin_##name##l, __builtin_choose_expr(__builtin_types_compatible_p(unsigned long long, type), prefix##_builtin_##name##l, __builtin_choose_expr(__builtin_types_compatible_p(long, type), prefix##_builtin_##name##l, __builtin_choose_expr(__builtin_types_compatible_p(unsigned long, type), prefix##_builtin_##name##l, __builtin_choose_expr(__builtin_types_compatible_p(int, type), prefix##_builtin_##name, __builtin_choose_expr(__builtin_types_compatible_p(unsigned int, type), prefix##_builtin_##name, (void)0))))))
+#define PSNIP_BUILTIN__CHOOSE_VARIANT2(prefix,name,type) __builtin_choose_expr(__builtin_types_compatible_p(long long, type), prefix##_builtin_##name##l, __builtin_choose_expr(__builtin_types_compatible_p(unsigned long long, type), prefix##_builtin_##name##l, __builtin_choose_expr(__builtin_types_compatible_p(long, type), prefix##_builtin_##name##l, __builtin_choose_expr(__builtin_types_compatible_p(unsigned long, type), prefix##_builtin_##name##l, __builtin_choose_expr(__builtin_types_compatible_p(int, type), prefix##_builtin_##name, __builtin_choose_expr(__builtin_types_compatible_p(unsigned int, type), prefix##_builtin_##name, __builtin_choose_expr(__builtin_types_compatible_p(short, type), prefix##_builtin_##name##s, __builtin_choose_expr(__builtin_types_compatible_p(unsigned short, type), prefix##_builtin_##name##s, __builtin_choose_expr(__builtin_types_compatible_p(char, type), prefix##_builtin_##name##b, __builtin_choose_expr(__builtin_types_compatible_p(unsigned char, type), prefix##_builtin_##name##b, (void)0))))))))))
+#else
+#  define PSNIP_BUILTIN__GEN_NAME(name,suffix) psnip_builtin_##name##suffix
+#  if CHAR_MIN == (-127-1) && INT_MAX == 127
+#    define PSNIP_BUILTIN__CHAR_SIZE 8
+#    define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,b)
+#  elif SHRT_MIN == (-127-1) && INT_MAX == 127
+#    define PSNIP_BUILTIN__SHORT_SIZE 8
+#    define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,s)
+#  elif INT_MIN == (-127-1) && INT_MAX == 127
+#    define PSNIP_BUILTIN__INT_SIZE 8
+#    define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,)
+#  elif LONG_MIN == (-127-1) && LONG_MAX == 127
+#    define PSNIP_BUILTIN__LONG_SIZE 8
+#    define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,l)
+#  elif LLONG_MIN == (-127-1) && LLONG_MAX == 127
+#    define PSNIP_BUILTIN__LLONG_SIZE 8
+#    define PSNIP_BUILTIN__VARIANT2_8(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
+#  endif
+#  if CHAR_MIN == (-32767-1) && INT_MAX == 32767
+#    define PSNIP_BUILTIN__CHAR_SIZE 16
+#    define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,b)
+#  elif SHRT_MIN == (-32767-1) && INT_MAX == 32767
+#    define PSNIP_BUILTIN__SHORT_SIZE 16
+#    define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,s)
+#  elif INT_MIN == (-32767-1) && INT_MAX == 32767
+#    define PSNIP_BUILTIN__INT_SIZE 16
+#    define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,)
+#  elif LONG_MIN == (-32767-1) && LONG_MAX == 32767
+#    define PSNIP_BUILTIN__LONG_SIZE 16
+#    define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,l)
+#  elif LLONG_MIN == (-32767-1) && LLONG_MAX == 32767
+#    define PSNIP_BUILTIN__LLONG_SIZE 16
+#    define PSNIP_BUILTIN__VARIANT2_16(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
+#  endif
+#  if CHAR_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#    define PSNIP_BUILTIN__CHAR_SIZE 32
+#    define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,b)
+#  elif SHRT_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#    define PSNIP_BUILTIN__SHORT_SIZE 32
+#    define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,s)
+#  elif INT_MIN == (-2147483647-1) && INT_MAX == 2147483647
+#    define PSNIP_BUILTIN__INT_SIZE 32
+#    define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,)
+#    define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,)
+#  elif LONG_MIN == (-2147483647-1) && LONG_MAX == 2147483647
+#    define PSNIP_BUILTIN__LLONG_SIZE 32
+#    define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,l)
+#    define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,l)
+#  elif LLONG_MIN == (-2147483647-1) && LLONG_MAX == 2147483647
+#    define PSNIP_BUILTIN__VARIANT_32(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
+#    define PSNIP_BUILTIN__VARIANT2_32(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
+#    define PSNIP_BUILTIN__LONG_SIZE 32
+#  endif
+#  if CHAR_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#    define PSNIP_BUILTIN_CHAR__SIZE 64
+#    define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,b)
+#  elif SHRT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#    define PSNIP_BUILTIN__SHORT_SIZE 64
+#    define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,s)
+#  elif INT_MIN == (-9223372036854775807LL-1) && INT_MAX == 9223372036854775807LL
+#    define PSNIP_BUILTIN__INT_SIZE 64
+#    define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,)
+#    define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,)
+#  elif LONG_MIN == (-9223372036854775807LL-1) && LONG_MAX == 9223372036854775807LL
+#    define PSNIP_BUILTIN__LONG_SIZE 64
+#    define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,l)
+#    define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,l)
+#  elif LLONG_MIN == (-9223372036854775807LL-1) && LLONG_MAX == 9223372036854775807LL
+#    define PSNIP_BUILTIN__LLONG_SIZE 64
+#    define PSNIP_BUILTIN__VARIANT_64(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
+#    define PSNIP_BUILTIN__VARIANT2_64(name) PSNIP_BUILTIN__GEN_NAME(name,ll)
+#  endif
 #endif
 
 /******
@@ -285,17 +276,35 @@ PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffsll, long long)
 #  endif
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_32)
-#  define psnip_builtin_ffs32(x) (PSNIP_BUILTIN__VARIANT_32(ffs)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_ffs)
+#    define psnip_builtin_ffs32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,ffs,psnip_int32_t)(x)
+#  else
+#    define psnip_builtin_ffs32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,ffs,psnip_int32_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_ffs32(x) PSNIP_BUILTIN__VARIANT_32(ffs)(x)
 #else
-  PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffs32, psnip_int32_t)
+PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffs32, psnip_int32_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_64)
-#  define psnip_builtin_ffs64(x) (PSNIP_BUILTIN__VARIANT_64(ffs)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_ffs)
+#    define psnip_builtin_ffs64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,ffs,psnip_int64_t)(x)
+#  else
+#    define psnip_builtin_ffs64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,ffs,psnip_int64_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_ffs64(x) PSNIP_BUILTIN__VARIANT_64(ffs)(x)
 #else
-  PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffs64, psnip_int64_t)
+PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffs64, psnip_int64_t)
 #endif
+
+/* #if !defined(psnip_builtin_ffs64) && defined(PSNIP_BUILTIN__VARIANT_64) */
+/* #  define psnip_builtin_ffs64(x) (PSNIP_BUILTIN__VARIANT_64(ffs)(x)) */
+/* #else */
+/*   PSNIP_BUILTIN__FFS_DEFINE_PORTABLE(ffs64, psnip_int64_t) */
+/* #endif */
 
 /*** __builtin_clz ***/
 
@@ -386,16 +395,28 @@ PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clzll, unsigned long long)
 #endif
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_32)
-#  define psnip_builtin_clz32(x) (PSNIP_BUILTIN__VARIANT_32(clz)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_clz)
+#    define psnip_builtin_clz32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,clz,psnip_uint32_t)(x)
+#  else
+#    define psnip_builtin_clz32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,clz,psnip_uint32_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_clz32(x) PSNIP_BUILTIN__VARIANT_32(clz)(x)
 #else
-  PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clz32, psnip_uint32_t)
+PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clz32, psnip_uint32_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_64)
-#  define psnip_builtin_clz64(x) (PSNIP_BUILTIN__VARIANT_64(clz)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_clz)
+#    define psnip_builtin_clz64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,clz,psnip_uint64_t)(x)
+#  else
+#    define psnip_builtin_clz64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,clz,psnip_uint64_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_clz64(x) PSNIP_BUILTIN__VARIANT_64(clz)(x)
 #else
-  PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clz64, psnip_uint64_t)
+PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clz64, psnip_uint64_t)
 #endif
 
 /*** __builtin_ctz ***/
@@ -448,16 +469,28 @@ PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctzll, unsigned long long)
 #  endif
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_32)
-#  define psnip_builtin_ctz32(x) (PSNIP_BUILTIN__VARIANT_32(ctz)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_ctz)
+#    define psnip_builtin_ctz32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,ctz,psnip_uint32_t)(x)
+#  else
+#    define psnip_builtin_ctz32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,ctz,psnip_uint32_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_ctz32(x) PSNIP_BUILTIN__VARIANT_32(ctz)(x)
 #else
-  PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctz32, psnip_uint32_t)
+PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctz32, psnip_uint32_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_64)
-#  define psnip_builtin_ctz64(x) (PSNIP_BUILTIN__VARIANT_64(ctz)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_ctz)
+#    define psnip_builtin_ctz64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,ctz,psnip_uint64_t)(x)
+#  else
+#    define psnip_builtin_ctz64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,ctz,psnip_uint64_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_ctz64(x) PSNIP_BUILTIN__VARIANT_64(ctz)(x)
 #else
-  PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctz64, psnip_uint64_t)
+PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctz64, psnip_uint64_t)
 #endif
 
 /*** __builtin_parity ***/
@@ -506,22 +539,34 @@ PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(parityll, unsigned long long)
 #  endif
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_32)
-#  define psnip_builtin_parity32(x) (PSNIP_BUILTIN__VARIANT_32(parity)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_parity)
+#    define psnip_builtin_parity32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,parity,psnip_uint32_t)(x)
+#  else
+#    define psnip_builtin_parity32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,parity,psnip_uint32_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_parity32(x) PSNIP_BUILTIN__VARIANT_32(parity)(x)
 #else
-  PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(parity32, psnip_uint32_t)
+PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(parity32, psnip_uint32_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_64)
-#  define psnip_builtin_parity64(x) (PSNIP_BUILTIN__VARIANT_64(parity)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_parity)
+#    define psnip_builtin_parity64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,parity,psnip_uint64_t)(x)
+#  else
+#    define psnip_builtin_parity64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,parity,psnip_uint64_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_parity64(x) PSNIP_BUILTIN__VARIANT_64(parity)(x)
 #else
-  PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(parity64, psnip_uint64_t)
+PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(parity64, psnip_uint64_t)
 #endif
 
 /*** __builtin_popcount ***/
 
 #define PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(f_n, T)	    \
-  PSNIP_BUILTIN__FUNCTION                               \
+  PSNIP_BUILTIN__FUNCTION				    \
   int psnip_builtin_##f_n(T x) {                            \
     x = x - ((x >> 1) & (T)~(T)0/3);                        \
     x = (x & (T)~(T)0/15*3) + ((x >> 2) & (T)~(T)0/15*3);   \
@@ -544,16 +589,28 @@ PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcountll, unsigned long long)
 #  endif
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_32)
-#  define psnip_builtin_popcount32(x) (PSNIP_BUILTIN__VARIANT_32(popcount)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_popcount)
+#    define psnip_builtin_popcount32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,popcount,psnip_uint32_t)(x)
+#  else
+#    define psnip_builtin_popcount32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,popcount,psnip_uint32_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_popcount32(x) PSNIP_BUILTIN__VARIANT_32(popcount)(x)
 #else
-  PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcount32, psnip_uint32_t)
+PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcount32, psnip_uint32_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_64)
-#  define psnip_builtin_popcount64(x) (PSNIP_BUILTIN__VARIANT_64(popcount)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_popcount)
+#    define psnip_builtin_popcount64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,popcount,psnip_uint64_t)(x)
+#  else
+#    define psnip_builtin_popcount64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,popcount,psnip_uint64_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_popcount64(x) PSNIP_BUILTIN__VARIANT_64(popcount)(x)
 #else
-  PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcount64, psnip_uint64_t)
+PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcount64, psnip_uint64_t)
 #endif
 
 /*** __builtin_clrsb ***/
@@ -581,16 +638,28 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
 #  endif
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_32)
-#  define psnip_builtin_clrsb32(x) (PSNIP_BUILTIN__VARIANT_32(clrsb)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_clrsb)
+#    define psnip_builtin_clrsb32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,clrsb,psnip_int32_t)(x)
+#  else
+#    define psnip_builtin_clrsb32(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,clrsb,psnip_int32_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_clrsb32(x) PSNIP_BUILTIN__VARIANT_32(clrsb)(x)
 #else
-  PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsb32, clz32, psnip_int32_t)
+PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsb32, psnip_int32_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT_64)
-#  define psnip_builtin_clrsb64(x) (PSNIP_BUILTIN__VARIANT_64(clrsb)(x))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT)
+#  if defined(psnip_builtin_clrsb)
+#    define psnip_builtin_clrsb64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(_,clrsb,psnip_int64_t)(x)
+#  else
+#    define psnip_builtin_clrsb64(x) PSNIP_BUILTIN__CHOOSE_VARIANT(psnip,clrsb,psnip_int64_t)(x)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_clrsb64(x) PSNIP_BUILTIN__VARIANT_64(clrsb)(x)
 #else
-  PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsb64, clz64, psnip_int64_t)
+PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsb64, psnip_int64_t)
 #endif
 
 /*** __builtin_bitreverse ***/
@@ -663,26 +732,50 @@ PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addcll, unsigned long long)
 #  endif
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT2_8)
-#  define psnip_builtin_addc8(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_8(addc)(x, y, ci, co))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
+#  if defined(psnip_builtin_addc)
+#    define psnip_builtin_addc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint8_t)(x, y, ci, co)
+#  else
+#    define psnip_builtin_addc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint8_t)(x, y, ci, co)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_8)
+#  define psnip_builtin_addc8(x, y, ci, co) PSNIP_BUILTIN__VARIANT_8(addc)(x, y, ci, co)
 #else
 PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc8, psnip_uint8_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT2_16)
-#  define psnip_builtin_addc16(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_16(addc)(x, y, ci, co))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
+#  if defined(psnip_builtin_addc)
+#    define psnip_builtin_addc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint16_t)(x, y, ci, co)
+#  else
+#    define psnip_builtin_addc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint16_t)(x, y, ci, co)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_16)
+#  define psnip_builtin_addc16(x, y, ci, co) PSNIP_BUILTIN__VARIANT_16(addc)(x, y, ci, co)
 #else
 PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc16, psnip_uint16_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT2_32)
-#  define psnip_builtin_addc32(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_32(addc)(x, y, ci, co))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
+#  if defined(psnip_builtin_addc)
+#    define psnip_builtin_addc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint32_t)(x, y, ci, co)
+#  else
+#    define psnip_builtin_addc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint32_t)(x, y, ci, co)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_addc32(x, y, ci, co) PSNIP_BUILTIN__VARIANT_32(addc)(x, y, ci, co)
 #else
 PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc32, psnip_uint32_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT2_64)
-#  define psnip_builtin_addc64(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_64(addc)(x, y, ci, co))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
+#  if defined(psnip_builtin_addc)
+#    define psnip_builtin_addc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint64_t)(x, y, ci, co)
+#  else
+#    define psnip_builtin_addc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint64_t)(x, y, ci, co)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_addc64(x, y, ci, co) PSNIP_BUILTIN__VARIANT_64(addc)(x, y, ci, co)
 #else
 PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc64, psnip_uint64_t)
 #endif
@@ -723,26 +816,50 @@ PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subcll, unsigned long long)
 #  endif
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT2_8)
-#  define psnip_builtin_subc8(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_8(subc)(x, y, ci, co))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
+#  if defined(psnip_builtin_subc)
+#    define psnip_builtin_subc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint8_t)(x, y, ci, co)
+#  else
+#    define psnip_builtin_subc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint8_t)(x, y, ci, co)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_8)
+#  define psnip_builtin_subc8(x, y, ci, co) PSNIP_BUILTIN__VARIANT_8(subc)(x, y, ci, co)
 #else
 PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc8, psnip_uint8_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT2_16)
-#  define psnip_builtin_subc16(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_16(subc)(x, y, ci, co))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
+#  if defined(psnip_builtin_subc)
+#    define psnip_builtin_subc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint16_t)(x, y, ci, co)
+#  else
+#    define psnip_builtin_subc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint16_t)(x, y, ci, co)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_16)
+#  define psnip_builtin_subc16(x, y, ci, co) PSNIP_BUILTIN__VARIANT_16(subc)(x, y, ci, co)
 #else
 PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc16, psnip_uint16_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT2_32)
-#  define psnip_builtin_subc32(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_32(subc)(x, y, ci, co))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
+#  if defined(psnip_builtin_subc)
+#    define psnip_builtin_subc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint32_t)(x, y, ci, co)
+#  else
+#    define psnip_builtin_subc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint32_t)(x, y, ci, co)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_32)
+#  define psnip_builtin_subc32(x, y, ci, co) PSNIP_BUILTIN__VARIANT_32(subc)(x, y, ci, co)
 #else
 PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc32, psnip_uint32_t)
 #endif
 
-#if defined(PSNIP_BUILTIN__VARIANT2_64)
-#  define psnip_builtin_subc64(x, y, ci, co) (PSNIP_BUILTIN__VARIANT2_64(subc)(x, y, ci, co))
+#if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
+#  if defined(psnip_builtin_subc)
+#    define psnip_builtin_subc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint64_t)(x, y, ci, co)
+#  else
+#    define psnip_builtin_subc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint64_t)(x, y, ci, co)
+#  endif
+#elif defined(PSNIP_BUILTIN__VARIANT_64)
+#  define psnip_builtin_subc64(x, y, ci, co) PSNIP_BUILTIN__VARIANT_64(subc)(x, y, ci, co)
 #else
 PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc64, psnip_uint64_t)
 #endif
