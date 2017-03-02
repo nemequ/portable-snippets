@@ -103,8 +103,8 @@ struct PsnipClockTimespec {
 #endif
 
 #if defined(__MACH__)
-#  if !defined(PSNIP_CLOCK_WALL_METHOD)
-#    PSNIP_CLOCK_MONOTONIC_METHOD PSNIP_CLOCK_METHOD_MACH_ABSOLUTE_TIME
+#  if !defined(PSNIP_CLOCK_MONOTONIC_METHOD)
+#    define PSNIP_CLOCK_MONOTONIC_METHOD PSNIP_CLOCK_METHOD_MACH_ABSOLUTE_TIME
 #  endif
 #endif
 
@@ -342,6 +342,11 @@ psnip_clock_monotonic_get_precision (void) {
   return 0;
 #elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
   return psnip_clock__clock_getres(PSNIP_CLOCK_CLOCK_GETTIME_MONOTONIC);
+#elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_MACH_ABSOLUTE_TIME
+  static mach_timebase_info_data_t tbi = { 0, };
+  if (tbi.denom == 0)
+    mach_timebase_info(&tbi);
+  return (psnip_uint32_t) (tbi.numer / tbi.denom);
 #elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_GETTICKCOUNT64
   return 1000;
 #elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_QUERYPERFORMANCECOUNTER
@@ -363,7 +368,6 @@ psnip_clock_monotonic_get_time (struct PsnipClockTimespec* res) {
   return psnip_clock__clock_gettime(PSNIP_CLOCK_CLOCK_GETTIME_MONOTONIC, res);
 #elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_MACH_ABSOLUTE_TIME
   psnip_uint64_t nsec = mach_absolute_time();
-  static psnip_uint64_t multiplier = 0;
   static mach_timebase_info_data_t tbi = { 0, };
   if (tbi.denom == 0)
     mach_timebase_info(&tbi);
