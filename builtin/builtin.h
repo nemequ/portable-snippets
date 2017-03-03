@@ -734,9 +734,9 @@ PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addcll, unsigned long long)
 
 #if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
 #  if defined(psnip_builtin_addc)
-#    define psnip_builtin_addc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint8_t)(x, y, ci, co)
+#    define psnip_builtin_addc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint8_t)(x, y, ci, (void*) co)
 #  else
-#    define psnip_builtin_addc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint8_t)(x, y, ci, co)
+#    define psnip_builtin_addc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint8_t)(x, y, ci, (void*) co)
 #  endif
 #elif defined(PSNIP_BUILTIN__VARIANT_8)
 #  define psnip_builtin_addc8(x, y, ci, co) PSNIP_BUILTIN__VARIANT_8(addc)(x, y, ci, co)
@@ -746,9 +746,9 @@ PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc8, psnip_uint8_t)
 
 #if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
 #  if defined(psnip_builtin_addc)
-#    define psnip_builtin_addc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint16_t)(x, y, ci, co)
+#    define psnip_builtin_addc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint16_t)(x, y, ci, (void*) co)
 #  else
-#    define psnip_builtin_addc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint16_t)(x, y, ci, co)
+#    define psnip_builtin_addc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint16_t)(x, y, ci, (void*) co)
 #  endif
 #elif defined(PSNIP_BUILTIN__VARIANT_16)
 #  define psnip_builtin_addc16(x, y, ci, co) PSNIP_BUILTIN__VARIANT_16(addc)(x, y, ci, co)
@@ -758,9 +758,9 @@ PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc16, psnip_uint16_t)
 
 #if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
 #  if defined(psnip_builtin_addc)
-#    define psnip_builtin_addc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint32_t)(x, y, ci, co)
+#    define psnip_builtin_addc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint32_t)(x, y, ci, (void*) co)
 #  else
-#    define psnip_builtin_addc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint32_t)(x, y, ci, co)
+#    define psnip_builtin_addc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint32_t)(x, y, ci, (void*) co)
 #  endif
 #elif defined(PSNIP_BUILTIN__VARIANT_32)
 #  define psnip_builtin_addc32(x, y, ci, co) PSNIP_BUILTIN__VARIANT_32(addc)(x, y, ci, co)
@@ -770,9 +770,9 @@ PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addc32, psnip_uint32_t)
 
 #if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
 #  if defined(psnip_builtin_addc)
-#    define psnip_builtin_addc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint64_t)(x, y, ci, co)
+#    define psnip_builtin_addc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,addc,psnip_uint64_t)(x, y, ci, (void*) co)
 #  else
-#    define psnip_builtin_addc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint64_t)(x, y, ci, co)
+#    define psnip_builtin_addc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,addc,psnip_uint64_t)(x, y, ci, (void*) co)
 #  endif
 #elif defined(PSNIP_BUILTIN__VARIANT_64)
 #  define psnip_builtin_addc64(x, y, ci, co) PSNIP_BUILTIN__VARIANT_64(addc)(x, y, ci, co)
@@ -818,9 +818,9 @@ PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subcll, unsigned long long)
 
 #if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
 #  if defined(psnip_builtin_subc)
-#    define psnip_builtin_subc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint8_t)(x, y, ci, co)
+#    define psnip_builtin_subc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint8_t)(x, y, ci, (void*) co)
 #  else
-#    define psnip_builtin_subc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint8_t)(x, y, ci, co)
+#    define psnip_builtin_subc8(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint8_t)(x, y, ci, (void*) co)
 #  endif
 #elif defined(PSNIP_BUILTIN__VARIANT_8)
 #  define psnip_builtin_subc8(x, y, ci, co) PSNIP_BUILTIN__VARIANT_8(subc)(x, y, ci, co)
@@ -830,9 +830,9 @@ PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc8, psnip_uint8_t)
 
 #if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
 #  if defined(psnip_builtin_subc)
-#    define psnip_builtin_subc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint16_t)(x, y, ci, co)
+#    define psnip_builtin_subc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint16_t)(x, y, ci, (void*) co)
 #  else
-#    define psnip_builtin_subc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint16_t)(x, y, ci, co)
+#    define psnip_builtin_subc16(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint16_t)(x, y, ci, (void*) co)
 #  endif
 #elif defined(PSNIP_BUILTIN__VARIANT_16)
 #  define psnip_builtin_subc16(x, y, ci, co) PSNIP_BUILTIN__VARIANT_16(subc)(x, y, ci, co)
@@ -842,9 +842,9 @@ PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc16, psnip_uint16_t)
 
 #if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
 #  if defined(psnip_builtin_subc)
-#    define psnip_builtin_subc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint32_t)(x, y, ci, co)
+#    define psnip_builtin_subc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint32_t)(x, y, ci, (void*) co)
 #  else
-#    define psnip_builtin_subc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint32_t)(x, y, ci, co)
+#    define psnip_builtin_subc32(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint32_t)(x, y, ci, (void*) co)
 #  endif
 #elif defined(PSNIP_BUILTIN__VARIANT_32)
 #  define psnip_builtin_subc32(x, y, ci, co) PSNIP_BUILTIN__VARIANT_32(subc)(x, y, ci, co)
@@ -854,9 +854,9 @@ PSNIP_BUILTIN__SUBC_DEFINE_PORTABLE(subc32, psnip_uint32_t)
 
 #if defined(PSNIP_BUILTIN__CHOOSE_VARIANT2)
 #  if defined(psnip_builtin_subc)
-#    define psnip_builtin_subc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint64_t)(x, y, ci, co)
+#    define psnip_builtin_subc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(_,subc,psnip_uint64_t)(x, y, ci, (void*) co)
 #  else
-#    define psnip_builtin_subc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint64_t)(x, y, ci, co)
+#    define psnip_builtin_subc64(x, y, ci, co) PSNIP_BUILTIN__CHOOSE_VARIANT2(psnip,subc,psnip_uint64_t)(x, y, ci, (void*) co)
 #  endif
 #elif defined(PSNIP_BUILTIN__VARIANT_64)
 #  define psnip_builtin_subc64(x, y, ci, co) PSNIP_BUILTIN__VARIANT_64(subc)(x, y, ci, co)
