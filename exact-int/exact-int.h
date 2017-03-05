@@ -40,7 +40,19 @@
 #      define PSNIP_EXACT_INT_HAVE_STDINT
 #    endif
 #  endif
-#  if defined(PSNIP_EXACT_INT_HAVE_STDINT)
+
+#  if \
+  defined(__INT8_TYPE__) && defined(__INT16_TYPE__) && defined(__INT32_TYPE__) && defined(__INT64_TYPE__) && \
+  defined(__UINT8_TYPE__) && defined(__UINT16_TYPE__) && defined(__UINT32_TYPE__) && defined(__UINT64_TYPE__)
+#    define psnip_int8_t   __INT8_TYPE__
+#    define psnip_int16_t  __INT16_TYPE__
+#    define psnip_int32_t  __INT32_TYPE__
+#    define psnip_int64_t  __INT64_TYPE__
+#    define psnip_uint8_t  __UINT8_TYPE__
+#    define psnip_uint16_t __UINT16_TYPE__
+#    define psnip_uint32_t __UINT32_TYPE__
+#    define psnip_uint64_t __UINT64_TYPE__
+#  elif defined(PSNIP_EXACT_INT_HAVE_STDINT)
 #    include <stdint.h>
 #    if !defined(psnip_int8_t)
 #      define psnip_int8_t int8_t
