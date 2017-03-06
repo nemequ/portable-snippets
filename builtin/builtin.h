@@ -930,6 +930,7 @@ PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr64, psnip_uint64_t, int)
 /*** _BitScanForward ***/
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward, 14, 0)
+#  pragma intrinsic(_BitScanForward)
 #  define psnip_intrin_BitScanForward(Index, Mask) _BitScanForward(Index, Mask)
 #else
 PSNIP_BUILTIN__FUNCTION
@@ -943,6 +944,7 @@ unsigned char psnip_intrin_BitScanForward(unsigned long* Index, unsigned long Ma
 #endif
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward64, 14, 0) && (defined(_M_AMD64) || defined(_M_ARM))
+#  pragma intrinsic(_BitScanForward64)
 #  define psnip_intrin_BitScanForward64(Index, Mask) _BitScanForward64(Index, Mask)
 #else
 PSNIP_BUILTIN__FUNCTION
@@ -958,6 +960,7 @@ unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_uint64_t
 /*** _BitScanReverse ***/
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanReverse, 14, 0)
+#  pragma intrinsic(_BitScanReverse)
 #  define psnip_intrin_BitScanReverse(Index, Mask) _BitScanReverse(Index, Mask)
 #else
 PSNIP_BUILTIN__FUNCTION
@@ -971,6 +974,7 @@ unsigned char psnip_intrin_BitScanReverse(unsigned long* Index, unsigned long Ma
 #endif
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanReverse64, 14, 0) && (defined(_M_AMD64) || defined(_M_ARM))
+#  pragma intrinsic(_BitScanReverse64)
 #  define psnip_intrin_BitScanReverse64(Index, Mask) _BitScanReverse64(Index, Mask)
 #else
 PSNIP_BUILTIN__FUNCTION
@@ -986,6 +990,7 @@ unsigned char psnip_intrin_BitScanReverse64(unsigned long* Index, psnip_uint64_t
 /*** bittest ***/
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittest, 14, 0)
+#  pragma intrinsic(_bittest)
 #  define psnip_intrin_bittest(a, b) _bittest(a, b)
 #else
 #  define psnip_intrin_bittest(a, b) (((*(a)) >> (b)) & 1)
@@ -995,6 +1000,7 @@ unsigned char psnip_intrin_BitScanReverse64(unsigned long* Index, psnip_uint64_t
 #endif
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittest64, 14, 0) && (defined(_M_AMD64) || defined(_M_ARM))
+#  pragma intrinsic(_bittest64)
 #  define psnip_intrin_bittest64(a, b) _bittest64(a, b)
 #else
 #  define psnip_intrin_bittest64(a, b) (((*(a)) >> (b)) & 1)
@@ -1014,6 +1020,7 @@ unsigned char psnip_intrin_BitScanReverse64(unsigned long* Index, psnip_uint64_t
   }
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandcomplement, 14, 0)
+#  pragma intrinsic(_bittestandcomplement)
 #  define psnip_intrin_bittestandcomplement(a, b) _bittestandcomplement(a, b)
 #else
 PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement, long, unsigned long)
@@ -1042,6 +1049,7 @@ PSNIP_BUILTIN__BITTESTANDCOMPLEMENT_DEFINE_PORTABLE(bittestandcomplement64, psni
   }
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandreset, 14, 0)
+#  pragma intrinsic(_bittestandreset)
 #  define psnip_intrin_bittestandreset(a, b) _bittestandreset(a, b)
 #else
 PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset, long, unsigned long)
@@ -1051,6 +1059,7 @@ PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset, long, unsigned l
 #endif
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandreset64, 14, 0) && (defined(_M_AMD64) || defined(_M_IA64))
+#  pragma intrinsic(_bittestandreset64)
 #  define psnip_intrin_bittestandreset64(a, b) _bittestandreset64(a, b)
 #else
 PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset64, psnip_int64_t, psnip_uint64_t)
@@ -1070,6 +1079,7 @@ PSNIP_BUILTIN__BITTESTANDRESET_DEFINE_PORTABLE(bittestandreset64, psnip_int64_t,
   }
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandset, 14, 0)
+#  pragma intrinsic(_bittestandset)
 #  define psnip_intrin_bittestandset(a, b) _bittestandset(a, b)
 #else
 PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset, long, unsigned long)
@@ -1079,6 +1089,7 @@ PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset, long, unsigned long)
 #endif
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_bittestandset64, 14, 0) && defined(_M_AMD64)
+#  pragma intrinsic(_bittestandset64)
 #  define psnip_intrin_bittestandset64(a, b) _bittestandset64(a, b)
 #else
 PSNIP_BUILTIN__BITTESTANDSET_DEFINE_PORTABLE(bittestandset64, psnip_int64_t, psnip_uint64_t)
@@ -1148,8 +1159,11 @@ psnip_uint64_t psnip_intrin_shiftright128(psnip_uint64_t LowPart, psnip_uint64_t
 /*** byteswap ***/
 
 #if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_byteswap_ushort,13,10)
+#  pragma intrinsic(_byteswap_ushort)
 #  define psnip_intrin_byteswap_ushort(v) _byteswap_ushort(v)
+#  pragma intrinsic(_byteswap_ulong)
 #  define psnip_intrin_byteswap_ulong(v)  _byteswap_ulong(v)
+#  pragma intrinsic(_byteswap_uint64)
 #  define psnip_intrin_byteswap_uint64(v) _byteswap_uint64(v)
 #else
 #  define psnip_intrin_byteswap_ushort(v) psnip_builtin_bswap16(v)
