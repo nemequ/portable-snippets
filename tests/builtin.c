@@ -28,24 +28,6 @@ test_gnu_ffs(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_ffs_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  int v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  /* Unset a random number of the least significant bits, otherwise
-     we're heavily biased towards low results. */
-  v &= (int) (~0U << munit_rand_int_range(0, (sizeof(v) * 8) - 1));
-
-  munit_assert_int(psnip_builtin_ffs(v), ==, __builtin_ffs(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_ffsl(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -59,24 +41,6 @@ test_gnu_ffsl(const MunitParameter params[], void* data) {
     v <<= 1;
     expected += 1;
   } while (v != 0);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_ffsl_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  long v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  /* Unset a random number of the least significant bits, otherwise
-     we're heavily biased towards low results. */
-  v &= (long) (~0UL << munit_rand_int_range(0, (sizeof(v) * 8) - 1));
-
-  munit_assert_int(psnip_builtin_ffsl(v), ==, __builtin_ffsl(v));
 
   return MUNIT_OK;
 }
@@ -100,24 +64,6 @@ test_gnu_ffsll(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_ffsll_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  long long v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  /* Unset a random number of the least significant bits, otherwise
-     we're heavily biased towards low results. */
-  v &= (long long) (~0ULL << munit_rand_int_range(0, (sizeof(v) * 8) - 1));
-
-  munit_assert_int(psnip_builtin_ffsll(v), ==, __builtin_ffsll(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_clz(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -131,30 +77,6 @@ test_gnu_clz(const MunitParameter params[], void* data) {
     v >>= 1;
     expected += 1;
   } while (v != 0);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_clz_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned int v;
-
-  /* __builtin_clz(0) is undefined, so make sure we don't test it.
-   * That said, here it returns 1 less than the number of bits in the
-   * number. */
-  do {
-    munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-    /* Unset a random number of the most significant bits, otherwise
-       we're heavily biased towards low results. */
-    const unsigned int m = (~0U) >> munit_rand_int_range(0, (sizeof(v) * 8) - 1);
-    v &= m;
-  } while (v == 0);
-
-  munit_assert_int(psnip_builtin_clz(v), ==, __builtin_clz(v));
 
   return MUNIT_OK;
 }
@@ -178,30 +100,6 @@ test_gnu_clzl(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_clzl_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long v;
-
-  /* __builtin_clzl(0) is undefined, so make sure we don't test it.
-   * That said, here it returns 1 less than the number of bits in the
-   * number. */
-  do {
-    munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-    /* Unset a random number of the most significant bits, otherwise
-       we're heavily biased towards low results. */
-    const unsigned long m = (~0UL) >> munit_rand_int_range(0, (sizeof(v) * 8) - 1);
-    v &= m;
-  } while (v == 0);
-
-  munit_assert_int(psnip_builtin_clzl(v), ==, __builtin_clzl(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_clzll(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -215,30 +113,6 @@ test_gnu_clzll(const MunitParameter params[], void* data) {
     v >>= 1;
     expected += 1;
   } while (v != 0);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_clzll_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long long v;
-
-  /* __builtin_clzll(0) is undefined, so make sure we don't test it.
-   * That said, here it returns 1 less than the number of bits in the
-   * number. */
-  do {
-    munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-    /* Unset a random number of the most significant bits, otherwise
-       we're heavily biased towards low results. */
-    const unsigned long long m = (~0ULL) >> munit_rand_int_range(0, (sizeof(v) * 8) - 1);
-    v &= m;
-  } while (v == 0);
-
-  munit_assert_int(psnip_builtin_clzll(v), ==, __builtin_clzll(v));
 
   return MUNIT_OK;
 }
@@ -298,30 +172,6 @@ test_gnu_ctz(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_ctz_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned int v;
-
-  /* __builtin_ctz(0) is undefined, so make sure we don't test it.
-   * That said, here it returns 1 less than the number of bits in the
-   * number. */
-  do {
-    munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-    /* Unset a random number of the most significant bits, otherwise
-       we're heavily biased towards low results. */
-    const unsigned int m = (~0U) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
-    v &= m;
-  } while (v == 0);
-
-  munit_assert_int(psnip_builtin_ctz(v), ==, __builtin_ctz(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_ctzl(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -335,30 +185,6 @@ test_gnu_ctzl(const MunitParameter params[], void* data) {
     v <<= 1;
     expected += 1;
   } while (v != 0);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_ctzl_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long v;
-
-  /* __builtin_ctzl(0) is undefined, so make sure we don't test it.
-   * That said, here it returns 1 less than the number of bits in the
-   * number. */
-  do {
-    munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-    /* Unset a random number of the most significant bits, otherwise
-       we're heavily biased towards low results. */
-    const unsigned long m = (~0UL) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
-    v &= m;
-  } while (v == 0);
-
-  munit_assert_int(psnip_builtin_ctzl(v), ==, __builtin_ctzl(v));
 
   return MUNIT_OK;
 }
@@ -382,30 +208,6 @@ test_gnu_ctzll(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_ctzll_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long long v;
-
-  /* __builtin_ctzll(0) is undefined, so make sure we don't test it.
-   * That said, here it returns 1 less than the number of bits in the
-   * number. */
-  do {
-    munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-    /* Unset a random number of the most significant bits, otherwise
-       we're heavily biased towards low results. */
-    const unsigned long long m = (~0ULL) << munit_rand_int_range(0, (sizeof(v) * 8) - 1);
-    v &= m;
-  } while (v == 0);
-
-  munit_assert_int(psnip_builtin_ctzll(v), ==, __builtin_ctzll(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_parity(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -419,20 +221,6 @@ test_gnu_parity(const MunitParameter params[], void* data) {
     v <<= 1;
     expected ^= 1;
   } while (v != 0);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_parity_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned int v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_parity(v), ==, __builtin_parity(v));
 
   return MUNIT_OK;
 }
@@ -456,20 +244,6 @@ test_gnu_parityl(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_parityl_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_parityl(v), ==, __builtin_parityl(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_parityll(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -483,20 +257,6 @@ test_gnu_parityll(const MunitParameter params[], void* data) {
     v <<= 1;
     expected ^= 1;
   } while (v != 0);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_parityll_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long long v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_parityll(v), ==, __builtin_parityll(v));
 
   return MUNIT_OK;
 }
@@ -520,20 +280,6 @@ test_gnu_popcount(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_popcount_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned int v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_popcount(v), ==, __builtin_popcount(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_popcountl(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -547,20 +293,6 @@ test_gnu_popcountl(const MunitParameter params[], void* data) {
     v >>= 1;
     expected -= 1;
   } while (v != 0);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_popcountl_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_popcountl(v), ==, __builtin_popcountl(v));
 
   return MUNIT_OK;
 }
@@ -584,20 +316,6 @@ test_gnu_popcountll(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_popcountll_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long long v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_popcountll(v), ==, __builtin_popcountll(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_clrsb(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -611,20 +329,6 @@ test_gnu_clrsb(const MunitParameter params[], void* data) {
     v <<= 1;
     expected -= 1;
   } while (v != 0);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_clrsb_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  int v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_clrsb(v), ==, __builtin_clrsb(v));
 
   return MUNIT_OK;
 }
@@ -648,20 +352,6 @@ test_gnu_clrsbl(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_clrsbl_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  long v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_clrsbl(v), ==, __builtin_clrsbl(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_clrsbll(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -680,20 +370,6 @@ test_gnu_clrsbll(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_clrsbll_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  long long v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_clrsbll(v), ==, __builtin_clrsbll(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_bswap16(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -701,20 +377,6 @@ test_gnu_bswap16(const MunitParameter params[], void* data) {
   psnip_uint16_t v = (psnip_uint16_t) 0xAABBULL;
 
   munit_assert_uint16(psnip_builtin_bswap16(v), ==, ((psnip_uint16_t) 0xBBAAULL));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_bswap16_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint16_t v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_bswap16(v), ==, __builtin_bswap16(v));
 
   return MUNIT_OK;
 }
@@ -732,20 +394,6 @@ test_gnu_bswap32(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_bswap32_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint32_t v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_bswap32(v), ==, __builtin_bswap32(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_bswap64(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -758,20 +406,6 @@ test_gnu_bswap64(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_bswap64_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint64_t v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_uint64(psnip_builtin_bswap64(v), ==, __builtin_bswap64(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_bitreverse8(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -779,20 +413,6 @@ test_gnu_bitreverse8(const MunitParameter params[], void* data) {
   psnip_uint8_t v = 182;
 
   munit_assert_uint8(psnip_builtin_bitreverse8(v), ==, 109);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_bitreverse8_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint8_t v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_uint8(psnip_builtin_bitreverse8(v), ==, __builtin_bitreverse8(v));
 
   return MUNIT_OK;
 }
@@ -825,20 +445,6 @@ test_gnu_bitreverse16(const MunitParameter params[], void* data) {
 
   for (i = 0 ; i < 64 ; i++)
     munit_assert_uint16(psnip_builtin_bitreverse16(tests[i].v), ==, tests[i].r);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_bitreverse16_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint16_t v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_bitreverse16(v), ==, __builtin_bitreverse16(v));
 
   return MUNIT_OK;
 }
@@ -887,20 +493,6 @@ test_gnu_bitreverse32(const MunitParameter params[], void* data) {
 
   for (i = 0 ; i < 64 ; i++)
     munit_assert_uint32(psnip_builtin_bitreverse32(tests[i].v), ==, tests[i].r);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_bitreverse32_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint32_t v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_builtin_bitreverse32(v), ==, __builtin_bitreverse32(v));
 
   return MUNIT_OK;
 }
@@ -986,20 +578,6 @@ test_gnu_bitreverse64(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_bitreverse64_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint64_t v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_uint64(psnip_builtin_bitreverse64(v), ==, __builtin_bitreverse64(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_addc8(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1046,26 +624,6 @@ test_gnu_addc8(const MunitParameter params[], void* data) {
     munit_assert_uint8(r, ==, test_vec[i].r);
     munit_assert_uint8(co, ==, test_vec[i].co);
   }
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_addcb_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned char x, y, ci, co1, co2, r1, r2;
-
-  munit_rand_memory(sizeof(x), (uint8_t*) &x);
-  munit_rand_memory(sizeof(y), (uint8_t*) &y);
-  ci = (unsigned char) munit_rand_int_range(0, 1);
-
-  r1 = psnip_builtin_addcb(x, y, ci, &co1);
-  r2 = __builtin_addcb(x, y, ci, &co2);
-
-  munit_assert_uint8(r1, ==, r2);
-  munit_assert_uint8(co1, ==, co2);
 
   return MUNIT_OK;
 }
@@ -1122,26 +680,6 @@ test_gnu_addc16(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_addcs_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned short x, y, ci, co1, co2, r1, r2;
-
-  munit_rand_memory(sizeof(x), (uint8_t*) &x);
-  munit_rand_memory(sizeof(y), (uint8_t*) &y);
-  ci = (unsigned short) munit_rand_int_range(0, 1);
-
-  r1 = psnip_builtin_addcs(x, y, ci, &co1);
-  r2 = __builtin_addcs(x, y, ci, &co2);
-
-  munit_assert_ushort(r1, ==, r2);
-  munit_assert_ushort(co1, ==, co2);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_addc32(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1188,26 +726,6 @@ test_gnu_addc32(const MunitParameter params[], void* data) {
     munit_assert_uint32(r, ==, test_vec[i].r);
     munit_assert_uint32(co, ==, test_vec[i].co);
   }
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_addc_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned int x, y, ci, co1, co2, r1, r2;
-
-  munit_rand_memory(sizeof(x), (uint8_t*) &x);
-  munit_rand_memory(sizeof(y), (uint8_t*) &y);
-  ci = (unsigned int) munit_rand_int_range(0, 1);
-
-  r1 = psnip_builtin_addc(x, y, ci, &co1);
-  r2 = __builtin_addc(x, y, ci, &co2);
-
-  munit_assert_uint(r1, ==, r2);
-  munit_assert_uint(co1, ==, co2);
 
   return MUNIT_OK;
 }
@@ -1264,26 +782,6 @@ test_gnu_addc64(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_addcll_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long long x, y, ci, co1, co2, r1, r2;
-
-  munit_rand_memory(sizeof(x), (uint8_t*) &x);
-  munit_rand_memory(sizeof(y), (uint8_t*) &y);
-  ci = (unsigned long long) munit_rand_int_range(0, 1);
-
-  r1 = psnip_builtin_addcll(x, y, ci, &co1);
-  r2 = __builtin_addcll(x, y, ci, &co2);
-
-  munit_assert_ullong(r1, ==, r2);
-  munit_assert_ullong(co1, ==, co2);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_subcb(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1319,26 +817,6 @@ test_gnu_subcb(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_subcb_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned char x, y, ci, co1, co2, r1, r2;
-
-  munit_rand_memory(sizeof(x), (uint8_t*) &x);
-  munit_rand_memory(sizeof(y), (uint8_t*) &y);
-  ci = (unsigned char) munit_rand_int_range(0, 1);
-
-  r1 = psnip_builtin_subcb(x, y, ci, &co1);
-  r2 = __builtin_subcb(x, y, ci, &co2);
-
-  munit_assert_uint8(r1, ==, r2);
-  munit_assert_uint8(co1, ==, co2);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_subcs(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1354,26 +832,6 @@ test_gnu_subcs(const MunitParameter params[], void* data) {
   r = psnip_builtin_subcs(USHRT_MAX, USHRT_MAX, 0, &co);
   munit_assert_ushort(r,  ==, 0);
   munit_assert_ushort(co, ==, 0);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_subcs_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned short x, y, ci, co1, co2, r1, r2;
-
-  munit_rand_memory(sizeof(x), (uint8_t*) &x);
-  munit_rand_memory(sizeof(y), (uint8_t*) &y);
-  ci = (unsigned short) munit_rand_int_range(0, 1);
-
-  r1 = psnip_builtin_subcs(x, y, ci, &co1);
-  r2 = __builtin_subcs(x, y, ci, &co2);
-
-  munit_assert_ushort(r1, ==, r2);
-  munit_assert_ushort(co1, ==, co2);
 
   return MUNIT_OK;
 }
@@ -1399,26 +857,6 @@ test_gnu_subc(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_subc_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned int x, y, ci, co1, co2, r1, r2;
-
-  munit_rand_memory(sizeof(x), (uint8_t*) &x);
-  munit_rand_memory(sizeof(y), (uint8_t*) &y);
-  ci = (unsigned int) munit_rand_int_range(0, 1);
-
-  r1 = psnip_builtin_subc(x, y, ci, &co1);
-  r2 = __builtin_subc(x, y, ci, &co2);
-
-  munit_assert_uint(r1, ==, r2);
-  munit_assert_uint(co1, ==, co2);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_gnu_subcl(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1434,26 +872,6 @@ test_gnu_subcl(const MunitParameter params[], void* data) {
   r = psnip_builtin_subcl(ULONG_MAX, ULONG_MAX, 0, &co);
   munit_assert_ulong(r,  ==, 0);
   munit_assert_ulong(co, ==, 0);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_gnu_subcl_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long x, y, ci, co1, co2, r1, r2;
-
-  munit_rand_memory(sizeof(x), (uint8_t*) &x);
-  munit_rand_memory(sizeof(y), (uint8_t*) &y);
-  ci = (unsigned long) munit_rand_int_range(0, 1);
-
-  r1 = psnip_builtin_subcl(x, y, ci, &co1);
-  r2 = __builtin_subcl(x, y, ci, &co2);
-
-  munit_assert_ulong(r1, ==, r2);
-  munit_assert_ulong(co1, ==, co2);
 
   return MUNIT_OK;
 }
@@ -1479,26 +897,6 @@ test_gnu_subcll(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_gnu_subcll_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long long x, y, ci, co1, co2, r1, r2;
-
-  munit_rand_memory(sizeof(x), (uint8_t*) &x);
-  munit_rand_memory(sizeof(y), (uint8_t*) &y);
-  ci = (unsigned long long) munit_rand_int_range(0, 1);
-
-  r1 = psnip_builtin_subcll(x, y, ci, &co1);
-  r2 = __builtin_subcll(x, y, ci, &co2);
-
-  munit_assert_ullong(r1, ==, r2);
-  munit_assert_ullong(co1, ==, co2);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_rotl8(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1513,21 +911,6 @@ test_msvc_rotl8(const MunitParameter params[], void* data) {
   size_t i;
   for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
     munit_assert_uint8(psnip_intrin_rotl8(v, (psnip_uint8_t) i), ==, expected[i - 1]);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_rotl8_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint8_t v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
-
-  munit_rand_memory(sizeof(v), (unsigned char*) &v);
-
-  munit_assert_uint8(psnip_intrin_rotl8(v, s), ==, _rotl8(v, s));
 
   return MUNIT_OK;
 }
@@ -1554,21 +937,6 @@ test_msvc_rotl16(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_rotl16_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint16_t v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
-
-  munit_rand_memory(sizeof(v), (unsigned char*) &v);
-
-  munit_assert_uint16(psnip_intrin_rotl16(v, s), ==, _rotl16(v, s));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_rotl(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1589,21 +957,6 @@ test_msvc_rotl(const MunitParameter params[], void* data) {
   size_t i;
   for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
     munit_assert_uint32(psnip_intrin_rotl(v, (int) i), ==, expected[i - 1]);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_rotl_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint32_t v;
-  const int s = munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
-
-  munit_rand_memory(sizeof(v), (psnip_uint8_t*) &v);
-
-  munit_assert_uint32(psnip_intrin_rotl(v, s), ==, _rotl(v, s));
 
   return MUNIT_OK;
 }
@@ -1642,21 +995,6 @@ test_msvc_rotl64(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_rotl64_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint64_t v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
-
-  munit_rand_memory(sizeof(v), (unsigned char*) &v);
-
-  munit_assert_uint64(psnip_intrin_rotl64(v, s), ==, _rotl64(v, s));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_rotr8(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1671,21 +1009,6 @@ test_msvc_rotr8(const MunitParameter params[], void* data) {
   size_t i;
   for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
     munit_assert_uint8(psnip_intrin_rotr8(v, (psnip_uint8_t) i), ==, expected[i - 1]);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_rotr8_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint8_t v;
-  const psnip_uint8_t s = (psnip_uint8_t) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
-
-  munit_rand_memory(sizeof(v), (psnip_uint8_t*) &v);
-
-  munit_assert_uint8(psnip_intrin_rotr8(v, s), ==, _rotr8(v, s));
 
   return MUNIT_OK;
 }
@@ -1712,21 +1035,6 @@ test_msvc_rotr16(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_rotr16_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint16_t v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
-
-  munit_rand_memory(sizeof(v), (unsigned char*) &v);
-
-  munit_assert_uint16(psnip_intrin_rotr16(v, s), ==, _rotr16(v, s));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_rotr(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1747,21 +1055,6 @@ test_msvc_rotr(const MunitParameter params[], void* data) {
   size_t i;
   for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
     munit_assert_uint32(psnip_intrin_rotr(v, (int) i), ==, expected[i - 1]);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_rotr_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint32_t v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
-
-  munit_rand_memory(sizeof(v), (psnip_uint8_t*) &v);
-
-  munit_assert_uint32(psnip_intrin_rotr(v, s), ==, _rotr(v, s));
 
   return MUNIT_OK;
 }
@@ -1800,21 +1093,6 @@ test_msvc_rotr64(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_rotr64_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint32_t v;
-  const unsigned char s = (unsigned char) munit_rand_int_range(1, (sizeof(v) * CHAR_BIT) - 1);
-
-  munit_rand_memory(sizeof(v), (psnip_uint8_t*) &v);
-
-  munit_assert_uint64(psnip_intrin_rotr64(v, s), ==, _rotr64(v, s));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_BitScanForward(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1832,25 +1110,6 @@ test_msvc_BitScanForward(const MunitParameter params[], void* data) {
     munit_assert_ulong(idx, ==, i);
     mask <<= 1;
   }
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_BitScanForward_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint32_t mask;
-  unsigned long i1, i2;
-  unsigned char z1, z2;
-  munit_rand_memory(sizeof(mask), (unsigned char*) &mask);
-
-  z1 = _BitScanForward(&i1, mask);
-  z2 = psnip_intrin_BitScanForward(&i2, mask);
-  munit_assert_uint8(z1, ==, z2);
-  if (z1 != 0)
-    munit_assert_ulong(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -1876,25 +1135,6 @@ test_msvc_BitScanForward64(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_BitScanForward64_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint64_t mask;
-  unsigned long i1, i2;
-  unsigned char z1, z2;
-  munit_rand_memory(sizeof(mask), (unsigned char*) &mask);
-
-  z1 = _BitScanForward64(&i1, mask);
-  z2 = psnip_intrin_BitScanForward64(&i2, mask);
-  munit_assert_uint8(z1, ==, z2);
-  if (z1 != 0)
-    munit_assert_ulong(i1, ==, i2);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_BitScanReverse(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1906,25 +1146,6 @@ test_msvc_BitScanReverse(const MunitParameter params[], void* data) {
   isNonzero = psnip_intrin_BitScanReverse(&idx, mask);
   munit_assert_uint8(isNonzero, ==, 1);
   munit_assert_uint32(idx, ==, 3);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_BitScanReverse_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint32_t mask;
-  unsigned long i1, i2;
-  unsigned char z1, z2;
-  munit_rand_memory(sizeof(mask), (unsigned char*) &mask);
-
-  z1 = _BitScanReverse(&i1, mask);
-  z2 = psnip_intrin_BitScanReverse(&i2, mask);
-  munit_assert_uint8(z1, ==, z2);
-  if (z1 != 0)
-    munit_assert_ulong(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -1946,28 +1167,6 @@ test_msvc_BitScanReverse64(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_BitScanReverse64_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint64_t mask;
-  unsigned long i1 = 0, i2 = 0;
-  unsigned char z1, z2;
-  munit_rand_memory(sizeof(mask), (unsigned char*) &mask);
-
-  z1 = _BitScanReverse64(&i1, mask);
-  z2 = psnip_intrin_BitScanReverse64(&i2, mask);
-  munit_assert_uint8(z1, ==, z2);
-  munit_assert_ulong(i1, ==, i2);
-
-  return MUNIT_OK;
-}
-
-#if defined(_MSC_VER)
-#  pragma warning(disable:4057)
-#endif
-
-static MunitResult
 test_msvc_bittest(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -1982,22 +1181,6 @@ test_msvc_bittest(const MunitParameter params[], void* data) {
   long nBit;
   for (nBit = 0 ; nBit < 31 ; nBit++)
     munit_assert_uint8((psnip_uint8_t) (bits[nBit] == '1'), ==, psnip_intrin_bittest(&num, nBit));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_bittest_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_int32_t nBit;
-  long num;
-  munit_rand_memory(sizeof(num), (uint8_t*) &num);
-
-  for (nBit = 0 ; nBit < (int) (sizeof(num) * CHAR_BIT) ; nBit++)
-    munit_assert_uint8(_bittest(&num, nBit), ==,
-		       psnip_intrin_bittest(&num, nBit));
 
   return MUNIT_OK;
 }
@@ -2023,22 +1206,6 @@ test_msvc_bittest64(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_bittest64_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  int nBit;
-  psnip_int64_t num;
-  munit_rand_memory(sizeof(num), (uint8_t*) &num);
-
-  for (nBit = 0 ; nBit < (int) (sizeof(num) * CHAR_BIT) ; nBit++)
-    munit_assert_uint8(_bittest64(&num, nBit), ==,
-		       psnip_intrin_bittest64(&num, nBit));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_bittestandcomplement(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -2053,27 +1220,6 @@ test_msvc_bittestandcomplement(const MunitParameter params[], void* data) {
   result = psnip_intrin_bittestandcomplement(&i, 1);
   munit_assert_uint8(result, ==, 1);
   munit_assert_long(i, ==, 1);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_bittestandcomplement_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_int32_t i1, i2, p;
-  unsigned char r1, r2;
-
-  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
-  i2 = i1;
-  p = munit_rand_int_range(1, (sizeof(i1) * 8) - 1);
-
-  r1 = psnip_intrin_bittestandcomplement(&i1, p);
-  r2 = _bittestandcomplement(&i2, p);
-
-  munit_assert_int(r1, ==, r2);
-  munit_assert_long(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -2098,27 +1244,6 @@ test_msvc_bittestandcomplement64(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_bittestandcomplement64_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_int64_t i1, i2, p;
-  unsigned char r1, r2;
-
-  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
-  i2 = i1;
-  p = munit_rand_int_range(1, (sizeof(i1) * 8) - 1);
-
-  r1 = psnip_intrin_bittestandcomplement64(&i1, p);
-  r2 = _bittestandcomplement64(&i2, p);
-
-  munit_assert_int64(r1, ==, r2);
-  munit_assert_int64(i1, ==, i2);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_bittestandreset(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -2129,27 +1254,6 @@ test_msvc_bittestandreset(const MunitParameter params[], void* data) {
   result = psnip_intrin_bittestandreset(&i, (sizeof(i) * 8) - 1);
   munit_assert_uint8(result, ==, 1);
   munit_assert_int32(i, ==, 0x7fffffff - 111);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_bittestandreset_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_int32_t i1, i2, p;
-  unsigned char r1, r2;
-
-  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
-  i2 = i1;
-  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
-
-  r1 = psnip_intrin_bittestandreset(&i1, p);
-  r2 = _bittestandreset(&i2, p);
-
-  munit_assert_int(r1, ==, r2);
-  munit_assert_long(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -2170,27 +1274,6 @@ test_msvc_bittestandreset64(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_bittestandreset64_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_int64_t i1, i2, p;
-  unsigned char r1, r2;
-
-  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
-  i2 = i1;
-  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
-
-  r1 = psnip_intrin_bittestandreset64(&i1, p);
-  r2 = _bittestandreset64(&i2, p);
-
-  munit_assert_int(r1, ==, r2);
-  munit_assert_int64(i1, ==, i2);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_bittestandset(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -2201,27 +1284,6 @@ test_msvc_bittestandset(const MunitParameter params[], void* data) {
   result = psnip_intrin_bittestandset(&i, (sizeof(i) * 8) - 1);
   munit_assert_uint8(result, ==, 0);
   munit_assert_long(i, ==, -112);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_bittestandset_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_int32_t i1, i2, p;
-  unsigned char r1, r2;
-
-  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
-  i2 = i1;
-  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
-
-  r1 = psnip_intrin_bittestandset(&i1, p);
-  r2 = _bittestandset(&i2, p);
-
-  munit_assert_int(r1, ==, r2);
-  munit_assert_long(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -2250,27 +1312,6 @@ test_msvc_bittestandset64(const MunitParameter params[], void* data) {
 
     munit_assert_int64(d, ==, s);
   }
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_bittestandset64_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_int64_t i1, i2, p;
-  unsigned char r1, r2;
-
-  munit_rand_memory(sizeof(i1), (uint8_t*) &i1);
-  i2 = i1;
-  p = munit_rand_int_range(0, (sizeof(i1) * 8) - 1);
-
-  r1 = psnip_intrin_bittestandset64(&i1, p);
-  r2 = _bittestandset64(&i2, p);
-
-  munit_assert_int64(r1, ==, r2);
-  munit_assert_int64(i1, ==, i2);
 
   return MUNIT_OK;
 }
@@ -2325,26 +1366,6 @@ test_msvc_shiftleft128(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_shiftleft128_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint64_t h, l, r1, r2;
-  unsigned char s;
-
-  s = (unsigned char) munit_rand_int_range(0, 255);
-  munit_rand_memory(sizeof(h), (uint8_t*) &h);
-  munit_rand_memory(sizeof(l), (uint8_t*) &l);
-
-  r1 = psnip_intrin_shiftleft128(l, h, s);
-  r2 = __shiftleft128(l, h, s);
-
-  munit_assert_uint64(r1, ==, r2);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_shiftright128(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -2394,26 +1415,6 @@ test_msvc_shiftright128(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_shiftright128_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint64_t h, l, r1, r2;
-  unsigned char s;
-
-  s = (unsigned char) munit_rand_int_range(0, 255);
-  munit_rand_memory(sizeof(h), (uint8_t*) &h);
-  munit_rand_memory(sizeof(l), (uint8_t*) &l);
-
-  r1 = psnip_intrin_shiftright128(l, h, s);
-  r2 = __shiftright128(l, h, s);
-
-  munit_assert_uint64(r1, ==, r2);
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_byteswap_ushort(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -2421,20 +1422,6 @@ test_msvc_byteswap_ushort(const MunitParameter params[], void* data) {
   psnip_uint16_t v = (psnip_uint16_t) 0xAABBULL;
 
   munit_assert_uint16(psnip_intrin_byteswap_ushort(v), ==, ((psnip_uint16_t) 0xBBAAULL));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
-test_msvc_byteswap_ushort_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned short v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_intrin_byteswap_ushort(v), ==, _byteswap_ushort(v));
 
   return MUNIT_OK;
 }
@@ -2452,20 +1439,6 @@ test_msvc_byteswap_ulong(const MunitParameter params[], void* data) {
 }
 
 static MunitResult
-test_msvc_byteswap_ulong_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  unsigned long v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_int(psnip_intrin_byteswap_ulong(v), ==, _byteswap_ulong(v));
-
-  return MUNIT_OK;
-}
-
-static MunitResult
 test_msvc_byteswap_uint64(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
@@ -2477,31 +1450,10 @@ test_msvc_byteswap_uint64(const MunitParameter params[], void* data) {
   return MUNIT_OK;
 }
 
-static MunitResult
-test_msvc_byteswap_uint64_native(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
-  psnip_uint64_t v;
-
-  munit_rand_memory(sizeof(v), (uint8_t*) &v);
-
-  munit_assert_uint64(psnip_intrin_byteswap_uint64(v), ==, _byteswap_uint64(v));
-
-  return MUNIT_OK;
-}
-
-#define PSNIP_TEST_BUILTIN_MIXED(name1,name2)				\
-  { (char*) "/builtin/"#name1, test_gnu_##name1, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }, \
-  { (char*) "/builtin/"#name2"/native", test_gnu_##name2##_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 #define PSNIP_TEST_BUILTIN(name)					\
-  { (char*) "/builtin/"#name, test_gnu_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }, \
-  { (char*) "/builtin/"#name"/native", test_gnu_##name##_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
+  { (char*) "/builtin/"#name, test_gnu_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }
 #define PSNIP_TEST_INTRIN(name) \
-  { (char*) "/intrin/"#name, test_msvc_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }, \
-  { (char*) "/intrin/"#name"/native", test_msvc_##name##_native, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
-#define PSNIP_TEST_WRAPPER(name) \
-  { (char*) "/wrapper/"#name, test_gnu_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }
+  { (char*) "/intrin/"#name, test_msvc_##name, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL }
 
 static MunitTest test_suite_tests[] = {
   PSNIP_TEST_BUILTIN(ffs),
@@ -2510,6 +1462,8 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_BUILTIN(clz),
   PSNIP_TEST_BUILTIN(clzl),
   PSNIP_TEST_BUILTIN(clzll),
+  PSNIP_TEST_BUILTIN(clz32),
+  PSNIP_TEST_BUILTIN(clz64),
   PSNIP_TEST_BUILTIN(ctz),
   PSNIP_TEST_BUILTIN(ctzl),
   PSNIP_TEST_BUILTIN(ctzll),
@@ -2529,10 +1483,10 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_BUILTIN(bitreverse16),
   PSNIP_TEST_BUILTIN(bitreverse32),
   PSNIP_TEST_BUILTIN(bitreverse64),
-  PSNIP_TEST_BUILTIN_MIXED(addc8,addcb),
-  PSNIP_TEST_BUILTIN_MIXED(addc16,addcs),
-  PSNIP_TEST_BUILTIN_MIXED(addc32,addc),
-  PSNIP_TEST_BUILTIN_MIXED(addc64,addcll),
+  PSNIP_TEST_BUILTIN(addc8),
+  PSNIP_TEST_BUILTIN(addc16),
+  PSNIP_TEST_BUILTIN(addc32),
+  PSNIP_TEST_BUILTIN(addc64),
   PSNIP_TEST_BUILTIN(subcb),
   PSNIP_TEST_BUILTIN(subcs),
   PSNIP_TEST_BUILTIN(subc),
@@ -2564,9 +1518,6 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_INTRIN(byteswap_ushort),
   PSNIP_TEST_INTRIN(byteswap_ulong),
   PSNIP_TEST_INTRIN(byteswap_uint64),
-
-  PSNIP_TEST_WRAPPER(clz32),
-  PSNIP_TEST_WRAPPER(clz64),
 
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
