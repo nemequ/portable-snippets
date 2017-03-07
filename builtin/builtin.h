@@ -116,60 +116,120 @@
 #define PSNIP_BUILTIN__SUFFIX_L  4
 #define PSNIP_BUILTIN__SUFFIX_LL 5
 
+#if !defined(PSNIP_BUILTIN__SIZEOF_CHAR)
+#  if   CHAR_MIN == (-0x7fLL-1) && CHAR_MAX == 0x7fLL
+#    define PSNIP_BUILTIN__SIZEOF_CHAR 8
+#  elif CHAR_MIN == (-0x7fffLL-1) && CHAR_MAX == 0x7fffLL
+#    define PSNIP_BUILTIN__SIZEOF_CHAR 16
+#  elif CHAR_MIN == (-0x7fffffffLL-1) && CHAR_MAX == 0x7fffffffLL
+#    define PSNIP_BUILTIN__SIZEOF_CHAR 32
+#  elif CHAR_MIN == (-0x7fffffffffffffffLL-1) && CHAR_MAX == 0x7fffffffffffffffLL
+#    define PSNIP_BUILTIN__SIZEOF_CHAR 64
+#  endif
+#endif
+
+#if !defined(PSNIP_BUILTIN__SIZEOF_SHRT)
+#  if   SHRT_MIN == (-0x7fLL-1) && SHRT_MAX == 0x7fLL
+#    define PSNIP_BUILTIN__SIZEOF_SHRT 8
+#  elif SHRT_MIN == (-0x7fffLL-1) && SHRT_MAX == 0x7fffLL
+#    define PSNIP_BUILTIN__SIZEOF_SHRT 16
+#  elif SHRT_MIN == (-0x7fffffffLL-1) && SHRT_MAX == 0x7fffffffLL
+#    define PSNIP_BUILTIN__SIZEOF_SHRT 32
+#  elif SHRT_MIN == (-0x7fffffffffffffffLL-1) && SHRT_MAX == 0x7fffffffffffffffLL
+#    define PSNIP_BUILTIN__SIZEOF_SHRT 64
+#  endif
+#endif
+
+#if !defined(PSNIP_BUILTIN__SIZEOF_INT)
+#  if   INT_MIN == (-0x7fLL-1) && INT_MAX == 0x7fLL
+#    define PSNIP_BUILTIN__SIZEOF_INT 8
+#  elif INT_MIN == (-0x7fffLL-1) && INT_MAX == 0x7fffLL
+#    define PSNIP_BUILTIN__SIZEOF_INT 16
+#  elif INT_MIN == (-0x7fffffffLL-1) && INT_MAX == 0x7fffffffLL
+#    define PSNIP_BUILTIN__SIZEOF_INT 32
+#  elif INT_MIN == (-0x7fffffffffffffffLL-1) && INT_MAX == 0x7fffffffffffffffLL
+#    define PSNIP_BUILTIN__SIZEOF_INT 64
+#  endif
+#endif
+
+#if !defined(PSNIP_BUILTIN__SIZEOF_LONG)
+#  if   LONG_MIN == (-0x7fLL-1) && LONG_MAX == 0x7fLL
+#    define PSNIP_BUILTIN__SIZEOF_LONG 8
+#  elif LONG_MIN == (-0x7fffLL-1) && LONG_MAX == 0x7fffLL
+#    define PSNIP_BUILTIN__SIZEOF_LONG 16
+#  elif LONG_MIN == (-0x7fffffffLL-1) && LONG_MAX == 0x7fffffffLL
+#    define PSNIP_BUILTIN__SIZEOF_LONG 32
+#  elif LONG_MIN == (-0x7fffffffffffffffLL-1) && LONG_MAX == 0x7fffffffffffffffLL
+#    define PSNIP_BUILTIN__SIZEOF_LONG 64
+#  endif
+#endif
+
+#if !defined(PSNIP_BUILTIN__SIZEOF_LLONG)
+#  if   LLONG_MIN == (-0x7fLL-1) && LLONG_MAX == 0x7fLL
+#    define PSNIP_BUILTIN__SIZEOF_LLONG 8
+#  elif LLONG_MIN == (-0x7fffLL-1) && LLONG_MAX == 0x7fffLL
+#    define PSNIP_BUILTIN__SIZEOF_LLONG 16
+#  elif LLONG_MIN == (-0x7fffffffLL-1) && LLONG_MAX == 0x7fffffffLL
+#    define PSNIP_BUILTIN__SIZEOF_LLONG 32
+#  elif LLONG_MIN == (-0x7fffffffffffffffLL-1) && LLONG_MAX == 0x7fffffffffffffffLL
+#    define PSNIP_BUILTIN__SIZEOF_LLONG 64
+#  endif
+#endif
+
 #if !defined(PSNIP_BUILTIN_SUFFIX_INT8)
-#  if CHAR_MIN == (-0x7fLL-1) && CHAR_MAX == 0x7fLL
+#  if PSNIP_BUILTIN__SIZEOF_CHAR == 8
 #    define PSNIP_BUILTIN_SUFFIX_INT8 PSNIP_BUILTIN__SUFFIX_B
-#  elif SHRT_MIN == (-0x7fLL-1) && SHRT_MAX == 0x7fLL
+#  elif PSNIP_BUILTIN__SIZEOF_SHRT == 8
 #    define PSNIP_BUILTIN_SUFFIX_INT8 PSNIP_BUILTIN__SUFFIX_S
-#  elif INT_MIN == (-0x7fLL-1) && INT_MAX == 0x7fLL
+#  elif PSNIP_BUILTIN__SIZEOF_INT == 8
 #    define PSNIP_BUILTIN_SUFFIX_INT8 PSNIP_BUILTIN__SUFFIX_
-#  elif LONG_MIN == (-0x7fLL-1) && LONG_MAX == 0x7fLL
+#  elif PSNIP_BUILTIN__SIZEOF_LONG == 8
 #    define PSNIP_BUILTIN_SUFFIX_INT8 PSNIP_BUILTIN__SUFFIX_L
-#  elif LLONG_MIN == (-0x7fLL-1) && LLONG_MAX == 0x7fLL
+#  elif PSNIP_BUILTIN__SIZEOF_LLONG == 8
 #    define PSNIP_BUILTIN_SUFFIX_INT8 PSNIP_BUILTIN__SUFFIX_LL
 #  endif
 #endif
 
 #if !defined(PSNIP_BUILTIN_SUFFIX_INT16)
-#  if CHAR_MIN == (-0x7fffLL-1) && CHAR_MAX == 0x7fffLL
+#  if PSNIP_BUILTIN__SIZEOF_CHAR == 16
 #    define PSNIP_BUILTIN_SUFFIX_INT16 PSNIP_BUILTIN__SUFFIX_B
-#  elif SHRT_MIN == (-0x7fffLL-1) && SHRT_MAX == 0x7fffLL
+#  elif PSNIP_BUILTIN__SIZEOF_SHRT == 16
 #    define PSNIP_BUILTIN_SUFFIX_INT16 PSNIP_BUILTIN__SUFFIX_S
-#  elif INT_MIN == (-0x7fffLL-1) && INT_MAX == 0x7fffLL
+#  elif PSNIP_BUILTIN__SIZEOF_INT == 16
 #    define PSNIP_BUILTIN_SUFFIX_INT16 PSNIP_BUILTIN__SUFFIX_
-#  elif LONG_MIN == (-0x7fffLL-1) && LONG_MAX == 0x7fffLL
+#  elif PSNIP_BUILTIN__SIZEOF_LONG == 16
 #    define PSNIP_BUILTIN_SUFFIX_INT16 PSNIP_BUILTIN__SUFFIX_L
-#  elif LLONG_MIN == (-0x7fffLL-1) && LLONG_MAX == 0x7fffLL
+#  elif PSNIP_BUILTIN__SIZEOF_LLONG == 16
 #    define PSNIP_BUILTIN_SUFFIX_INT16 PSNIP_BUILTIN__SUFFIX_LL
 #  endif
 #endif
 
 #if !defined(PSNIP_BUILTIN_SUFFIX_INT32)
-#  if CHAR_MIN == (-0x7fffffffLL-1) && CHAR_MAX == 0x7fffffffLL
+#  if PSNIP_BUILTIN__SIZEOF_CHAR == 32
 #    define PSNIP_BUILTIN_SUFFIX_INT32 PSNIP_BUILTIN__SUFFIX_B
-#  elif SHRT_MIN == (-0x7fffffffLL-1) && SHRT_MAX == 0x7fffffffLL
+#  elif PSNIP_BUILTIN__SIZEOF_SHRT == 32
 #    define PSNIP_BUILTIN_SUFFIX_INT32 PSNIP_BUILTIN__SUFFIX_S
-#  elif INT_MIN == (-0x7fffffffLL-1) && INT_MAX == 0x7fffffffLL
+#  elif PSNIP_BUILTIN__SIZEOF_INT == 32
 #    define PSNIP_BUILTIN_SUFFIX_INT32 PSNIP_BUILTIN__SUFFIX_
-#  elif LONG_MIN == (-0x7fffffffLL-1) && LONG_MAX == 0x7fffffffLL
+#  elif PSNIP_BUILTIN__SIZEOF_LONG == 32
 #    define PSNIP_BUILTIN_SUFFIX_INT32 PSNIP_BUILTIN__SUFFIX_L
-#  elif LLONG_MIN == (-0x7fffffffLL-1) && LLONG_MAX == 0x7fffffffLL
+#  elif PSNIP_BUILTIN__SIZEOF_LLONG == 32
 #    define PSNIP_BUILTIN_SUFFIX_INT32 PSNIP_BUILTIN__SUFFIX_LL
 #  endif
 #endif
 
 #if !defined(PSNIP_BUILTIN_SUFFIX_INT64)
-#  if defined(__APPLE__) && LLONG_MIN == (-0x7fffffffffffffffLL-1) && LLONG_MAX == 0x7fffffffffffffffLL
+#  if defined(__APPLE__) && PSNIP_BUILTIN__SIZEOF_LLONG == 64
 #    define PSNIP_BUILTIN_SUFFIX_INT64 PSNIP_BUILTIN__SUFFIX_LL
-#  elif CHAR_MIN == (-0x7fffffffffffffffLL-1) && CHAR_MAX == 0x7fffffffffffffffLL
+#  elif PSNIP_BUILTIN__SIZEOF_CHAR == 64
 #    define PSNIP_BUILTIN_SUFFIX_INT64 PSNIP_BUILTIN__SUFFIX_B
-#  elif SHRT_MIN == (-0x7fffffffffffffffLL-1) && SHRT_MAX == 0x7fffffffffffffffLL
+#  elif PSNIP_BUILTIN__SIZEOF_SHRT == 64
 #    define PSNIP_BUILTIN_SUFFIX_INT64 PSNIP_BUILTIN__SUFFIX_S
-#  elif INT_MIN == (-0x7fffffffffffffffLL-1) && INT_MAX == 0x7fffffffffffffffLL
+#  elif PSNIP_BUILTIN__SIZEOF_INT == 64
 #    define PSNIP_BUILTIN_SUFFIX_INT64 PSNIP_BUILTIN__SUFFIX_
-#  elif LONG_MIN == (-0x7fffffffffffffffLL-1) && LONG_MAX == 0x7fffffffffffffffLL
+#  elif PSNIP_BUILTIN__SIZEOF_LONG == 64
 #    define PSNIP_BUILTIN_SUFFIX_INT64 PSNIP_BUILTIN__SUFFIX_L
-#  elif LLONG_MIN == (-0x7fffffffffffffffLL-1) && LLONG_MAX == 0x7fffffffffffffffLL
+#  elif PSNIP_BUILTIN__SIZEOF_LLONG == 64
 #    define PSNIP_BUILTIN_SUFFIX_INT64 PSNIP_BUILTIN__SUFFIX_LL
 #  endif
 #endif
@@ -420,12 +480,73 @@ PSNIP_BUILTIN__FUNCTION
 int psnip_builtin_clz(unsigned int v) {
   return psnip_builtin_clzl(v);
 }
+#    define psnip_builtin_clz32(x) PSNIP_BUILTIN__VARIANT_INT32(psnip,clz)(x)
+#    define psnip_builtin_clz64(x) PSNIP_BUILTIN__VARIANT_INT64(psnip,clz)(x)
 #  else
-PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clz, unsigned int)
-PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clzl, unsigned long)
-PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clzll, unsigned long long)
-#  endif
+PSNIP_BUILTIN__FUNCTION
+int psnip_builtin_clz32(psnip_uint32_t v) {
+  static const unsigned char MultiplyDeBruijnBitPosition[] = {
+    0,  9,  1, 10, 13, 21,  2, 29, 11, 14, 16, 18, 22, 25,  3, 30,
+    8, 12, 20, 28, 15, 17, 24,  7, 19, 27, 23,  6, 26,  5,  4, 31
+  };
 
+  v |= v >> 1;
+  v |= v >> 2;
+  v |= v >> 4;
+  v |= v >> 8;
+  v |= v >> 16;
+
+  return
+    ((sizeof(psnip_uint32_t) * CHAR_BIT) - 1) -
+    MultiplyDeBruijnBitPosition[(psnip_uint32_t)(v * 0x07C4ACDDU) >> 27];
+}
+
+PSNIP_BUILTIN__FUNCTION
+int psnip_builtin_clz64(psnip_uint64_t v) {
+  static const unsigned char MultiplyDeBruijnBitPosition[] = {
+     0, 47,  1, 56, 48, 27,  2, 60, 57, 49, 41, 37, 28, 16,  3, 61,
+    54, 58, 35, 52, 50, 42, 21, 44, 38, 32, 29, 23, 17, 11,  4, 62,
+    46, 55, 26, 59, 40, 36, 15, 53, 34, 51, 20, 43, 31, 22, 10, 45,
+    25, 39, 14, 33, 19, 30,  9, 24, 13, 18,  8, 12,  7,  6,  5, 63
+  };
+
+  v |= v >> 1;
+  v |= v >> 2;
+  v |= v >> 4;
+  v |= v >> 8;
+  v |= v >> 16;
+  v |= v >> 32;
+
+  return
+    ((sizeof(psnip_uint64_t) * CHAR_BIT) - 1) -
+    MultiplyDeBruijnBitPosition[(psnip_uint64_t)(v * 0x03F79D71B4CB0A89ULL) >> 58];
+}
+
+#    if PSNIP_BUILTIN__SIZEOF_INT == 32
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_clz(unsigned int x) { return psnip_builtin_clz32(x); }
+#    elif PSNIP_BUILTIN__SIZEOF_INT == 64
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_clz(unsigned int x) { return psnip_builtin_clz64(x); }
+#    else
+       PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clz, unsigned int)
+#    endif
+
+#    if PSNIP_BUILTIN__SIZEOF_LONG == 32
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_clzl(unsigned long x) { return psnip_builtin_clz32(x); }
+#    elif PSNIP_BUILTIN__SIZEOF_LONG == 64
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_clzl(unsigned long x) { return psnip_builtin_clz64(x); }
+#    else
+       PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clzl, unsigned long)
+#    endif
+
+#    if PSNIP_BUILTIN__SIZEOF_LLONG == 32
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_clzll(unsigned long long x) { return psnip_builtin_clz32(x); }
+#    elif PSNIP_BUILTIN__SIZEOF_LLONG == 64
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_clzll(unsigned long long x) { return psnip_builtin_clz64(x); }
+#    else
+       PSNIP_BUILTIN__CLZ_DEFINE_PORTABLE(clzll, unsigned long long)
+#    endif
+
+#  endif
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define __builtin_clz(x)   psnip_builtin_clz(x)
 #    define __builtin_clzl(x)  psnip_builtin_clzl(x)
