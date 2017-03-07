@@ -32,7 +32,8 @@ include (CheckCCompilerFlag)
 if(ENABLE_AGGRESSIVE_WARNINGS)
   if(MSVC)
     set(EXTRA_WARNING_FLAGS
-      /W4)
+      /W4
+      /analyze)
 
     if(FATAL_WARNINGS)
       list(APPEND EXTRA_WARNING_FLAGS /WX)
