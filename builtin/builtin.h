@@ -503,33 +503,14 @@ PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctzll, unsigned long long)
 
 /*** __builtin_parity ***/
 
-#define PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(f_n, T)		\
-  PSNIP_BUILTIN__FUNCTION					\
-  int psnip_builtin_##f_n(T x) {				\
-    static const char psnip_builtin_parity_lookup[256] = {	\
-      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
-      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
-      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
-      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
-      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
-      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
-      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
-      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
-      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
-      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
-      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
-      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
-      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,		\
-      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
-      1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,		\
-      0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0		\
-    };								\
-    int s;							\
-								\
-    for (s = (sizeof(T) / 2) * 8 ; s != 4 ; s /= 2) {		\
-      x ^= x >> s;						\
-    }								\
-    return psnip_builtin_parity_lookup[x & 0xff];		\
+#define PSNIP_BUILTIN__PARITY_DEFINE_PORTABLE(f_n, T)			\
+  PSNIP_BUILTIN__FUNCTION						\
+  int psnip_builtin_##f_n(T v) {					\
+    size_t i;								\
+    for (i = (sizeof(T) * CHAR_BIT) / 2 ; i > 2 ; i /= 2)		\
+      v ^= v >> i;							\
+    v &= 0xf;								\
+    return (0x6996 >> v) & 1;						\
   }
 
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_parity, 3, 4)
