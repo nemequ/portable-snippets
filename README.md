@@ -9,7 +9,7 @@ various versions of GCC, Clang, and PGI ([on Travis
 CI](https://travis-ci.org/nemequ/portable-snippets)), and MSVC ([on
 AppVeyor](https://ci.appveyor.com/project/quixdb/portable-snippets)).
 
-Currently read-to-use modules include:
+Currently ready-to-use modules include:
 
  * [builtin](https://github.com/nemequ/portable-snippets/tree/master/builtin) —
    use compiler builtins/intrinsics, or fall back on standard C
@@ -22,8 +22,8 @@ Currently read-to-use modules include:
  * [exact-width](https://github.com/nemequ/portable-snippets/tree/master/exact-width) —
    exact width types (think `<stdint.h>`) which are used by some other headers
 
-There are also a few modules under heavy development which are not yet
-ready for deployment, but would benefit greatly from testing:
+There are also a few modules which are not yet ready for widespread
+use, but would benefit greatly from testing:
 
  * [clock](https://github.com/nemequ/portable-snippets/tree/master/clock) —
    cross-platform wall clock, CPU time, and monotonic time

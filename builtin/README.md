@@ -63,79 +63,34 @@ Sporadic testing is also done on ICC and Oracle Developer Studio.
 
 GCC builtins:
 
- - [x] ffs
- - [x] ffsl
- - [x] ffsll
- - [x] clz
- - [x] clzl
- - [x] clzll
- - [x] ctz
- - [x] ctzl
- - [x] ctzll
- - [x] clrsb
- - [x] clrsbl
- - [x] clrsbll
- - [x] popcount
- - [x] popcountl
- - [x] popcountll
- - [x] parity
- - [x] parityl
- - [x] parityll
- - [x] bswap16
- - [x] bswap32
- - [x] bswap64
+ - [x] ffs, ffsl, ffsll, ffs32, ffs64
+ - [x] clz, clzl, clzll, clz32, clz64
+ - [x] ctz, ctzl, ctzll, ctz32, ctz64
+ - [x] clrsb, clrsbl, clrsbll, clrsb32, clrsb64
+ - [x] popcount, popcountl, popcountll, popcount32, popcount64
+ - [x] parity, parityl, parityll, parity32, parity64
+ - [x] bswap16, bswap32, bswap64
 
 Clang builtins:
 
- - [x] bitreverse8
- - [x] bitreverse16
- - [x] bitreverse32
- - [x] bitreverse64
- - [x] addcb
- - [x] addcs
- - [x] addc
- - [x] addcl
- - [x] addcll
- - [x] subcb
- - [x] subcs
- - [x] subc
- - [x] subcl
- - [x] subcll
+ - [x] bitreverse8, bitreverse16, bitreverse32, bitreverse64
+ - [x] addcb, addcs, addc, addcl, addcll, addc8, addc16, addc32, addc64
+ - [x] subcb, subcs, subc, subcl, subcll, subc8, subc16, subc32, subc64
 
 MSVC intrinsics:
 
- - [x] rotl8
- - [x] rotl16
- - [x] rotl
- - [x] rotl64
- - [x] rotr8
- - [x] rotr16
- - [x] rotr
- - [x] rotr64
- - [x] BitScanForward
- - [x] BitScanForward64
- - [x] BitScanReverse
- - [x] BitScanReverse64
- - [ ] mul128
- - [ ] umul128
- - [x] shiftleft128
- - [x] shiftright128
- - [ ] mulh
- - [ ] umulh
- - [x] byteswap_uint64
- - [x] byteswap_ulong
- - [x] byteswap_ushort
- - [x] bittest
- - [x] bittest64
- - [x] bittestandcomplement
- - [x] bittestandcomplement64
- - [x] bittestandreset
- - [x] bittestandreset64
- - [x] bittestandset
- - [x] bittestandset64
-
-For overflow-safe integer operations (*i.e.*, `__builtin_*_overflow`),
-use [safe-math.h](../safe-math).
+ - [x] rotl8, rotl16, rotl, rotl64
+ - [x] rotr8, rotr16, rotr, rotr64
+ - [x] BitScanForward, BitScanForward64
+ - [x] BitScanReverse, BitScanReverse64
+ - [ ] mul128, umul128
+ - [x] shiftleft128, shiftright128
+ - [ ] mulh, umulh
+ - [x] byteswap_ushort, byteswap_ulong, byteswap_uint64
+ - [x] bittest, bittest64
+ - [x] bittestandcomplement, bittestandcomplement64
+ - [x] bittestandreset, bittestandreset64
+ - [x] bittestandset, bittestandset64
 
 If we are missing a function you feel should be included, please [file
 an issue](https://github.com/nemequ/portable-snippets/issues).  Please
@@ -151,8 +106,8 @@ For bswap/byteswap functions, you should really use
 [endian.h](../endian) which also handles endianness detection as well
 as providing easier to use APIs.
 
-For things which are effectively progressive enhancements (such as
-`__builtin_expect`) as opposed to hard requirements, see
+For things which are effectively compiler hints (such as
+`__builtin_expect`) as opposed to data manipulation functions, see
 [Hedley](https://nemequ.github.io/hedley/).
 
 ## Areas for future work
@@ -166,8 +121,7 @@ different compilers or architectures.
 Creating implementations of one compiler's builtins using builtins
 from another is probably your best bet to improve performance.
 Another useful possibility is using architecure-specific builtins, or
-even embedded assembly, to accelerate portable versions when they are
-available.
+even embedded assembly, when they are available.
 
 ### Architecture-specific builtins
 

@@ -19,6 +19,7 @@ clocks.  Currently supported clocks are:
  * Monotonic clock
    * `clock_gettime`
    * `mach_absolute_time`
+   * `QueryPerformanceCounter`
 
 Note that, on some platforms, `clock_gettime` requires linking to
 librt.  If you prefer, you can define `PSNIP_CLOCK_NO_LIBRT` prior to

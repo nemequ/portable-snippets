@@ -1,12 +1,13 @@
 # Exact-Width Integer Types
 
 Lots of stuff in psnip (as well as outside of psnip) requires
-exact-width integer types.  C99 provides them in <stdint.h>, but
+exact-width integer types.  C99 provides them in `<stdint.h>`, but
 sometimes you can't rely on C99 being available.
 
 This header will define macros for `psnip_(u)int(8,16,32,64)_t`, using
 methods a bit more portable than just blindly including `<stdint.h>`:
 
+ * If `__(U)INTN_TYPE__` is defined, use those types.
  * On platforms where we know `<stdint.h>` is available (such as if
    we're compiling in C99 mode), we include `<stdint.h>`.
  * Otherwise, if we're using Visual Studio, use types we know exist.
@@ -26,4 +27,4 @@ implementation, including:
  * [pstdint.h](http://www.azillionmonkeys.com/qed/pstdint.h) (BSD-3)
  * [msinttypes](https://code.google.com/archive/p/msinttypes/) (BSD-3)
 
-Feel free to file a PR if I'm missing any.
+Feel free to file a PR if I'm missing anything.
