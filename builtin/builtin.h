@@ -651,7 +651,10 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
 #  define psnip_builtin_bitreverse32(x) __builtin_bitreverse32(x)
 #  define psnip_builtin_bitreverse64(x) __builtin_bitreverse64(x)
 #else
-PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse8,  psnip_int8_t,  psnip_uint8_t)
+PSNIP_BUILTIN__FUNCTION
+psnip_int8_t psnip_builtin_bitreverse8(psnip_int8_t v) {
+  return (psnip_uint8_t) ((((psnip_uint8_t) v) * 0x0202020202ULL & 0x010884422010ULL) % 1023);
+}
 PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse16, psnip_int16_t, psnip_uint16_t)
 PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse32, psnip_int32_t, psnip_uint32_t)
 PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t, psnip_uint64_t)
