@@ -633,14 +633,16 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
 #define PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(f_n, T, UT)	\
   PSNIP_BUILTIN__FUNCTION					\
   T psnip_builtin_##f_n(T x) {					\
-    UT v = (UT) x;						\
+    union { T s; UT u; } v;					\
+    v.s = x;							\
     size_t s = sizeof(x) * CHAR_BIT;				\
-    UT mask = (UT) ~((UT) 0U);					\
+    UT mask = 0U;						\
+    mask = ~mask;						\
     while ((s >>= 1) > 0) {					\
       mask ^= (mask << s);					\
-      v = ((v >> s) & mask) | ((v << s) & ~mask);		\
+      v.u = ((v.u >> s) & mask) | ((v.u << s) & ~mask);		\
     }								\
-    return (T) v;						\
+    return v.s;							\
   }
 
 #if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_bitreverse64)
@@ -666,7 +668,8 @@ PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t, psnip_uin
 #define PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(f_n, T)	\
   PSNIP_BUILTIN__FUNCTION				\
   T psnip_builtin_##f_n(T x, T y, T ci, T* co) {	\
-    const T max = (T) (((T) 0) - 1);			\
+    T max = 0;						\
+    max = ~max;						\
     T r = (T) x + y;					\
     *co = (T) (x > (max - y));				\
     if (ci) {						\
