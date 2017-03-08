@@ -248,52 +248,33 @@ psnip_atomic_int32_store(psnip_atomic_int32* object, psnip_int32_t desired) {
 typedef long long volatile psnip_atomic_int64;
 typedef long volatile psnip_atomic_int32;
 
-static __inline
-psnip_int64_t
-psnip_atomic_int64_load(psnip_atomic_int64* object) {
-  MemoryBarrier();
-  return (psnip_int64_t) *object;
-}
-
-static __inline
-void
-psnip_atomic_int64_store(psnip_atomic_int64* object, psnip_int64_t desired) {
-  *object = desired;
-  MemoryBarrier();
-}
-
-static __inline
-psnip_int32_t
-psnip_atomic_int32_load_(psnip_atomic_int32* object) {
-  MemoryBarrier();
-  return (psnip_int32_t) *object;
-}
-
-static __inline
-void
-psnip_atomic_int32_store_(psnip_atomic_int32* object, psnip_int32_t desired) {
-  *object = desired;
-  MemoryBarrier();
-}
-
-#define psnip_atomic_int32_compare_exchange(object, expected, desired)  \
+#define psnip_atomic_int32_load(object) \
+  __pragma(warning(push)) \
+  __pragma(warning(disable:28112)) \
+  (*(object)) \
+  __pragma(warning(pop))
+#define psnip_atomic_int32_store(object, desired) \
+  InterlockedExchange(object, desired)
+#define psnip_atomic_int32_compare_exchange(object, expected, desired) \
   InterlockedCompareExchange(object, desired, *(expected))
 #define psnip_atomic_int32_add(object, operand) \
   InterlockedExchangeAdd(object, operand)
 #define psnip_atomic_int32_sub(object, operand) \
   InterlockedExchangeAdd(object, -(operand))
 
+#define psnip_atomic_int64_load(object) \
+  __pragma(warning(push)) \
+  __pragma(warning(disable:28112)) \
+  (*(object)) \
+  __pragma(warning(pop))
+#define psnip_atomic_int64_store(object, desired) \
+  InterlockedExchange64(object, desired)
 #define psnip_atomic_int64_compare_exchange(object, expected, desired)  \
   InterlockedCompareExchange64(object, desired, *(expected))
 #define psnip_atomic_int64_add(object, operand) \
   InterlockedExchangeAdd64(object, operand)
 #define psnip_atomic_int64_sub(object, operand) \
   InterlockedExchangeAdd64(object, -(operand))
-
-#define psnip_atomic_int32_load(object) \
-  psnip_atomic_int32_load_(object)
-#define psnip_atomic_int32_store(object, desired) \
-  psnip_atomic_int32_store_(object, desired)
 
 #define psnip_atomic_fence() \
   MemoryBarrier()
