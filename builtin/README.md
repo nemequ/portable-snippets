@@ -9,7 +9,7 @@ compiler.
 We also provide exact-width variants of many builtins; no more calling
 different functions depending on the size of `int`, `long`, `long
 long`, etc.  These are typically just aliases for the appropriate
-function, but if we can't find an appropriate type a fully portable
+function, but if we can't find an appropriate type a portable
 implementation will be used.
 
 If you define `PSNIP_BUILTIN_EMULATE_NATIVE` *before* `builtin.h` is
@@ -20,10 +20,9 @@ directly in MSVC, or any other compiler, including GCC < 3.3).
 
 If the compiler already has the builtin, the psnip function will
 simply be defined to that builtin.  If the compiler does not have an
-implementation it will be implemented using either a
-built-in/intrinsic the compiler *does* support (i.e., using an MSVC
-intrinsic to implement a GCC built-in), or a fully-portable pure C
-implementation.
+implementation one will be provided using either a built-in/intrinsic
+the compiler *does* support (i.e., using an MSVC intrinsic to
+implement a GCC built-in), or a fully-portable pure C implementation.
 
 For example, for GCC's `__builtin_ffs` builtin, we provide
 implementations which work everywhere (including versions of GCC prior
@@ -52,11 +51,10 @@ documentation only.
 
 ## Implementation Status
 
-Almost every generic builtin we can implement has been implemented.
-This should work with almost anywhere (our biggest restriction is
-probably that we currently assume `CHAR_BIT == 8`), but every commit
-is tested before landing in the master branch on various versions of
-GCC, clang, MSVC, and PGI (thanks to [Travis
+Virtually every generic builtin we can implement has been implemented.
+This should work almost everywhere, but every commit is tested before
+landing in the master branch on various versions of GCC, clang, MSVC,
+and PGI (thanks to [Travis
 CI](https://travis-ci.org/nemequ/portable-snippets) and
 [AppVeyor](https://ci.appveyor.com/project/quixdb/portable-snippets)).
 Sporadic testing is also done on ICC and Oracle Developer Studio.
