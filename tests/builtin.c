@@ -194,7 +194,7 @@ test_gnu_ctzll(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-  unsigned long long v = ~0U;
+  unsigned long long v = ~0ULL;
   int expected = 0;
 
   do {
@@ -203,6 +203,70 @@ test_gnu_ctzll(const MunitParameter params[], void* data) {
     v <<= 1;
     expected += 1;
   } while (v != 0);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_ctz32(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  const struct { psnip_uint32_t v; int expected; } tests[] = {
+    { UINT32_C(0xd5a00000), 21 }, { UINT32_C(0x36000000), 25 },
+    { UINT32_C(0xbbe2ec00), 10 }, { UINT32_C(0xa0000000), 29 },
+    { UINT32_C(0x4cd80000), 19 }, { UINT32_C(0xa05bf300),  8 },
+    { UINT32_C(0xeea5ac80),  7 }, { UINT32_C(0x08000000), 27 },
+    { UINT32_C(0x6a500000), 20 }, { UINT32_C(0x0a900000), 20 },
+    { UINT32_C(0xf0042f34),  2 }, { UINT32_C(0x22700000), 20 },
+    { UINT32_C(0xc0000000), 30 }, { UINT32_C(0xb38651c8),  3 },
+    { UINT32_C(0x42f3b000), 12 }, { UINT32_C(0xf16211c0),  6 },
+    { UINT32_C(0xe6fece00),  9 }, { UINT32_C(0xb0000000), 28 },
+    { UINT32_C(0xecbd9b00),  8 }, { UINT32_C(0x40000000), 30 },
+    { UINT32_C(0x2ea2c000), 14 }, { UINT32_C(0xd18ef600),  9 },
+    { UINT32_C(0xd925824c),  2 }, { UINT32_C(0x74168fe0),  5 },
+    { UINT32_C(0xd0968000), 15 }, { UINT32_C(0x49953e00),  9 },
+    { UINT32_C(0x20000000), 29 }, { UINT32_C(0xe9e00000), 21 },
+    { UINT32_C(0xb0831400), 10 }, { UINT32_C(0x2a000000), 25 },
+    { UINT32_C(0x05121000), 12 }, { UINT32_C(0x58f63780),  7 }
+  };
+
+  size_t i;
+  for (i = 0 ; i < sizeof(tests) / sizeof(tests[0]) ; i++)
+    munit_assert_uint32(psnip_builtin_ctz32(tests[i].v), ==, tests[i].expected);
+
+  return MUNIT_OK;
+}
+
+static MunitResult
+test_gnu_ctz64(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  const struct { psnip_uint64_t v; int expected; } tests[] = {
+    { UINT64_C(0x2d1b3eb168fe0000), 17 }, { UINT64_C(0xb9e26858c0000000), 30 },
+    { UINT64_C(0x8273288949c00000), 22 }, { UINT64_C(0x47be52b261510000), 16 },
+    { UINT64_C(0x6863296cf2b0b800), 11 }, { UINT64_C(0xcca44c0000000000), 42 },
+    { UINT64_C(0x5b24000000000000), 50 }, { UINT64_C(0x0480000000000000), 55 },
+    { UINT64_C(0xb7c0000000000000), 54 }, { UINT64_C(0x601e137200000000), 33 },
+    { UINT64_C(0x2000000000000000), 61 }, { UINT64_C(0x9f57de358606b000), 12 },
+    { UINT64_C(0xac04400000000000), 46 }, { UINT64_C(0x5300000000000000), 56 },
+    { UINT64_C(0x7240438000000000), 39 }, { UINT64_C(0xf564680000000000), 43 },
+    { UINT64_C(0x106ba4119ad4d8e0),  5 }, { UINT64_C(0xd31a19d800000000), 35 },
+    { UINT64_C(0x340f946ae7bb4000), 14 }, { UINT64_C(0xfa47686166c48000), 15 },
+    { UINT64_C(0xf5901272aab6d800), 11 }, { UINT64_C(0x11811486d23a0000), 17 },
+    { UINT64_C(0x2900000000000000), 56 }, { UINT64_C(0xdf2b208000000000), 39 },
+    { UINT64_C(0x461f5c4843fdaf5f),  0 }, { UINT64_C(0xdd80000000000000), 55 },
+    { UINT64_C(0xfb45cef800000000), 35 }, { UINT64_C(0x28c0000000000000), 54 },
+    { UINT64_C(0xf00dface00000000), 33 }, { UINT64_C(0x0200000000000000), 57 },
+    { UINT64_C(0x3ee1eef527547280),  7 }, { UINT64_C(0xbc33c7ea705c0000), 18 },
+    { UINT64_C(0x00000000ffffffff),  0 }, { UINT64_C(0xffffffff00000000), 32 }
+  };
+
+  size_t i;
+  for (i = 0 ; i < sizeof(tests) / sizeof(tests[0]) ; i++) {
+    munit_assert_uint64(psnip_builtin_ctz64(tests[i].v), ==, tests[i].expected);
+  }
 
   return MUNIT_OK;
 }
@@ -1504,6 +1568,8 @@ static MunitTest test_suite_tests[] = {
   PSNIP_TEST_BUILTIN(ctz),
   PSNIP_TEST_BUILTIN(ctzl),
   PSNIP_TEST_BUILTIN(ctzll),
+  PSNIP_TEST_BUILTIN(ctz32),
+  PSNIP_TEST_BUILTIN(ctz64),
   PSNIP_TEST_BUILTIN(parity),
   PSNIP_TEST_BUILTIN(parityl),
   PSNIP_TEST_BUILTIN(parityll),

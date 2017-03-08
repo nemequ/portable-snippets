@@ -604,9 +604,84 @@ int psnip_builtin_clz64(psnip_uint64_t v) {
 #  define psnip_builtin_ctz32(x) PSNIP_BUILTIN__VARIANT_INT32(_,ctz)(x)
 #  define psnip_builtin_ctz64(x) PSNIP_BUILTIN__VARIANT_INT64(_,ctz)(x)
 #else
-PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctz, unsigned int)
-PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctzl, unsigned long)
-PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctzll, unsigned long long)
+#  if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_BitScanForward, 14, 0)
+PSNIP_BUILTIN__FUNCTION
+int psnip_builtin_ctzll(unsigned long long v) {
+  unsigned long r = 0;
+#    if defined(_M_AMD64) || defined(_M_ARM)
+  _BitScanForward64(&r, v);
+  return (int) r;
+#    else
+  if (_BitScanForward(&r, (unsigned int) (v)))
+    return (int) (r);
+
+  _BitScanForward(&r, (unsigned int) (v >> 32));
+  return (int) (r + 32);
+#    endif
+}
+
+PSNIP_BUILTIN__FUNCTION
+int psnip_builtin_ctzl(unsigned long v) {
+  unsigned long r = 0;
+  _BitScanForward(&r, v);
+  return (int) r;
+}
+
+PSNIP_BUILTIN__FUNCTION
+int psnip_builtin_ctz(unsigned int v) {
+  return psnip_builtin_ctzl(v);
+}
+#    define psnip_builtin_ctz32(x) PSNIP_BUILTIN__VARIANT_INT32(psnip,ctz)(x)
+#    define psnip_builtin_ctz64(x) PSNIP_BUILTIN__VARIANT_INT64(psnip,ctz)(x)
+#  else
+PSNIP_BUILTIN__FUNCTION
+int psnip_builtin_ctz32(psnip_uint32_t v) {
+  static const unsigned char MultiplyDeBruijnBitPosition[] = {
+     0,  1, 28,  2, 29, 14, 24,  3, 30, 22, 20, 15, 25, 17,  4,  8,
+    31, 27, 13, 23, 21, 19, 16,  7, 26, 12, 18,  6, 11,  5, 10,  9
+  };
+
+  return
+    MultiplyDeBruijnBitPosition[((psnip_uint32_t)((v & -v) * 0x077CB531U)) >> 27];
+}
+
+PSNIP_BUILTIN__FUNCTION
+int psnip_builtin_ctz64(psnip_uint64_t v) {
+  static const unsigned char MultiplyDeBruijnBitPosition[] = {
+     0,  1, 56,  2, 57, 49, 28,  3, 61, 58, 42, 50, 38, 29, 17,  4,
+    62, 47, 59, 36, 45, 43, 51, 22, 53, 39, 33, 30, 24, 18, 12,  5,
+    63, 55, 48, 27, 60, 41, 37, 16, 46, 35, 44, 21, 52, 32, 23, 11,
+    54, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19,  9, 13,  8,  7,  6
+  };
+
+  return
+    MultiplyDeBruijnBitPosition[((psnip_uint64_t)((v & -v) * 0x03f79d71b4ca8b09ULL)) >> 58];
+}
+
+#    if PSNIP_BUILTIN__SIZEOF_INT == 32
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_ctz(unsigned int x) { return psnip_builtin_ctz32(x); }
+#    elif PSNIP_BUILTIN__SIZEOF_INT == 64
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_ctz(unsigned int x) { return psnip_builtin_ctz64(x); }
+#    else
+       PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctz, unsigned int)
+#    endif
+
+#    if PSNIP_BUILTIN__SIZEOF_LONG == 32
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_ctzl(unsigned long x) { return psnip_builtin_ctz32(x); }
+#    elif PSNIP_BUILTIN__SIZEOF_LONG == 64
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_ctzl(unsigned long x) { return psnip_builtin_ctz64(x); }
+#    else
+       PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctzl, unsigned long)
+#    endif
+
+#    if PSNIP_BUILTIN__SIZEOF_LLONG == 32
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_ctzll(unsigned long long x) { return psnip_builtin_ctz32(x); }
+#    elif PSNIP_BUILTIN__SIZEOF_LLONG == 64
+       PSNIP_BUILTIN__FUNCTION int psnip_builtin_ctzll(unsigned long long x) { return psnip_builtin_ctz64(x); }
+#    else
+       PSNIP_BUILTIN__CTZ_DEFINE_PORTABLE(ctzll, unsigned long long)
+#    endif
+#  endif
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define __builtin_ctz(x)   psnip_builtin_ctz(x)
 #    define __builtin_ctzl(x)  psnip_builtin_ctzl(x)
