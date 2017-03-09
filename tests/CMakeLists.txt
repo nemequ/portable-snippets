@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.6)
+cmake_minimum_required(VERSION 3.0)
 
 project(portable-snippet-tests)
 
@@ -28,17 +28,20 @@ else()
   unset(orig_req_libs)
 endif()
 
-include (CheckCCompilerFlag)
-if(ENABLE_AGGRESSIVE_WARNINGS)
-  if(MSVC)
-    set(EXTRA_WARNING_FLAGS
-      /W4)
+include (AddCompilerFlags)
 
-    if(FATAL_WARNINGS)
-      list(APPEND EXTRA_WARNING_FLAGS /WX)
-    endif()
-  else()
-    set (EXTRA_WARNING_FLAGS
+set(PSNIP_C_FLAGS)
+
+if(FATAL_WARNINGS)
+  set_compiler_specific_flags(VARIABLE FATAL_WARNING_FLAGS
+    GCCISH -Werror
+    MSVC /WX)
+  list(APPEND PSNIP_C_FLAGS ${FATAL_WARNING_FLAGS})
+endif()
+
+if(ENABLE_AGGRESSIVE_WARNINGS)
+  set_compiler_specific_flags(VARIABLE EXTRA_WARNING_FLAGS
+    GCCISH
       -Wall
       -Waggregate-return
       -Wcast-align
@@ -86,21 +89,22 @@ if(ENABLE_AGGRESSIVE_WARNINGS)
       -WUnsafe-loop-optimizations
       -Wwrite-strings
       -Wsuggest-attribute=format
-      -Minform=inform)
+    PGI
+      -Minform=inform
+    MSVC
+      /W4)
 
-    if(FATAL_WARNINGS)
-      list(APPEND EXTRA_WARNING_FLAGS -Werror)
-    endif()
+  list(APPEND PSNIP_C_FLAGS ${EXTRA_WARNING_FLAGS})
+endif()
+
+if(NOT ENABLE_SANITIZER STREQUAL "")
+  if(ENABLE_SANITIZER STREQUAL "undefined")
+    set_compiler_specific_flags(VARIABLE UBSAN_FLAGS
+      GCCISH -fsanitize=undefined
+      GCC -fno-sanitize-recover=undefined,float-cast-overflow,float-divide-by-zero
+      CLANG -fno-sanitize-recover=undefined,integer)
+    list(APPEND PSNIP_C_FLAGS ${UBSAN_FLAGS})
   endif()
-
-  foreach (flag ${EXTRA_WARNING_FLAGS})
-    string (REGEX REPLACE "[^a-zA-Z0-9]+" "_" test_name "CFLAG_${flag}")
-    CHECK_C_COMPILER_FLAG ("${flag}" ${test_name})
-
-    if (${test_name})
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}")
-    endif ()
-  endforeach (flag)
 endif()
 
 add_library(munit munit/munit.c)
@@ -118,6 +122,7 @@ function(psnip_add_tests)
 
   add_executable("${PSNIP_TEST_TARGET}" ${PSNIP_TEST_SOURCES})
   target_link_libraries("${PSNIP_TEST_TARGET}" munit)
+  target_add_compiler_flags("${PSNIP_TEST_TARGET}" ${PSNIP_C_FLAGS})
 
   if(PSNIP_TEST_TESTS)
     foreach(TEST ${PSNIP_TEST_TESTS})
