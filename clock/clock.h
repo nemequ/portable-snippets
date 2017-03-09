@@ -296,9 +296,8 @@ psnip_clock_cpu_get_precision (void) {
 
 PSNIP_CLOCK__FUNCTION int
 psnip_clock_cpu_get_time (struct PsnipClockTimespec* res) {
-  (void) res;
-
 #if !defined(PSNIP_CLOCK_CPU_METHOD)
+  (void) res;
   return -2;
 #elif defined(PSNIP_CLOCK_CPU_METHOD) && PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
   return psnip_clock__clock_gettime(PSNIP_CLOCK_CLOCK_GETTIME_CPU, res);
@@ -310,11 +309,12 @@ psnip_clock_cpu_get_time (struct PsnipClockTimespec* res) {
   res->nanoseconds = (t % CLOCKS_PER_SEC) * (PSNIP_CLOCK_NSEC_PER_SEC / CLOCKS_PER_SEC);
 #elif defined(PSNIP_CLOCK_CPU_METHOD) && PSNIP_CLOCK_CPU_METHOD == PSNIP_CLOCK_METHOD_GETPROCESSTIMES
   FILETIME CreationTime, ExitTime, KernelTime, UserTime;
+  LARGE_INTEGER date, adjust;
+
   if (!GetProcessTimes(GetCurrentProcess(), &CreationTime, &ExitTime, &KernelTime, &UserTime))
     return -7;
 
   /* http://www.frenk.com/2009/12/convert-filetime-to-unix-timestamp/ */
-  LARGE_INTEGER date, adjust;
   date.HighPart = UserTime.dwHighDateTime;
   date.LowPart = UserTime.dwLowDateTime;
   adjust.QuadPart = 11644473600000 * 10000;
@@ -330,6 +330,7 @@ psnip_clock_cpu_get_time (struct PsnipClockTimespec* res) {
   res->seconds = usage.ru_utime.tv_sec;
   res->nanoseconds = tv.tv_usec * 1000;
 #else
+  (void) res;
   return -2;
 #endif
 
@@ -360,9 +361,8 @@ psnip_clock_monotonic_get_precision (void) {
 
 PSNIP_CLOCK__FUNCTION int
 psnip_clock_monotonic_get_time (struct PsnipClockTimespec* res) {
-  (void) res;
-
 #if !defined(PSNIP_CLOCK_MONOTONIC_METHOD)
+  (void) res;
   return -2;
 #elif defined(PSNIP_CLOCK_MONOTONIC_METHOD) && PSNIP_CLOCK_MONOTONIC_METHOD == PSNIP_CLOCK_METHOD_CLOCK_GETTIME
   return psnip_clock__clock_gettime(PSNIP_CLOCK_CLOCK_GETTIME_MONOTONIC, res);
