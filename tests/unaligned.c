@@ -1,4 +1,7 @@
 #define PSNIP_UNALIGNED_ALLOW_UNDEFINED
+/* #define PSNIP_UNALIGNED_ALLOW_UBSAN */
+/* #define PSNIP_UNALIGNED_IMPL 2 */
+/* #define PSNIP_UNALIGNED_IMPL 3 */
 
 #include "../exact-int/exact-int.h"
 #include "../unaligned/unaligned.h"

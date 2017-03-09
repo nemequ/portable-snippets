@@ -83,6 +83,20 @@
 #  define PSNIP_UNALIGNED__FUNCTION PSNIP_UNALIGNED__COMPILER_ATTRIBUTES static PSNIP_UNALIGNED__INLINE
 #endif
 
+
+#if !defined(PSNIP_UNALIGNED_ALLOW_UBSAN)
+#  if defined(__GNUC__) && ((__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 9))
+#    define PSNIP_UNALIGNED__NO_UBSAN __attribute__((__no_sanitize_undefined__))
+#  elif defined(__clang__) && defined(__has_attribute)
+#    if __has_attribute(no_sanitize)
+#      define PSNIP_UNALIGNED__NO_UBSAN __attribute__((no_sanitize("undefined")))
+#    endif
+#  endif
+#endif
+#if !defined(PSNIP_UNALIGNED__NO_UBSAN)
+#  define PSNIP_UNALIGNED__NO_UBSAN
+#endif
+
 /* http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.faqs/4972.html */
 #if defined(__CC_ARM)
 #  define PSNIP_UNALIGNED__PACKED __packed
@@ -108,22 +122,26 @@
 #  if defined(__cplusplus)
 #    define PSNIP_UNALIGNED_LOAD_DEFINE(name, T)		\
   PSNIP_UNALIGNED__FUNCTION					\
+  PSNIP_UNALIGNED__NO_UBSAN					\
   T name(const void* src) {					\
     return *static_cast<PSNIP_UNALIGNED__PACKED T*>(src);	\
   }
 #    define PSNIP_UNALIGNED_STORE_DEFINE(name, T)	\
   PSNIP_UNALIGNED__FUNCTION				\
+  PSNIP_UNALIGNED__NO_UBSAN				\
   void name(void* dest, T src) {			\
     *static_cast<PSNIP_UNALIGNED__PACKED T*> = src;	\
   }
 #  else
 #    define PSNIP_UNALIGNED_LOAD_DEFINE(name, T)	\
   PSNIP_UNALIGNED__FUNCTION				\
+  PSNIP_UNALIGNED__NO_UBSAN				\
   T name(const void* src) {				\
     return *((PSNIP_UNALIGNED__PACKED T*) src);		\
   }
 #    define PSNIP_UNALIGNED_STORE_DEFINE(name, T)	\
   PSNIP_UNALIGNED__FUNCTION				\
+  PSNIP_UNALIGNED__NO_UBSAN				\
   void name(void* dest, T src) {			\
     *((PSNIP_UNALIGNED__PACKED T*) dest) = src;		\
   }
@@ -132,11 +150,11 @@
 #  if defined(_MSC_VER) || (defined(__INTEL_COMPILER) && defined(WIN32))
 #    define PSNIP_UNALIGNED__UNION_T(T)		\
   __pragma(pack(push, 1))			\
-  union { int64_t v; char a[sizeof(int64_t)]; } \
+  union { psnip_int64_t v; char a[sizeof(psnip_int64_t)]; } \
   __pragma(pack(pop))
 #  else
 #    define PSNIP_UNALIGNED__UNION_T(T)		\
-  union { int64_t v; char a[sizeof(int64_t)]; } \
+  union { psnip_int64_t v; char a[sizeof(psnip_int64_t)]; } \
   __attribute__((packed))
 #  endif
 #  define PSNIP_UNALIGNED_LOAD_DEFINE(name, T)		\
