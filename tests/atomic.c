@@ -17,7 +17,7 @@ test_atomic_int64(const MunitParameter params[], void* data) {
   psnip_int64_t v, expected;
 
   v = psnip_atomic_int64_load(&value64);
-  munit_assert_int64(value64, ==, 9);
+  munit_assert_int64(v, ==, 9);
 
   v = v * v * v;
   psnip_atomic_int64_store(&value64, v);
@@ -54,7 +54,7 @@ test_atomic_int32(const MunitParameter params[], void* data) {
   psnip_int32_t v, expected;
 
   v = psnip_atomic_int32_load(&value32);
-  munit_assert_int32(value32, ==, 9);
+  munit_assert_int32(v, ==, 9);
 
   v = v * v * v;
   psnip_atomic_int32_store(&value32, v);
