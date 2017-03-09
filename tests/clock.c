@@ -14,30 +14,35 @@
 
 static MunitResult
 test_clock_wall_time(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
 #if defined(PSNIP_CLOCK_WALL_METHOD)
   struct PsnipClockTimespec res;
   psnip_uint32_t precision = psnip_clock_get_precision(PSNIP_CLOCK_TYPE_WALL);
+  time_t t;
+  int r;
+
+  (void) params;
+  (void) data;
 
   munit_logf(MUNIT_LOG_DEBUG, "Wall clock method: %d", PSNIP_CLOCK_WALL_METHOD);
 
   munit_assert_uint32(precision, !=, 0);
 
-  time_t t = time(NULL);
+  t = time(NULL);
   /* This test may fail if more than 1 second passes here, but this
    * thread could conceivably be preempted for longer. */
-  int r = psnip_clock_get_time(PSNIP_CLOCK_TYPE_WALL, &res);
+  r = psnip_clock_get_time(PSNIP_CLOCK_TYPE_WALL, &res);
   munit_assert_int(r, ==, 0);
 
   munit_assert_uint64(t, <=, res.seconds);
   munit_assert_uint64(t, >=, res.seconds - 1);
-#else
-  return MUNIT_SKIP;
-#endif
 
   return MUNIT_OK;
+#else
+  (void) params;
+  (void) data;
+
+  return MUNIT_SKIP;
+#endif
 }
 
 static int ts_difference(struct PsnipClockTimespec* earlier, struct PsnipClockTimespec* later) {
@@ -48,13 +53,12 @@ static int ts_difference(struct PsnipClockTimespec* earlier, struct PsnipClockTi
 
 static MunitResult
 test_clock_wall_veracity(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
 #if defined(PSNIP_CLOCK_WALL_METHOD)
   struct PsnipClockTimespec res1, res2;
+  int elapsed_ms;
+  int r;
 
-  int r = psnip_clock_get_time(PSNIP_CLOCK_TYPE_WALL, &res1);
+  r = psnip_clock_get_time(PSNIP_CLOCK_TYPE_WALL, &res1);
   munit_assert_int(r, ==, 0);
 
   /* Assuming we aren't interrupted by a signal, aren't suspended for
@@ -64,31 +68,36 @@ test_clock_wall_veracity(const MunitParameter params[], void* data) {
   r = psnip_clock_get_time(PSNIP_CLOCK_TYPE_WALL, &res2);
   munit_assert_int(r, ==, 0);
 
-  int elapsed_ms = ts_difference(&res1, &res2);
+  elapsed_ms = ts_difference(&res1, &res2);
 
   munit_assert_int(elapsed_ms, >,  950);
   munit_assert_int(elapsed_ms, <, 1050);
-#else
-  return MUNIT_SKIP;
-#endif
+
+  (void) params;
+  (void) data;
 
   return MUNIT_OK;
+#else
+  (void) params;
+  (void) data;
+
+  return MUNIT_SKIP;
+#endif
 }
 
 static MunitResult
 test_clock_cpu(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
-
 #if defined(PSNIP_CLOCK_CPU_METHOD)
   struct PsnipClockTimespec res1, res2;
   psnip_uint32_t precision = psnip_clock_get_precision(PSNIP_CLOCK_TYPE_WALL);
+  int r;
+  int elapsed_ms;
 
   munit_logf(MUNIT_LOG_DEBUG, "CPU clock method: %d", PSNIP_CLOCK_CPU_METHOD);
 
   munit_assert_uint32(precision, !=, 0);
 
-  int r = psnip_clock_get_time(PSNIP_CLOCK_TYPE_WALL, &res1);
+  r = psnip_clock_get_time(PSNIP_CLOCK_TYPE_WALL, &res1);
   munit_assert_int(r, ==, 0);
 
   sleep_seconds(1);
@@ -96,27 +105,33 @@ test_clock_cpu(const MunitParameter params[], void* data) {
   r = psnip_clock_get_time(PSNIP_CLOCK_TYPE_WALL, &res2);
   munit_assert_int(r, ==, 0);
 
-  int elapsed_ms = ts_difference(&res1, &res2);
+  elapsed_ms = ts_difference(&res1, &res2);
 
   munit_assert_int(elapsed_ms, >=, 1000);
   if (precision >= 1000)
     munit_assert_int(elapsed_ms, <=, 1010);
-#else
-  return MUNIT_SKIP;
-#endif
+
+  (void) params;
+  (void) data;
 
   return MUNIT_OK;
+#else
+  (void) params;
+  (void) data;
+
+  return MUNIT_SKIP;
+#endif
 }
 
 static MunitResult
 test_clock_monotonic(const MunitParameter params[], void* data) {
-  (void) params;
-  (void) data;
 
 #if defined(PSNIP_CLOCK_MONOTONIC_METHOD)
   struct PsnipClockTimespec res1, res2;
+  int r;
+  int elapsed_ms;
 
-  int r = psnip_clock_get_time(PSNIP_CLOCK_TYPE_MONOTONIC, &res1);
+  r = psnip_clock_get_time(PSNIP_CLOCK_TYPE_MONOTONIC, &res1);
   munit_assert_int(r, ==, 0);
 
   /* Assuming we aren't interrupted by a signal, aren't suspended for
@@ -126,15 +141,18 @@ test_clock_monotonic(const MunitParameter params[], void* data) {
   r = psnip_clock_get_time(PSNIP_CLOCK_TYPE_MONOTONIC, &res2);
   munit_assert_int(r, ==, 0);
 
-  int elapsed_ms = ts_difference(&res1, &res2);
+  elapsed_ms = ts_difference(&res1, &res2);
 
   munit_assert_int(elapsed_ms, >,  950);
   munit_assert_int(elapsed_ms, <, 1050);
+
+  (void) params;
+  (void) data;
+
+  return MUNIT_OK;
 #else
   return MUNIT_SKIP;
 #endif
-
-  return MUNIT_OK;
 }
 
 static MunitTest test_suite_tests[] = {

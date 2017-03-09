@@ -23,6 +23,19 @@ const union {
   { 1, 2, 3, 4, 5, 6, 7, 8 }
 };
 
+#if !defined(UINT8_C)
+#  define UINT8_C(c) ((psnip_uint8_t) (c ## U))
+#endif
+#if !defined(UINT16_C)
+#  define UINT16_C(c) ((psnip_uint16_t) (c ## U))
+#endif
+#if !defined(UINT32_C)
+#  define UINT32_C(c) c ## U
+#endif
+#if !defined(UINT64_C)
+#  define UINT64_C(c) c ## ULL
+#endif
+
 static MunitResult
 test_endian_swap_known(const MunitParameter params[], void* data) {
   (void) params;
@@ -42,27 +55,27 @@ test_endian_swap_random(const MunitParameter params[], void* data) {
 
   munit_assert_uint16(psnip_builtin_bswap16(UINT16_C(0xefbe)), ==, UINT16_C(0xbeef));
   {
-    const uint16_t input = (uint16_t) munit_rand_uint32();
-    const uint16_t swapped = psnip_builtin_bswap16(input);
-    const uint16_t double_swapped = psnip_builtin_bswap16(swapped);
+    const psnip_uint16_t input = (psnip_uint16_t) munit_rand_uint32();
+    const psnip_uint16_t swapped = psnip_builtin_bswap16(input);
+    const psnip_uint16_t double_swapped = psnip_builtin_bswap16(swapped);
 
     munit_assert_uint16(input, ==, double_swapped);
   }
 
   munit_assert_uint32(psnip_builtin_bswap32(UINT32_C(0xefbeadde)), ==, UINT32_C(0xdeadbeef));
   {
-    const uint32_t input = munit_rand_uint32();
-    const uint32_t swapped = psnip_builtin_bswap32(input);
-    const uint32_t double_swapped = psnip_builtin_bswap32(swapped);
+    const psnip_uint32_t input = munit_rand_uint32();
+    const psnip_uint32_t swapped = psnip_builtin_bswap32(input);
+    const psnip_uint32_t double_swapped = psnip_builtin_bswap32(swapped);
 
     munit_assert_uint32(input, ==, double_swapped);
   }
 
   munit_assert_uint64(psnip_builtin_bswap64(UINT64_C(0xdf0dde0fe0fdcba)), ==, UINT64_C(0xbadc0ffee0ddf00d));
   {
-    const uint64_t input = (((uint64_t) munit_rand_uint32()) << 32) | munit_rand_uint32();
-    const uint64_t swapped = psnip_builtin_bswap64(input);
-    const uint64_t double_swapped = psnip_builtin_bswap64(swapped);
+    const psnip_uint64_t input = (((psnip_uint64_t) munit_rand_uint32()) << 32) | munit_rand_uint32();
+    const psnip_uint64_t swapped = psnip_builtin_bswap64(input);
+    const psnip_uint64_t double_swapped = psnip_builtin_bswap64(swapped);
 
     munit_assert_uint64(input, ==, double_swapped);
   }

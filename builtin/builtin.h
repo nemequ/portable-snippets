@@ -49,6 +49,7 @@
 #  include <intrin.h>
 #endif
 #include <limits.h>
+#include <stdlib.h>
 
 #if defined(__i386) || defined(_M_IX86) || \
   defined(__amd64) || defined(_M_AMD64) || defined(__x86_64)
@@ -811,9 +812,9 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
   PSNIP_BUILTIN__FUNCTION					\
   T psnip_builtin_##f_n(T x) {					\
     union { T s; UT u; } v;					\
-    v.s = x;							\
     size_t s = sizeof(x) * CHAR_BIT;				\
     UT mask = 0U;						\
+    v.s = x;							\
     mask = ~mask;						\
     while ((s >>= 1) > 0) {					\
       mask ^= (mask << s);					\
@@ -849,8 +850,8 @@ PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_int64_t, psnip_uin
   PSNIP_BUILTIN__FUNCTION				\
   T psnip_builtin_##f_n(T x, T y, T ci, T* co) {	\
     T max = 0;						\
-    max = ~max;						\
     T r = (T) x + y;					\
+    max = ~max;						\
     *co = (T) (x > (max - y));				\
     if (ci) {						\
       if (r == max)					\
