@@ -37,8 +37,6 @@
 #  define PSNIP_UNALIGNED_IMPL PSNIP_UNALIGNED_IMPL_MEMCPY
 #elif defined(__INTEL_COMPILER)
 #  define PSNIP_UNALIGNED_IMPL PSNIP_UNALIGNED_IMPL_UNION
-#elif defined(__PGI)
-#  define PSNIP_UNALIGNED_IMPL PSNIP_UNALIGNED_IMPL_DEREF
 #elif defined(__GNUC__)
 #  if (__GNUC__ >= 6)
 #    define PSNIP_UNALIGNED_IMPL PSNIP_UNALIGNED_IMPL_MEMCPY
@@ -68,8 +66,10 @@
 #    define PSNIP_UNALIGNED__COMPILER_ATTRIBUTES
 #  endif
 
-#  if defined(HEDLEY_INLINE)
-#    define PSNIP_UNALIGNED__INLINE HEDLEY_INLINE
+#  if defined(HEDLEY_ALWAYS_INLINE)
+#    define PSNIP_UNALIGNED__INLINE HEDLEY_ALWAYS_INLINE
+#  elif defined(__GNUC__) && (__GNUC__ >= 4)
+#    define PSNIP_UNALIGNED__INLINE __attribute__((__always_inline__,__gnu_inline__)) inline
 #  elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 #    define PSNIP_UNALIGNED__INLINE inline
 #  elif defined(__GNUC_STDC_INLINE__)

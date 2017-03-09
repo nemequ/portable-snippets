@@ -107,6 +107,27 @@ if(NOT ENABLE_SANITIZER STREQUAL "")
   endif()
 endif()
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+set(CMAKE_C_FLAGS_DEBUG)
+set(CMAKE_C_FLAGS_RELEASE)
+
+set_compiler_specific_flags(
+  VARIABLE PSNIP_RELEASE_FLAGS
+  GCCISH -O3 -DNDEBUG)
+foreach(flag ${PSNIP_RELEASE_FLAGS})
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${flag}")
+endforeach()
+
+set_compiler_specific_flags(
+  VARIABLE PSNIP_DEBUG_FLAGS
+  GCCISH -O3 -g)
+foreach(flag ${PSNIP_DEBUG_FLAGS})
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${flag}")
+endforeach()
+
 add_library(munit munit/munit.c)
 set_property(TARGET munit PROPERTY C_STANDARD "99")
 if("${CLOCK_GETTIME_EXISTS}")

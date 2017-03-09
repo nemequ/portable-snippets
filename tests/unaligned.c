@@ -71,10 +71,64 @@ test_unaligned_uint16(const MunitParameter params[], void* data) {
   return MUNIT_OK;
 }
 
+/* Try to get the compiler to vectorize this; SIMD instructions are
+   more likely to have problems with unaligned accesses. */
+#if defined(__GNUC__)
+#  if !defined(__clang__)
+__attribute__((__optimize__(3),__noinline__))
+#  else
+__attribute__((__noinline__))
+#  endif
+#endif
+static void
+dangerous_copy(size_t count, psnip_uint64_t* dest, const psnip_uint64_t* src) {
+  size_t i;
+  for (i = 0 ; i < count ; i++) {
+    psnip_unaligned_store_uint64(&(dest[i]), psnip_unaligned_load_uint64(&(src[i])));
+  }
+}
+
+#if defined(__GNUC__)
+#  if !defined(__clang__)
+__attribute__((__optimize__(0),__noinline__))
+#  else
+__attribute__((__optnone__,__noinline__))
+#  endif
+#endif
+static MunitResult
+test_unaligned_uint64_tempt(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+  munit_rand_memory(sizeof(buffer), buffer);
+
+  static uint8_t buffer2[sizeof(buffer)];
+
+  dangerous_copy((sizeof(buffer) / sizeof(psnip_uint64_t)) - 1,
+		 (void*) (buffer2 + 1), (void*) (buffer + 1));
+
+  /* XOR all the data together, just to try to convince the compiler
+   * not to optimize anything away. */
+
+  uint8_t buffer_x = 0;
+  uint8_t buffer_y = 0;
+  size_t i;
+
+  for (i = 1 ; i < (sizeof(buffer) - (sizeof(psnip_uint64_t) - 1)) ; i++) {
+    buffer_x ^= buffer[i];
+    buffer_y ^= buffer[i];
+  }
+
+  munit_assert_uint8(buffer_x, ==, buffer_y);
+
+  return MUNIT_OK;
+}
+
 static MunitTest test_suite_tests[] = {
-  { (char*) "/unaligned/uint64", test_unaligned_uint64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/unaligned/uint32", test_unaligned_uint32, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/unaligned/uint16", test_unaligned_uint16, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/unaligned/uint64",       test_unaligned_uint64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/unaligned/uint32",       test_unaligned_uint32, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/unaligned/uint16",       test_unaligned_uint16, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/unaligned/uint64/tempt", test_unaligned_uint64_tempt, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
 
