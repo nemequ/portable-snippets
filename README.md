@@ -14,7 +14,9 @@ we'd be happy to try to work out a way to support it.
 Everything is tested continuously with various versions of GCC, Clang,
 and PGI ([on Travis
 CI](https://travis-ci.org/nemequ/portable-snippets)), and MSVC ([on
-AppVeyor](https://ci.appveyor.com/project/quixdb/portable-snippets)).
+AppVeyor](https://ci.appveyor.com/project/quixdb/portable-snippets)):
+
+[![Travis CI status](https://travis-ci.org/nemequ/portable-snippets.svg?branch=master)](https://travis-ci.org/nemequ/portable-snippets) [![AppVeyor status](https://ci.appveyor.com/api/projects/status/quoq2hwes530p29w/branch/master?svg=true)](https://ci.appveyor.com/project/quixdb/portable-snippets/branch/master)
 
 Currently ready-to-use modules include:
 
