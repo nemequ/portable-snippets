@@ -92,7 +92,8 @@ if(ENABLE_AGGRESSIVE_WARNINGS)
     PGI
       -Minform=inform
     MSVC
-      /W4)
+    /W4
+    /analyze)
 
   list(APPEND PSNIP_C_FLAGS ${EXTRA_WARNING_FLAGS})
 endif()

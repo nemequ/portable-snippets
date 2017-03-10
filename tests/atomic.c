@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdint.h>
 #include "../atomic/atomic.h"
 #include "munit/munit.h"
 
@@ -10,14 +9,16 @@ static psnip_atomic_int32 value32 = PSNIP_ATOMIC_VAR_INIT(9);
 
 static MunitResult
 test_atomic_int64(const MunitParameter params[], void* data) {
+#if !defined(PSNIP_ATOMIC_NOT_FOUND)
+  psnip_int64_t v, expected;
+#endif
+
   (void) params;
   (void) data;
 
 #if !defined(PSNIP_ATOMIC_NOT_FOUND)
-  psnip_int64_t v, expected;
-
   v = psnip_atomic_int64_load(&value64);
-  munit_assert_int64(value64, ==, 9);
+  munit_assert_int64(v, ==, 9);
 
   v = v * v * v;
   psnip_atomic_int64_store(&value64, v);
@@ -47,14 +48,16 @@ test_atomic_int64(const MunitParameter params[], void* data) {
 
 static MunitResult
 test_atomic_int32(const MunitParameter params[], void* data) {
+#if !defined(PSNIP_ATOMIC_NOT_FOUND)
+  psnip_int32_t v, expected;
+#endif
+
   (void) params;
   (void) data;
 
 #if !defined(PSNIP_ATOMIC_NOT_FOUND)
-  psnip_int32_t v, expected;
-
   v = psnip_atomic_int32_load(&value32);
-  munit_assert_int32(value32, ==, 9);
+  munit_assert_int32(v, ==, 9);
 
   v = v * v * v;
   psnip_atomic_int32_store(&value32, v);

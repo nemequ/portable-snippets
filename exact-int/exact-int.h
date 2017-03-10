@@ -34,7 +34,7 @@
 #      define PSNIP_EXACT_INT_HAVE_STDINT
 #    elif \
       (defined(__GNUC__) && ((__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5))) || \
-      (defined(_MSC_VER) && (_MSC_VER >= 1700)) || \
+      (defined(_MSC_VER) && (_MSC_VER >= 1600)) || \
       (defined(__SUNPRO_C) && (__SUNPRO_C >= 0x570)) || \
       (defined(__WATCOMC__) && (__WATCOMC__ >= 1250))
 #      define PSNIP_EXACT_INT_HAVE_STDINT
@@ -80,28 +80,28 @@
 #    endif
 #  elif defined(_MSC_VER)
 #    if !defined(psnip_int8_t)
-#      define psnip_int8_t __int8_t
+#      define psnip_int8_t __int8
 #    endif
 #    if !defined(psnip_uint8_t)
-#      define psnip_uint8_t unsigned __int8_t
+#      define psnip_uint8_t unsigned __int8
 #    endif
 #    if !defined(psnip_int16_t)
-#      define psnip_int16_t __int16_t
+#      define psnip_int16_t __int16
 #    endif
 #    if !defined(psnip_uint16_t)
-#      define psnip_uint16_t unsigned __int16_t
+#      define psnip_uint16_t unsigned __int16
 #    endif
 #    if !defined(psnip_int32_t)
-#      define psnip_int32_t __int32_t
+#      define psnip_int32_t __int32
 #    endif
 #    if !defined(psnip_uint32_t)
-#      define psnip_uint32_t unsigned __int32_t
+#      define psnip_uint32_t unsigned __int32
 #    endif
 #    if !defined(psnip_int64_t)
-#      define psnip_int64_t __int64_t
+#      define psnip_int64_t __int64
 #    endif
 #    if !defined(psnip_uint64_t)
-#      define psnip_uint64_t unsigned __int64_t
+#      define psnip_uint64_t unsigned __int64
 #    endif
 #  else
 #    include <limits.h>
