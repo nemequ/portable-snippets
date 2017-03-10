@@ -560,8 +560,9 @@ PSNIP_SAFE_DEFINE_LARGER_UNSIGNED_OPS(psnip_uint64_t, uint64)
 #define PSNIP_SAFE_DEFINE_SIGNED_NEG(T, name, min, max) \
   PSNIP_SAFE__FUNCTION psnip_safe_bool \
   psnip_safe_##name##_neg (T* res, T value) { \
-    *res = -value; \
-    return !PSNIP_SAFE_UNLIKELY(value == min); \
+    _Bool r = value != min; \
+    *res = PSNIP_SAFE_LIKELY(r) ? -value : max; \
+    return r; \
   }
 
 #if defined(PSNIP_SAFE_HAVE_BUILTIN_OVERFLOW)
@@ -881,11 +882,6 @@ PSNIP_SAFE_DEFINE_UNSIGNED_MOD(psnip_uint64_t, uint64, 0xffffffffffffffffULL)
 
 #endif /* !defined(PSNIP_SAFE_NO_FIXED) */
 
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
-/* The are no fixed-length or size selections because they cause an
- * error about _Generic specifying two compatible types.  Hopefully
- * this doesn't cause problems on exotic platforms, but if it does
- * please let me know and I'll try to figure something out. */
 #define PSNIP_SAFE_C11_GENERIC_SELECTION(res, op) \
   _Generic((*res), \
 	   char: psnip_safe_char_##op, \
@@ -903,6 +899,20 @@ PSNIP_SAFE_DEFINE_UNSIGNED_MOD(psnip_uint64_t, uint64, 0xffffffffffffffffULL)
   PSNIP_SAFE_C11_GENERIC_SELECTION(res, op)(res, a, b)
 #define PSNIP_SAFE_C11_GENERIC_UNARY_OP(op, res, v) \
   PSNIP_SAFE_C11_GENERIC_SELECTION(res, op)(res, v)
+
+#if defined(PSNIP_SAFE_HAVE_BUILTINS)
+#define psnip_safe_add(res, a, b) !__builtin_add_overflow(a, b, res)
+#define psnip_safe_sub(res, a, b) !__builtin_sub_overflow(a, b, res)
+#define psnip_safe_mul(res, a, b) !__builtin_mul_overflow(a, b, res)
+#define psnip_safe_div(res, a, b) !__builtin_div_overflow(a, b, res)
+#define psnip_safe_mod(res, a, b) !__builtin_mod_overflow(a, b, res)
+#define psnip_safe_neg(res, v)    PSNIP_SAFE_C11_GENERIC_UNARY_OP (neg, res, v)
+
+#elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+/* The are no fixed-length or size selections because they cause an
+ * error about _Generic specifying two compatible types.  Hopefully
+ * this doesn't cause problems on exotic platforms, but if it does
+ * please let me know and I'll try to figure something out. */
 
 #define psnip_safe_add(res, a, b) PSNIP_SAFE_C11_GENERIC_BINARY_OP(add, res, a, b)
 #define psnip_safe_sub(res, a, b) PSNIP_SAFE_C11_GENERIC_BINARY_OP(sub, res, a, b)
