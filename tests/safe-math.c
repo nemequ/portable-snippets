@@ -114,7 +114,7 @@ test_safe_generic(const MunitParameter params[], void* user_data) {
     munit_assert_true(psnip_safe_##name##_neg(&result, max)); \
     munit_assert_##name(result, ==, -max); \
     munit_assert_false(psnip_safe_##name##_neg(&result, min)); \
-    munit_assert_##name(result, ==, min); \
+    munit_assert_##name(result, ==, max); \
     return MUNIT_OK; \
   }
 

@@ -532,8 +532,9 @@ PSNIP_SAFE_DEFINE_LARGER_UNSIGNED_OPS(uint64_t, uint64)
 #define PSNIP_SAFE_DEFINE_SIGNED_NEG(T, name, min, max) \
   PSNIP_SAFE__FUNCTION _Bool \
   psnip_safe_##name##_neg (T* res, T value) { \
-    *res = -value; \
-    return !PSNIP_SAFE_UNLIKELY(value == min); \
+    _Bool r = value != min; \
+    *res = PSNIP_SAFE_LIKELY(r) ? -value : max; \
+    return r; \
   }
 
 #if defined(PSNIP_SAFE_HAVE_BUILTIN_OVERFLOW)
