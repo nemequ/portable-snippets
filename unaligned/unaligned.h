@@ -124,13 +124,13 @@
   PSNIP_UNALIGNED__FUNCTION					\
   PSNIP_UNALIGNED__NO_UBSAN					\
   T name(const void* src) {					\
-    return *static_cast<PSNIP_UNALIGNED__PACKED T*>(src);	\
+    return *static_cast<PSNIP_UNALIGNED__PACKED const T*>(src);	\
   }
-#    define PSNIP_UNALIGNED_STORE_DEFINE(name, T)	\
-  PSNIP_UNALIGNED__FUNCTION				\
-  PSNIP_UNALIGNED__NO_UBSAN				\
-  void name(void* dest, T src) {			\
-    *static_cast<PSNIP_UNALIGNED__PACKED T*> = src;	\
+#    define PSNIP_UNALIGNED_STORE_DEFINE(name, T)		\
+  PSNIP_UNALIGNED__FUNCTION					\
+  PSNIP_UNALIGNED__NO_UBSAN					\
+  void name(void* dest, T src) {				\
+    *(static_cast<PSNIP_UNALIGNED__PACKED T*>(dest)) = src;	\
   }
 #  else
 #    define PSNIP_UNALIGNED_LOAD_DEFINE(name, T)	\
