@@ -38,6 +38,8 @@ would benefit greatly from testing:
 
  * [unaligned](https://github.com/nemequ/portable-snippets/tree/master/unaligned) —
    fast unaligned loads & stores
+ * [once](https://github.com/nemequ/portable-snippets/tree/master/once) —
+   one-time initialization
 
 Modules can be used in isolation, though some do work better together,
 so if you can keep the whole repository together instead of just

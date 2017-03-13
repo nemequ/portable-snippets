@@ -189,6 +189,16 @@ psnip_add_tests(TARGET clock
   SOURCES
     clock.c)
 
+psnip_add_tests(TARGET once SOURCES once.c)
+
+if(ENABLE_PTHREADS)
+  find_package (Threads REQUIRED)
+  target_link_libraries(once ${CMAKE_THREAD_LIBS_INIT})
+  target_compile_definitions(once PRIVATE PSNIP_ENABLE_PTHREADS)
+elseif(ENABLE_OPENMP)
+  target_compile_options(once PRIVATE ${OpenMP_C_FLAGS})
+endif()
+
 if("${CLOCK_GETTIME_EXISTS}")
   target_link_libraries(clock "${CLOCK_GETTIME_LIBRARY}")
 else()
