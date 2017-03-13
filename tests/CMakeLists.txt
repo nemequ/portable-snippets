@@ -157,46 +157,28 @@ function(psnip_add_tests)
   endif()
 endfunction(psnip_add_tests)
 
-psnip_add_tests(TARGET endian
-  SOURCES
-    endian.c)
-
-psnip_add_tests(TARGET atomic
-  SOURCES
-    atomic.c)
-
-if(ENABLE_OPENMP)
-  target_compile_options(atomic PRIVATE ${OpenMP_C_FLAGS})
-endif()
-
-psnip_add_tests(TARGET builtin
-  SOURCES
-    builtin.c
-  TESTS
-    "/builtin"
-    "/intrin"
-    "/wrapper")
-
-psnip_add_tests(TARGET safe-math
-  SOURCES
-    safe-math.c)
-
-psnip_add_tests(TARGET unaligned
-  SOURCES
-    unaligned.c)
-
-psnip_add_tests(TARGET clock
-  SOURCES
-    clock.c)
-
-psnip_add_tests(TARGET once SOURCES once.c)
+psnip_add_tests(TARGET endian     SOURCES endian.c)
+psnip_add_tests(TARGET atomic     SOURCES atomic.c)
+psnip_add_tests(TARGET builtin    SOURCES builtin.c
+  TESTS "/builtin" "/intrin" "/wrapper")
+psnip_add_tests(TARGET safe-math  SOURCES safe-math.c)
+psnip_add_tests(TARGET unaligned  SOURCES unaligned.c)
+psnip_add_tests(TARGET clock      SOURCES clock.c)
+psnip_add_tests(TARGET once       SOURCES once.c)
+psnip_add_tests(TARGET cpu        SOURCES cpu.c ../cpu/cpu.c)
 
 if(ENABLE_PTHREADS)
   find_package (Threads REQUIRED)
-  target_link_libraries(once ${CMAKE_THREAD_LIBS_INIT})
-  target_compile_definitions(once PRIVATE PSNIP_ENABLE_PTHREADS)
-elseif(ENABLE_OPENMP)
-  target_compile_options(once PRIVATE ${OpenMP_C_FLAGS})
+  foreach(tgt once cpu)
+    target_link_libraries(${tgt} ${CMAKE_THREAD_LIBS_INIT})
+    target_compile_definitions(${tgt} PRIVATE PSNIP_ENABLE_PTHREADS)
+  endforeach()
+endif()
+
+if(ENABLE_OPENMP)
+  foreach(tgt atomic once cpu)
+    target_compile_options(${tgt} PRIVATE ${OpenMP_C_FLAGS})
+  endforeach()
 endif()
 
 if("${CLOCK_GETTIME_EXISTS}")
