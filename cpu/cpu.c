@@ -1,3 +1,13 @@
+/* CPU Information (v1)
+ * Portable Snippets - https://gitub.com/nemequ/portable-snippets
+ * Created by Evan Nemerson <evan@nemerson.com>
+ *
+ *   To the extent possible under law, the authors have waived all
+ *   copyright and related or neighboring rights to this code.  For
+ *   details, see the Creative Commons Zero 1.0 Universal license at
+ *   https://creativecommons.org/publicdomain/zero/1.0/
+ */
+
 #include "cpu.h"
 
 #include "../once/once.h"
