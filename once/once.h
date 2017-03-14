@@ -57,16 +57,24 @@ static BOOL CALLBACK psnip_once__callback_wrap(INIT_ONCE* InitOnce, void* Parame
   (void) Context;
   (void) InitOnce;
 #if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable:4055)
+#  pragma warning(push)
+#  pragma warning(disable:4055)
 #endif
   ((void (*)(void)) Parameter)();
 #if defined(_MSC_VER)
-#pragma warning(pop)
+#  pragma warning(pop)
 #endif
   return !0;
 }
-#  define psnip_once_call(flag, func) InitOnceExecuteOnce(flag, &psnip_once__callback_wrap, func, NULL)
+#  if defined(_MSC_VER) && (_MSC_VER >= 1500)
+#    define psnip_once_call(flag, func) \
+  __pragma(warning(push)) \
+  __pragma(warning(disable:4152)) \
+  InitOnceExecuteOnce(flag, &psnip_once__callback_wrap, func, NULL) \
+  __pragma(warning(pop))
+#  else
+#    define psnip_once_call(flag, func) InitOnceExecuteOnce(flag, &psnip_once__callback_wrap, func, NULL)
+#  endif
 #elif PSNIP_ONCE_BACKEND == PSNIP_ONCE__BACKEND_ATOMIC
 #  define PSNIP_ONCE_INIT PSNIP_ATOMIC_VAR_INIT(0)
 typedef psnip_atomic_int32 psnip_once;

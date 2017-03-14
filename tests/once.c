@@ -17,10 +17,6 @@ test_once_basic(const MunitParameter params[], void* data) {
   (void) params;
   (void) data;
 
-#if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable:4152)
-#endif
   munit_assert_int(test_once_basic_times_called, ==, 0);
   psnip_once_call(&test_once_basic_once, &test_once_basic_init);
   munit_assert_int(test_once_basic_times_called, ==, 1);
@@ -28,9 +24,6 @@ test_once_basic(const MunitParameter params[], void* data) {
   munit_assert_int(test_once_basic_times_called, ==, 1);
   psnip_once_call(&test_once_basic_once, &test_once_basic_init);
   munit_assert_int(test_once_basic_times_called, ==, 1);
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
 
   return MUNIT_OK;
 }
