@@ -70,8 +70,8 @@ test_clock_wall_veracity(const MunitParameter params[], void* data) {
 
   elapsed_ms = ts_difference(&res1, &res2);
 
-  munit_assert_int(elapsed_ms, >,  950);
-  munit_assert_int(elapsed_ms, <, 1050);
+  munit_assert_int(elapsed_ms, >,  900);
+  munit_assert_int(elapsed_ms, <, 1100);
 
   (void) params;
   (void) data;
@@ -109,7 +109,7 @@ test_clock_cpu(const MunitParameter params[], void* data) {
 
   munit_assert_int(elapsed_ms, >=, 1000);
   if (precision >= 1000)
-    munit_assert_int(elapsed_ms, <=, 1010);
+    munit_assert_int(elapsed_ms, <=, 1100);
 
   (void) params;
   (void) data;
@@ -143,8 +143,8 @@ test_clock_monotonic(const MunitParameter params[], void* data) {
 
   elapsed_ms = ts_difference(&res1, &res2);
 
-  munit_assert_int(elapsed_ms, >,  950);
-  munit_assert_int(elapsed_ms, <, 1050);
+  munit_assert_int(elapsed_ms, >,  900);
+  munit_assert_int(elapsed_ms, <, 1100);
 
   (void) params;
   (void) data;
