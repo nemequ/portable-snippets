@@ -5,6 +5,7 @@ integer operations do not overflow.  Available implementations, in
 order of priority:
 
  * Compiler builtins (i.e., `__builtin_*_overflow`).
+ * On Windows, use `<intsafe.h>` for the types it supports.
  * If a larger type is available, promote the inputs and verify the
    result falls within the range of the result type before casting to
    it.
@@ -21,13 +22,13 @@ Regardless of which implementation is chosen, the preferred API is the
 same.  For each type and operation, we define:
 
 ```c
-_Bool psnip_safe_{type_identifier}_{operation} ({T}* result, {T} a, {T} b);
+psnip_safe_bool psnip_safe_{type_identifier}_{operation} ({T}* result, {T} a, {T} b);
 ```
 
 For example, for addition on signed integers, there is
 
 ```c
-_Bool psnip_safe_int_add (int* res, int a, int b);
+psnip_safe_bool psnip_safe_int_add (int* res, int a, int b);
 ```
 
 Values for type_identifier and T are:
@@ -64,6 +65,8 @@ Operations are:
  * neg (negation, for signed types only)
 
 Negation only has one input argument, all the others have two.
+
+`psnip_safe_bool` is defined to _Bool (for C99) or int.
 
 ## Emulation of native APIs
 
