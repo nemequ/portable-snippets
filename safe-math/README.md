@@ -139,3 +139,21 @@ mode since there was no standard way to implement them until C11.
 
 Even if you request emulation of the GCC builtins, we cannot provide
 the `__builtin_*_overflow_p` functions.
+
+# Alternatives
+
+## C
+
+ * [GCC Integer Overflow
+   Builtins](https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html)
+   (GCC 5+)
+ * [Windows'
+   <intsafe.h>](https://msdn.microsoft.com/en-us/library/windows/desktop/ff521693(v=vs.85).aspx)
+   (Windows only, unsigned only)
+
+This module will use
+
+## C++
+
+ * [SafeInt](https://safeint.codeplex.com/)
+ * [Boost Safe Numerics](http://blincubator.com/bi_library/safe-numerics/?gform_post_id=426)
