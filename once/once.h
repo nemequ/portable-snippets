@@ -18,8 +18,10 @@
 
 #if !defined(PSNIP_ONCE_BACKEND) && defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201102L) && !defined(__STDC_NO_THREADS__)
 #  include <limits.h>
-#  if defined(__GNUC__) && (__GLIBC__ < 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ < 16))
-/* stdc-predef.h didn't include __STDC_NO_THREADS__ until 2.16. */
+#  if defined(__STDC_NO_THREADS__) || (defined(__GNUC__) && (__GLIBC__ < 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ < 16)))
+/* stdc-predef.h didn't include __STDC_NO_THREADS__ until 2.16.  icc
+   doesn't include stdc-predef.h until we pull in limits.h, so the
+   first check doesn't work. */
 #  else
 #    include <threads.h>
 #    define PSNIP_ONCE_BACKEND PSNIP_ONCE_BACKEND_C11
