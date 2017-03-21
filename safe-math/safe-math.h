@@ -16,7 +16,7 @@
 #    if __has_builtin(__builtin_add_overflow)
 #      define PSNIP_SAFE_HAVE_BUILTIN_OVERFLOW
 #    endif
-#  elif defined(__GNUC__) && (__GNUC__ >= 5)
+#  elif defined(__GNUC__) && (__GNUC__ >= 5) && !defined(__INTEL_COMPILER)
 #    define PSNIP_SAFE_HAVE_BUILTIN_OVERFLOW
 #  endif
 #  if defined(__has_include)
