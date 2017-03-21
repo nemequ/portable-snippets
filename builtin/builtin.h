@@ -783,7 +783,20 @@ PSNIP_BUILTIN__POPCOUNT_DEFINE_PORTABLE(popcountll, unsigned long long)
 
 #if PSNIP_BUILTIN_GNU_HAS_BUILTIN(__builtin_clrsb, 4, 7)
 #  define psnip_builtin_clrsb(x)   __builtin_clrsb(x)
-#  define psnip_builtin_clrsbl(x)  __builtin_clrsbl(x)
+#  if !defined(__INTEL_COMPILER)
+#    define psnip_builtin_clrsbl(x)  __builtin_clrsbl(x)
+#  else
+#    if PSNIP_BUILTIN__SIZEOF_LONG == PSNIP_BUILTIN__SIZEOF_INT
+#      define psnip_builtin_clrsbl(x) ((long) __builtin_clrsb((int) x))
+#    elif PSNIP_BUILTIN__SIZEOF_LONG == PSNIP_BUILTIN__SIZEOF_LLONG
+#      define psnip_builtin_clrsbl(x) ((long) __builtin_clrsbll((long long) x))
+#    else
+       PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbl, clzl, long)
+#    endif
+#    if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#      define __builtin_clrsbl(x)  psnip_builtin_clrsbl(x)
+#    endif
+#  endif
 #  define psnip_builtin_clrsbll(x) __builtin_clrsbll(x)
 #  define psnip_builtin_clrsb32(x) PSNIP_BUILTIN__VARIANT_INT32(_,clrsb)(x)
 #  define psnip_builtin_clrsb64(x) PSNIP_BUILTIN__VARIANT_INT64(_,clrsb)(x)
