@@ -40,6 +40,8 @@ would benefit greatly from testing:
    fast unaligned loads & stores
  * [once](https://github.com/nemequ/portable-snippets/tree/master/once) —
    one-time initialization
+ * [once](https://github.com/nemequ/portable-snippets/tree/master/random) —
+   random number generation (cryptographic, reproducible, and fast)
 
 Modules can be used in isolation, though some do work better together,
 so if you can keep the whole repository together instead of just
