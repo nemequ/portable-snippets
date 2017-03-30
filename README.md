@@ -70,6 +70,8 @@ interested in:
    threads API on top of pthreads and the Windows API.  zlib license.
  * [win-iconv](https://github.com/win-iconv/win-iconv) — Windows
    implementation of the iconv API (character set conversion).
+ * [mman-win32](https://github.com/witwall/mman-win32) — `mman.h`
+   (`mmap()`, *etc.*) implementation for Windows.
 
 If there is a project you'd like to see added to the list, please file
 an issue or pull request.
