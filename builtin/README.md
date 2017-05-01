@@ -104,6 +104,9 @@ For bswap/byteswap functions, you should really use
 [endian.h](../endian) which also handles endianness detection as well
 as providing easier to use APIs.
 
+For SIMD intrinsics (SSE, AVX, NEON, etc.), take a look at the
+[SIMDe](https://github.com/nemequ/simde/) project.
+
 For things which are effectively compiler hints (such as
 `__builtin_expect`) as opposed to data manipulation functions, see
 [Hedley](https://nemequ.github.io/hedley/).
