@@ -26,3 +26,14 @@ want.
 If you wish to ignore the result of compile-time detection attempts,
 you may define `PSNIP_ENDIAN_FORCE_RT` prior to including this header
 to force run-time detection.
+
+If you're only interested in detection you can just ignore the
+swapping functions mentioned above.  If endianness could be determined
+at compile-time (i.e., through preprocessor macros),
+`PSNIP_ENDIAN_ORDER` will be defined to either `PSNIP_ENDIAN_LITTLE`
+or `PSNIP_ENDIAN_BIG`.
+
+If you need (or prefer) to fall back on run-time detection,
+`PSNIP_ENDIAN_ORDER_RT` will evaluate to the same values
+(`PSNIP_ENDIAN_LITTLE` or `PSNIP_ENDIAN_BIG`).  Note that the
+"run-time" detection will likely be optimized away by the compiler.

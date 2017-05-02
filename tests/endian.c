@@ -107,11 +107,24 @@ test_endian_from_le(const MunitParameter params[], void* data) {
   return MUNIT_OK;
 }
 
+static MunitResult
+test_endian_match_rt(const MunitParameter params[], void* data) {
+  (void) params;
+  (void) data;
+
+#if defined(PSNIP_ENDIAN_ORDER)
+  munit_assert_uint32(PSNIP_ENDIAN_ORDER, ==, PSNIP_ENDIAN_ORDER_RT);
+#endif
+
+  return MUNIT_OK;
+}
+
 static MunitTest test_suite_tests[] = {
   { (char*) "/endian/swap/known", test_endian_swap_known, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
   { (char*) "/endian/swap/random", test_endian_swap_random, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   { (char*) "/endian/from-be", test_endian_from_be, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
   { (char*) "/endian/from-le", test_endian_from_le, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
+  { (char*) "/endian/match-rt", test_endian_match_rt, NULL, NULL, MUNIT_TEST_OPTION_SINGLE_ITERATION, NULL },
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
 

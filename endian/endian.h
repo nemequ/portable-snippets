@@ -1,4 +1,4 @@
-/* Endianness detection and swapping (v2)
+/* Endianness detection and swapping (v3)
  * Portable Snippets - https://gitub.com/nemequ/portable-snippets
  * Created by Evan Nemerson <evan@nemerson.com>
  *
@@ -61,10 +61,10 @@
  * possible to mix endianness within a single program.  This is
  * currently pretty rare, though.
  *
- * We define PSNIP_ENDIAN_ORDER to PSNIP_ENDIAN_LITTLE,
+ * We try to define PSNIP_ENDIAN_ORDER to PSNIP_ENDIAN_LITTLE,
  * PSNIP_ENDIAN_BIG, or PSNIP_ENDIAN_PDP.  Additionally, you can use
  * the PSNIP_RT_BYTE_ORDER to check the runtime byte order, which is a
- * bit more reliable (though it does introduce some runtime overhead.
+ * bit more reliable (though it may introduce some runtime overhead).
  *
  * In the event we are unable to determine endianness at compile-time,
  * PSNIP_ENDIAN_ORDER is left undefined and you will be forced to rely
@@ -114,7 +114,7 @@
 #    elif defined(__BYTE_ORDER) && (__BYTE_ORDER == __PDP_ENDIAN)
 #      define PSNIP_ENDIAN_ORDER PSNIP_ENDIAN_PDP
 #    endif
-#  else
+#  elif defined(__linux__) || defined(__linux) || defined(__gnu_linux__)
 #    include <endian.h>
 #    if defined(__BYTE_ORDER) && defined(__LITTLE_ENDIAN) && (__BYTE_ORDER == __LITTLE_ENDIAN)
 #      define PSNIP_ENDIAN_ORDER PSNIP_ENDIAN_LITTLE
@@ -133,29 +133,28 @@
 
 #endif /* !defined(PSNIP_ENDIAN_FORCE_RT) */
 
-#if defined(PSNIP_ENDIAN_FORCE_RT) || !defined(PSNIP_ENDIAN_ORDER)
-
 static const union {
+  unsigned long long value;
   unsigned char bytes[4];
-  psnip_uint32_t value;
 } psnip_endian_rt_data = {
-  { 1, 2, 3, 4 }
+  1
 };
 
-#define PSNIP_RT_BYTE_ORDER_IS_LE (psnip_endian_rt_data.value == 0x04030201)
-#define PSNIP_RT_BYTE_ORDER_IS_BE (psnip_endian_rt_data.value == 0x01020304)
-#define PSNIP_RT_BYTE_ORDER (PSNIP_RT_BYTE_ORDER_IS_LE ? PSNIP_ENDIAN_LITTLE : PSNIP_ENDIAN_BIG)
+#define PSNIP_ENDIAN_ORDER_RT_IS_LE (psnip_endian_rt_data.bytes[0] == 1)
+#define PSNIP_ENDIAN_ORDER_RT_IS_BE (psnip_endian_rt_data.bytes[sizeof(unsigned long long) - 1] == 1)
+#define PSNIP_ENDIAN_ORDER_RT (PSNIP_ENDIAN_ORDER_RT_IS_LE ? PSNIP_ENDIAN_LITTLE : PSNIP_ENDIAN_BIG)
 
+#if defined(PSNIP_ENDIAN_FORCE_RT) || !defined(PSNIP_ENDIAN_ORDER)
 #define PSNIP_ENDIAN__DEFINE_LE_FUNC(siz) \
-  static PSNIP_ENDIAN__FUNCTION \
+  PSNIP_ENDIAN__FUNCTION \
   psnip_uint##siz##_t psnip_endian_le##siz(psnip_uint##siz##_t v) { \
-    return PSNIP_RT_BYTE_ORDER_IS_LE ? v : psnip_builtin_bswap##siz(v); \
+    return PSNIP_ENDIAN_ORDER_RT_IS_LE ? v : psnip_builtin_bswap##siz(v); \
   }
 
 #define PSNIP_ENDIAN__DEFINE_BE_FUNC(siz) \
-  static PSNIP_ENDIAN__FUNCTION \
-  psnip_uint##siz##_t psnip_endian_le##siz(psnip_uint##siz##_t v) { \
-    return PSNIP_RT_BYTE_ORDER_IS_BE ? v : psnip_builtin_bswap##siz(v); \
+  PSNIP_ENDIAN__FUNCTION \
+  psnip_uint##siz##_t psnip_endian_be##siz(psnip_uint##siz##_t v) { \
+    return PSNIP_ENDIAN_ORDER_RT_IS_BE ? v : psnip_builtin_bswap##siz(v); \
   }
 
 PSNIP_ENDIAN__DEFINE_LE_FUNC(16)
@@ -164,7 +163,6 @@ PSNIP_ENDIAN__DEFINE_LE_FUNC(64)
 PSNIP_ENDIAN__DEFINE_BE_FUNC(16)
 PSNIP_ENDIAN__DEFINE_BE_FUNC(32)
 PSNIP_ENDIAN__DEFINE_BE_FUNC(64)
-
 #elif PSNIP_ENDIAN_ORDER == PSNIP_ENDIAN_LITTLE
 #  define psnip_endian_le16(v) ((psnip_uint16_t) (v))
 #  define psnip_endian_le32(v) ((psnip_uint32_t) (v))
