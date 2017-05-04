@@ -104,9 +104,17 @@ psnip_random__rdrand (size_t length, psnip_uint8_t data[PSNIP_RANDOM_ARRAY_PARAM
   while (remaining > 0) {
     do {
 #if defined(PSNIP_CPU_ARCH_X86_64)
+#  if defined(__GNUC__)
+      r = __builtin_ia32_rdrand64_step(&v);
+#  else
       r = _rdrand64_step(&v);
+#  endif
 #else
+#  if defined(__GNUC__)
+      r = __builtin_ia32_rdrand32_step(&v);
+#  else
       r = _rdrand32_step(&v);
+#  endif
 #endif
     } while (r == 0);
 
