@@ -23,7 +23,7 @@
 #if defined(PSNIP_CPU_ARCH_X86_64) || defined(PSNIP_CPU_ARCH_X86)
 #  if defined(__has_builtin)
 #    if defined(__clang__) && (__clang_major__ == 3 && __clang_minor__ == 5)
-#    elif __has_builtin(__builtin_ia32_rdrand64_step)
+#    elif __has_builtin(__builtin_ia32_rdrand64_step) || __has_builtin(__builtin_ia32_rdrand32_step)
 #      define PSNIP_RANDOM__SECURE_ALLOW_RDRAND
 #    endif
 #  elif (defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)))
@@ -95,14 +95,18 @@ static int
 psnip_random__rdrand (size_t length, psnip_uint8_t data[PSNIP_RANDOM_ARRAY_PARAM(length)]) {
   size_t remaining = length;
   unsigned int r;
+#if defined(PSNIP_CPU_ARCH_X86_64)
   unsigned long long int v;
+#else
+  unsigned int v;
+#endif
 
   while (remaining > 0) {
     do {
-#if defined(__GNUC__)
-      r = __builtin_ia32_rdrand64_step(&v);
-#else
+#if defined(PSNIP_CPU_ARCH_X86_64)
       r = _rdrand64_step(&v);
+#else
+      r = _rdrand32_step(&v);
 #endif
     } while (r == 0);
 
