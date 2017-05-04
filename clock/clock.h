@@ -102,7 +102,7 @@ struct PsnipClockTimespec {
 #  endif
 #endif
 
-#if defined(__MACH__)
+#if defined(__MACH__) && !defined(__gnu_hurd__)
 #  if !defined(PSNIP_CLOCK_MONOTONIC_METHOD)
 #    define PSNIP_CLOCK_MONOTONIC_METHOD PSNIP_CLOCK_METHOD_MACH_ABSOLUTE_TIME
 #  endif
