@@ -6,6 +6,15 @@ enable_testing()
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/munit/munit.c")
+  find_program(GIT git)
+  if(GIT)
+    execute_process(COMMAND ${GIT} submodule update --init --recursive)
+  else()
+    message (FATAL_ERROR "It looks like you don't have submodules checked out.  Please run `git submodule update --init --recursive'")
+  endif()
+endif()
+
 if(ENABLE_OPENMP)
   find_package(OpenMP REQUIRED)
 endif()
