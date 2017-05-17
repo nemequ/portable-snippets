@@ -13,6 +13,7 @@
 
 #define PSNIP_ONCE__BACKEND_ATOMIC  1
 #define PSNIP_ONCE__BACKEND_PTHREAD 2
+#define PSNIP_ONCE__BACKEND_NONE    3
 #define PSNIP_ONCE__BACKEND_C11     11
 #define PSNIP_ONCE__BACKEND_WIN32   32
 
@@ -111,6 +112,15 @@ static void psnip_once_call(psnip_once* flag, void (*func)(void)) {
 	   function. */
       } while (psnip_atomic_int32_load(flag) == 1);
     }
+  }
+}
+#elif PSNIP_ONCE_BACKEND == PSNIP_ONCE__BACKEND_NONE
+#  define PSNIP_ONCE_INIT 0
+typedef int psnip_once;
+static void psnip_once_call(psnip_once* flag, void (*func)(void)) {
+  if (*flag == 0) {
+    func();
+    *flag = 1;
   }
 }
 #endif
