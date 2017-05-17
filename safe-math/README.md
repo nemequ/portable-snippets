@@ -151,7 +151,7 @@ the `__builtin_*_overflow_p` functions.
    <intsafe.h>](https://msdn.microsoft.com/en-us/library/windows/desktop/ff521693(v=vs.85).aspx)
    (Windows only, unsigned only)
 
-This module will use
+This module will use the above APIs if available.
 
 ## C++
 
