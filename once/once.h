@@ -18,6 +18,7 @@
 
 #if !defined(PSNIP_ONCE_BACKEND)
 #  if defined(__STDC_NO_THREADS__) && __STDC_NO_THREADS__
+#  elif defined(__EMSCRIPTEN__)
 #  elif defined(__has_include)
 #    if __has_include(<threads.h>)
 #      include <threads.h>

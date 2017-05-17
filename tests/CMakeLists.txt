@@ -158,11 +158,11 @@ function(psnip_add_tests)
   if(PSNIP_TEST_TESTS)
     foreach(TEST ${PSNIP_TEST_TESTS})
       add_test(NAME "${TEST}"
-	COMMAND $<TARGET_FILE:${PSNIP_TEST_TARGET}> "${TEST}")
+	COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:${PSNIP_TEST_TARGET}> "${TEST}")
     endforeach(TEST)
   else()
     add_test(NAME "/${PSNIP_TEST_TARGET}"
-      COMMAND $<TARGET_FILE:${PSNIP_TEST_TARGET}>)
+      COMMAND ${CMAKE_CROSSCOMPILING_EMULATOR} $<TARGET_FILE:${PSNIP_TEST_TARGET}>)
   endif()
 endfunction(psnip_add_tests)
 

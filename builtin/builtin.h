@@ -834,7 +834,7 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
     return x;							\
   }
 
-#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_bitreverse64)
+#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_bitreverse64) && !defined(__EMSCRIPTEN__)
 #  define psnip_builtin_bitreverse8(x)  __builtin_bitreverse8(x)
 #  define psnip_builtin_bitreverse16(x) __builtin_bitreverse16(x)
 #  define psnip_builtin_bitreverse32(x) __builtin_bitreverse32(x)
