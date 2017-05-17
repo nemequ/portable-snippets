@@ -524,7 +524,7 @@ test_gnu_bitreverse8(const MunitParameter params[], void* data) {
   (void) data;
 
   for (i = 0 ; i < (sizeof(vals) / sizeof(vals[0])) ; i++) {
-    munit_assert_uint8(psnip_builtin_bitreverse8((psnip_int8_t) i), ==, (psnip_int8_t) vals[i]);
+    munit_assert_uint8(psnip_builtin_bitreverse8((psnip_uint8_t) i), ==, vals[i]);
   }
 
   return MUNIT_OK;
