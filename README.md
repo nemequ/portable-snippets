@@ -13,10 +13,12 @@ we'd be happy to try to work out a way to support it.
 
 Everything is tested continuously with various versions of GCC, Clang,
 and PGI ([on Travis
-CI](https://travis-ci.org/nemequ/portable-snippets)), and MSVC ([on
-AppVeyor](https://ci.appveyor.com/project/quixdb/portable-snippets)):
+CI](https://travis-ci.org/nemequ/portable-snippets)), MSVC ([on
+AppVeyor](https://ci.appveyor.com/project/quixdb/portable-snippets)),
+and Emscripten (on
+[Codefresh](https://g.codefresh.io/repositories/nemequ/portable-snippets/builds?filter=trigger:build;branch:master;service:591f783d728f4b0001051d3e~portable-snippets)):
 
-[![Travis CI status](https://travis-ci.org/nemequ/portable-snippets.svg?branch=master)](https://travis-ci.org/nemequ/portable-snippets) [![AppVeyor status](https://ci.appveyor.com/api/projects/status/quoq2hwes530p29w/branch/master?svg=true)](https://ci.appveyor.com/project/quixdb/portable-snippets/branch/master)
+[![Travis CI status](https://travis-ci.org/nemequ/portable-snippets.svg?branch=master)](https://travis-ci.org/nemequ/portable-snippets) [![AppVeyor status](https://ci.appveyor.com/api/projects/status/quoq2hwes530p29w/branch/master?svg=true)](https://ci.appveyor.com/project/quixdb/portable-snippets/branch/master) [![Codefresh status](https://g.codefresh.io/api/badges/build?repoOwner=nemequ&repoName=portable-snippets&branch=master&pipelineName=portable-snippets&accountName=nemequ&type=cf-1)](https://g.codefresh.io/repositories/nemequ/portable-snippets/builds?filter=trigger:build;branch:master;service:591f783d728f4b0001051d3e~portable-snippets)
 
 Currently ready-to-use modules include:
 
