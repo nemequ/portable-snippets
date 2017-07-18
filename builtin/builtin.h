@@ -70,6 +70,10 @@
 #  endif
 #endif
 
+#if defined(__ARM_ACLE)
+#  include <arm_acle.h>
+#endif
+
 #if \
   !defined(psnip_int64_t) || !defined(psnip_uint64_t) || \
   !defined(psnip_int32_t) || !defined(psnip_uint32_t) || \
@@ -1035,82 +1039,156 @@ psnip_builtin_bswap64(psnip_uint64_t v) {
 /*** _rotl ***/
 
 #define PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(f_n, T, ST)	\
-  PSNIP_BUILTIN__FUNCTION				\
-  T psnip_intrin_##f_n(T value, ST shift) {		\
-    return						\
-      (value >> ((sizeof(T) * 8) - shift)) |		\
-      (value << shift);					\
+  PSNIP_BUILTIN__FUNCTION                               \
+  T psnip_intrin_##f_n(T value, ST shift) {             \
+    const ST mask = (ST) ((sizeof(T) * CHAR_BIT) - 1);  \
+    return                                              \
+      (value << (shift & mask)) |                       \
+      (value >> (-shift & mask));                       \
   }
 
-#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotl8, 14, 0)
+#if defined(PSNIP_BUILTIN__ENABLE_X86) && PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotl8, 14, 0)
 #  define psnip_intrin_rotl8(value, shift) _rotl8(value, shift)
 #  define psnip_intrin_rotl16(value, shift) _rotl16(value, shift)
 #else
-  PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl8, psnip_uint8_t, unsigned char)
-  PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl16, psnip_uint16_t, unsigned char)
+#  if defined(PSNIP_BUILTIN__ENABLE_X86) && PSNIP_BUILTIN_GNU_HAS_BUILTIN(__rolw, 4, 5)
+#    define psnip_intrin_rotl8(value, shift) __rolb(value, shift)
+#    define psnip_intrin_rotl16(value, shift) __rolw(value, shift)
+#  elif defined(PSNIP_BUILTIN__ENABLE_X86) && !defined(_MSC_VER)
+PSNIP_BUILTIN__FUNCTION
+psnip_uint32_t psnip_intrin_rotl8(psnip_uint8_t value, int shift) {
+  __asm__ ("rolb %1, %0" : "+g" (value) : "cI" ((psnip_uint8_t) shift));
+  return value;
+}
+
+PSNIP_BUILTIN__FUNCTION
+psnip_uint32_t psnip_intrin_rotl16(psnip_uint16_t value, int shift) {
+  __asm__ ("rolw %1, %0" : "+g" (value) : "cI" ((psnip_uint8_t) shift));
+  return value;
+}
+#  else
+PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl8, psnip_uint8_t, unsigned char)
+PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl16, psnip_uint16_t, unsigned char)
+#  endif
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
-#    if !defined(_rotl8)
-#      define _rotl8(value, shift)  psnip_intrin_rotl8(value, shift)
-#    endif
-#    if !defined(_rotl16)
-#      define _rotl16(value, shift) psnip_intrin_rotl16(value, shift)
-#    endif
+#    define _rotl8(value, shift)  psnip_intrin_rotl8(value, shift)
+#    define _rotl16(value, shift) psnip_intrin_rotl16(value, shift)
 #  endif
 #endif
 
-#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotl8, 13, 10)
+#if defined(PSNIP_BUILTIN__ENABLE_X86) && (PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotl, 13, 10) || PSNIP_BUILTIN_GNU_HAS_BUILTIN(_rotl, 4, 5) || defined(__INTEL_COMPILER))
 #  define psnip_intrin_rotl(value, shift) _rotl(value, shift)
+#else
+#  if defined(PSNIP_BUILTIN__ENABLE_X86) && !defined(_MSC_VER)
+PSNIP_BUILTIN__FUNCTION
+psnip_uint32_t psnip_intrin_rotl(psnip_uint32_t value, int shift) {
+  __asm__ ("roll %1, %0" : "+g" (value) : "cI" ((psnip_uint8_t) shift));
+  return value;
+}
+#  else
+PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl, psnip_uint32_t, int)
+#  endif
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _rotl(value, shift) psnip_intrin_rotl(value, shift)
+#  endif
+#endif
+
+#if defined(PSNIP_BUILTIN__ENABLE_X86) && PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotl64, 13, 10)
 #  define psnip_intrin_rotl64(value, shift) _rotl64(value, shift)
 #else
-  PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl, psnip_uint32_t, int)
-  PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl64, psnip_uint64_t, int)
-
+#  if defined(__amd64) && PSNIP_BUILTIN_GNU_HAS_BUILTIN(__rolq, 4, 5)
+#    define psnip_intrin_rotl64(value, shift) __rolq(value, shift)
+#  elif defined(PSNIP_BUILTIN__ENABLE_X86) && !defined(_MSC_VER)
+PSNIP_BUILTIN__FUNCTION
+psnip_uint64_t psnip_intrin_rotl64(psnip_uint64_t value, int shift) {
+  __asm__ ("rolq %1, %0" : "+g" (value) : "cJ" ((psnip_uint8_t) shift));
+  return value;
+}
+#  else
+PSNIP_BUILTIN_ROTL_DEFINE_PORTABLE(rotl64, psnip_uint64_t, int)
+#  endif
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
-#    if !defined(_rotl)
-#      define _rotl(value, shift)   psnip_intrin_rotl(value, shift)
-#    endif
-#    if !defined(_rotl64)
-#      define _rotl64(value, shift) psnip_intrin_rotl64(value, shift)
-#    endif
+#    define _rotl64(value, shift) psnip_intrin_rotl64(value, shift)
 #  endif
 #endif
 
 /*** _rotr ***/
 
 #define PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(f_n, T, ST)	\
-  PSNIP_BUILTIN__FUNCTION				\
-  T psnip_intrin_##f_n(T value, ST shift) {		\
-    return						\
-      (value << ((sizeof(T) * 8) - shift)) |		\
-      (value >> shift);					\
+  PSNIP_BUILTIN__FUNCTION                               \
+  T psnip_intrin_##f_n(T value, ST shift) {             \
+    const ST mask = (ST) ((sizeof(T) * CHAR_BIT) - 1);  \
+    return                                              \
+      (value >> (shift & mask)) |                       \
+      (value << (-shift & mask));                       \
   }
 
-PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr8, psnip_uint8_t, unsigned char)
-PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr16, psnip_uint16_t, unsigned char)
-
-#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotr8, 14, 0)
+#if defined(PSNIP_BUILTIN__ENABLE_X86) && PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotr8, 14, 0)
 #  define psnip_intrin_rotr8(value, shift) _rotr8(value, shift)
 #  define psnip_intrin_rotr16(value, shift) _rotr16(value, shift)
 #else
+#  if defined(PSNIP_BUILTIN__ENABLE_X86) && PSNIP_BUILTIN_GNU_HAS_BUILTIN(__rorw, 4, 5)
+#    define psnip_intrin_rotr8(value, shift) __rorb(value, shift)
+#    define psnip_intrin_rotr16(value, shift) __rorw(value, shift)
+#  elif defined(PSNIP_BUILTIN__ENABLE_X86) && !defined(_MSC_VER)
+PSNIP_BUILTIN__FUNCTION
+psnip_uint32_t psnip_intrin_rotr8(psnip_uint8_t value, int shift) {
+  __asm__ ("rorb %1, %0" : "+g" (value) : "cI" ((psnip_uint8_t) shift));
+  return value;
+}
+
+PSNIP_BUILTIN__FUNCTION
+psnip_uint32_t psnip_intrin_rotr16(psnip_uint16_t value, int shift) {
+  __asm__ ("rorw %1, %0" : "+g" (value) : "cI" ((psnip_uint8_t) shift));
+  return value;
+}
+#  else
+PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr8, psnip_uint8_t, unsigned char)
+PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr16, psnip_uint16_t, unsigned char)
+#  endif
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define _rotr8(value, shift)  psnip_intrin_rotr8(value, shift)
 #    define _rotr16(value, shift) psnip_intrin_rotr16(value, shift)
 #  endif
 #endif
 
-#if PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotr8, 13, 10)
+#if defined(PSNIP_BUILTIN__ENABLE_X86) && (PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotr, 13, 10) || PSNIP_BUILTIN_GNU_HAS_BUILTIN(_rotr, 4, 5) || defined(__INTEL_COMPILER))
 #  define psnip_intrin_rotr(value, shift) _rotr(value, shift)
+#else
+#  if defined(PSNIP_BUILTIN__ENABLE_X86) && !defined(_MSC_VER)
+PSNIP_BUILTIN__FUNCTION
+psnip_uint32_t psnip_intrin_rotr(psnip_uint32_t value, int shift) {
+  __asm__ ("rorl %1, %0" : "+g" (value) : "cI" ((psnip_uint8_t) shift));
+  return value;
+}
+#  elif defined(__ARM_ACLE) && (__ARM_ACLE >= 100)
+#    define psnip_intrin_rotr(value, shift) __ror(value, shift)
+#  else
+PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr, psnip_uint32_t, int)
+#  endif
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define _rotr(value, shift) psnip_intrin_rotr(value, shift)
+#  endif
+#endif
+
+#if defined(PSNIP_BUILTIN__ENABLE_X86) && PSNIP_BUILTIN_MSVC_HAS_INTRIN(_rotr64, 13, 10)
 #  define psnip_intrin_rotr64(value, shift) _rotr64(value, shift)
 #else
-PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr, psnip_uint32_t, int)
+#  if defined(__amd64) && PSNIP_BUILTIN_GNU_HAS_BUILTIN(__rorq, 4, 5)
+#    define psnip_intrin_rotr64(value, shift) __rorq(value, shift)
+#  elif defined(PSNIP_BUILTIN__ENABLE_X86) && !defined(_MSC_VER)
+PSNIP_BUILTIN__FUNCTION
+psnip_uint64_t psnip_intrin_rotr64(psnip_uint64_t value, int shift) {
+  __asm__ ("rorq %1, %0" : "+g" (value) : "cJ" ((psnip_uint8_t) shift));
+  return value;
+}
+#  elif defined(__ARM_ACLE) && (__ARM_ACLE >= 110)
+#    define psnip_intrin_rotr64(value, shift) __rorll(value, shift)
+#  else
 PSNIP_BUILTIN_ROTR_DEFINE_PORTABLE(rotr64, psnip_uint64_t, int)
+#  endif
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
-#    if !defined(_rotr)
-#      define _rotr(value, shift)   psnip_intrin_rotr(value, shift)
-#    endif
-#    if !defined(_rotr64)
-#      define _rotr64(value, shift) psnip_intrin_rotr64(value, shift)
-#    endif
+#    define _rotr64(value, shift) psnip_intrin_rotr64(value, shift)
 #  endif
 #endif
 

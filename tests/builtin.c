@@ -1010,16 +1010,16 @@ static MunitResult
 test_msvc_rotl8(const MunitParameter params[], void* data) {
   const psnip_uint8_t v = 'A';
   const psnip_uint8_t expected[] = {
-          0x82, 0x05, 0x0a,
-    0x14, 0x28, 0x50
+    0x41, 0x82, 0x05, 0x0a,
+    0x14, 0x28, 0x50, 0xa0
   };
   size_t i;
 
   (void) params;
   (void) data;
 
-  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
-    munit_assert_uint8(psnip_intrin_rotl8(v, (psnip_uint8_t) i), ==, expected[i - 1]);
+  for (i = 0; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint8(psnip_intrin_rotl8(v, (psnip_uint8_t) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1028,18 +1028,18 @@ static MunitResult
 test_msvc_rotl16(const MunitParameter params[], void* data) {
   const psnip_uint16_t v = 0x12;
   const unsigned short expected[] = {
-            0x0024, 0x0048, 0x0090,
+    0x0012, 0x0024, 0x0048, 0x0090,
     0x0120, 0x0240, 0x0480, 0x0900,
     0x1200, 0x2400, 0x4800, 0x9000,
-    0x2001, 0x4002, 0x8004
+    0x2001, 0x4002, 0x8004, 0x0009
   };
   size_t i;
 
   (void) params;
   (void) data;
 
-  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
-    munit_assert_uint16(psnip_intrin_rotl16(v, (unsigned char) i), ==, expected[i - 1]);
+  for (i = 0; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint16(psnip_intrin_rotl16(v, (unsigned char) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1048,22 +1048,22 @@ static MunitResult
 test_msvc_rotl(const MunitParameter params[], void* data) {
   const psnip_uint32_t v = 0xfd93U;
   const psnip_uint32_t expected[] = {
-                 0x0001fb26U, 0x0003f64cU, 0x0007ec98U,
+    0x0000fd93U, 0x0001fb26U, 0x0003f64cU, 0x0007ec98U,
     0x000fd930U, 0x001fb260U, 0x003f64c0U, 0x007ec980U,
     0x00fd9300U, 0x01fb2600U, 0x03f64c00U, 0x07ec9800U,
     0x0fd93000U, 0x1fb26000U, 0x3f64c000U, 0x7ec98000U,
     0xfd930000U, 0xfb260001U, 0xf64c0003U, 0xec980007U,
     0xd930000fU, 0xb260001fU, 0x64c0003fU, 0xc980007eU,
     0x930000fdU, 0x260001fbU, 0x4c0003f6U, 0x980007ecU,
-    0x30000fd9U, 0x60001fb2U, 0xc0003f64U
+    0x30000fd9U, 0x60001fb2U, 0xc0003f64U, 0x80007ec9U
   };
   size_t i;
 
   (void) params;
   (void) data;
 
-  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
-    munit_assert_uint32(psnip_intrin_rotl(v, (int) i), ==, expected[i - 1]);
+  for (i = 0; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint32(psnip_intrin_rotl(v, (int) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1072,7 +1072,7 @@ static MunitResult
 test_msvc_rotl64(const MunitParameter params[], void* data) {
   const psnip_uint64_t v = UINT64_C(0x3db5195091e98f9d);
   const psnip_uint64_t expected[] = {
-                                  UINT64_C(0x7b6a32a123d31f3a), UINT64_C(0xf6d4654247a63e74), UINT64_C(0xeda8ca848f4c7ce9),
+    UINT64_C(0x3db5195091e98f9d), UINT64_C(0x7b6a32a123d31f3a), UINT64_C(0xf6d4654247a63e74), UINT64_C(0xeda8ca848f4c7ce9),
     UINT64_C(0xdb5195091e98f9d3), UINT64_C(0xb6a32a123d31f3a7), UINT64_C(0x6d4654247a63e74f), UINT64_C(0xda8ca848f4c7ce9e),
     UINT64_C(0xb5195091e98f9d3d), UINT64_C(0x6a32a123d31f3a7b), UINT64_C(0xd4654247a63e74f6), UINT64_C(0xa8ca848f4c7ce9ed),
     UINT64_C(0x5195091e98f9d3db), UINT64_C(0xa32a123d31f3a7b6), UINT64_C(0x4654247a63e74f6d), UINT64_C(0x8ca848f4c7ce9eda),
@@ -1087,15 +1087,15 @@ test_msvc_rotl64(const MunitParameter params[], void* data) {
     UINT64_C(0x8f9d3db5195091e9), UINT64_C(0x1f3a7b6a32a123d3), UINT64_C(0x3e74f6d4654247a6), UINT64_C(0x7ce9eda8ca848f4c),
     UINT64_C(0xf9d3db5195091e98), UINT64_C(0xf3a7b6a32a123d31), UINT64_C(0xe74f6d4654247a63), UINT64_C(0xce9eda8ca848f4c7),
     UINT64_C(0x9d3db5195091e98f), UINT64_C(0x3a7b6a32a123d31f), UINT64_C(0x74f6d4654247a63e), UINT64_C(0xe9eda8ca848f4c7c),
-    UINT64_C(0xd3db5195091e98f9), UINT64_C(0xa7b6a32a123d31f3), UINT64_C(0x4f6d4654247a63e7)
+    UINT64_C(0xd3db5195091e98f9), UINT64_C(0xa7b6a32a123d31f3), UINT64_C(0x4f6d4654247a63e7), UINT64_C(0x9eda8ca848f4c7ce)
   };
   size_t i;
 
   (void) params;
   (void) data;
 
-  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
-    munit_assert_uint64(psnip_intrin_rotl64(v, (int) i), ==, expected[i - 1]);
+  for (i = 0; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint64(psnip_intrin_rotl64(v, (int) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1122,18 +1122,18 @@ static MunitResult
 test_msvc_rotr16(const MunitParameter params[], void* data) {
   const psnip_uint16_t v = 0x12;
   const psnip_uint16_t expected[] = {
-            0x0009, 0x8004, 0x4002,
+    0x0012, 0x0009, 0x8004, 0x4002,
     0x2001, 0x9000, 0x4800, 0x2400,
     0x1200, 0x0900, 0x0480, 0x0240,
-    0x0120, 0x0090, 0x0048
+    0x0120, 0x0090, 0x0048, 0x0024
   };
   size_t i;
 
   (void) params;
   (void) data;
 
-  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
-    munit_assert_uint16(psnip_intrin_rotr16(v, (psnip_uint8_t) i), ==, expected[i - 1]);
+  for (i = 0; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint16(psnip_intrin_rotr16(v, (psnip_uint8_t) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1142,22 +1142,22 @@ static MunitResult
 test_msvc_rotr(const MunitParameter params[], void* data) {
   const psnip_uint32_t v = 0x0fd93;
   const psnip_uint32_t expected[] = {
-                          UINT32_C(0x80007ec9), UINT32_C(0xc0003f64), UINT32_C(0x60001fb2),
+    UINT32_C(0x0000fd93), UINT32_C(0x80007ec9), UINT32_C(0xc0003f64), UINT32_C(0x60001fb2),
     UINT32_C(0x30000fd9), UINT32_C(0x980007ec), UINT32_C(0x4c0003f6), UINT32_C(0x260001fb),
     UINT32_C(0x930000fd), UINT32_C(0xc980007e), UINT32_C(0x64c0003f), UINT32_C(0xb260001f),
     UINT32_C(0xd930000f), UINT32_C(0xec980007), UINT32_C(0xf64c0003), UINT32_C(0xfb260001),
     UINT32_C(0xfd930000), UINT32_C(0x7ec98000), UINT32_C(0x3f64c000), UINT32_C(0x1fb26000),
     UINT32_C(0x0fd93000), UINT32_C(0x07ec9800), UINT32_C(0x03f64c00), UINT32_C(0x01fb2600),
     UINT32_C(0x00fd9300), UINT32_C(0x007ec980), UINT32_C(0x003f64c0), UINT32_C(0x001fb260),
-    UINT32_C(0x000fd930), UINT32_C(0x0007ec98), UINT32_C(0x0003f64c)
+    UINT32_C(0x000fd930), UINT32_C(0x0007ec98), UINT32_C(0x0003f64c), UINT32_C(0x0001fb26)
   };
   size_t i;
 
   (void) params;
   (void) data;
 
-  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
-    munit_assert_uint32(psnip_intrin_rotr(v, (int) i), ==, expected[i - 1]);
+  for (i = 0; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint32(psnip_intrin_rotr(v, (int) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
@@ -1166,7 +1166,7 @@ static MunitResult
 test_msvc_rotr64(const MunitParameter params[], void* data) {
   const psnip_uint64_t v = UINT64_C(0x3db5195091e98f9d);
   const psnip_uint64_t expected[] = {
-                                  UINT64_C(0x9eda8ca848f4c7ce), UINT64_C(0x4f6d4654247a63e7), UINT64_C(0xa7b6a32a123d31f3),
+    UINT64_C(0x3db5195091e98f9d), UINT64_C(0x9eda8ca848f4c7ce), UINT64_C(0x4f6d4654247a63e7), UINT64_C(0xa7b6a32a123d31f3),
     UINT64_C(0xd3db5195091e98f9), UINT64_C(0xe9eda8ca848f4c7c), UINT64_C(0x74f6d4654247a63e), UINT64_C(0x3a7b6a32a123d31f),
     UINT64_C(0x9d3db5195091e98f), UINT64_C(0xce9eda8ca848f4c7), UINT64_C(0xe74f6d4654247a63), UINT64_C(0xf3a7b6a32a123d31),
     UINT64_C(0xf9d3db5195091e98), UINT64_C(0x7ce9eda8ca848f4c), UINT64_C(0x3e74f6d4654247a6), UINT64_C(0x1f3a7b6a32a123d3),
@@ -1181,15 +1181,15 @@ test_msvc_rotr64(const MunitParameter params[], void* data) {
     UINT64_C(0x195091e98f9d3db5), UINT64_C(0x8ca848f4c7ce9eda), UINT64_C(0x4654247a63e74f6d), UINT64_C(0xa32a123d31f3a7b6),
     UINT64_C(0x5195091e98f9d3db), UINT64_C(0xa8ca848f4c7ce9ed), UINT64_C(0xd4654247a63e74f6), UINT64_C(0x6a32a123d31f3a7b),
     UINT64_C(0xb5195091e98f9d3d), UINT64_C(0xda8ca848f4c7ce9e), UINT64_C(0x6d4654247a63e74f), UINT64_C(0xb6a32a123d31f3a7),
-    UINT64_C(0xdb5195091e98f9d3), UINT64_C(0xeda8ca848f4c7ce9), UINT64_C(0xf6d4654247a63e74)
+    UINT64_C(0xdb5195091e98f9d3), UINT64_C(0xeda8ca848f4c7ce9), UINT64_C(0xf6d4654247a63e74), UINT64_C(0x7b6a32a123d31f3a)
   };
   size_t i;
 
   (void) params;
   (void) data;
 
-  for (i = 1; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
-    munit_assert_uint64(psnip_intrin_rotr64(v, (int) i), ==, expected[i - 1]);
+  for (i = 0; i < (sizeof(expected) / sizeof(expected[0])) ; i++)
+    munit_assert_uint64(psnip_intrin_rotr64(v, (int) i), ==, expected[i]);
 
   return MUNIT_OK;
 }
