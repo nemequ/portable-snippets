@@ -26,10 +26,6 @@
 #  endif
 #endif
 
-#if defined(__GNUC__) && ((__GNUC__ > 2) || (__GNUC__ == 2 && __GNUC_MINOR__ >= 16))
-#  define PSNIP_CPU__IMPL_GETAUXVAL
-#endif
-
 #if defined(PSNIP_CPU_ARCH_X86) || defined(PSNIP_CPU_ARCH_X86_64)
 #  if defined(_MSC_VER)
 static void psnip_cpu_getid(int func, int* data) {
@@ -41,6 +37,11 @@ static void psnip_cpu_getid(int func, int* data) {
 	   : "=a" (data[0]), "=b" (data[1]), "=c" (data[2]), "=d" (data[3])
 	   : "0" (func), "2" (0));
 }
+#  endif
+#elif defined(PSNIP_CPU_ARCH_ARM) || defined(PSNIP_CPU_ARCH_ARM64)
+#  if (defined(__GNUC__) && ((__GNUC__ > 2) || (__GNUC__ == 2 && __GNUC_MINOR__ >= 16)))
+#    define PSNIP_CPU__IMPL_GETAUXVAL
+#    include <sys/auxv.h>
 #  endif
 #endif
 
