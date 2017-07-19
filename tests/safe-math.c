@@ -137,7 +137,11 @@ test_safe_generic(const MunitParameter params[], void* user_data) {
   DEFINE_PSNIP_SAFE_TEST_ENTRY_S(name, div), \
   DEFINE_PSNIP_SAFE_TEST_ENTRY_S(name, neg)
 
+#if CHAR_MIN < 0
 DEFINE_PSNIP_SAFE_TESTS_S(char,               char,     CHAR_MIN, CHAR_MAX)
+#else
+DEFINE_PSNIP_SAFE_TESTS  (char,               char,     CHAR_MIN, CHAR_MAX)
+#endif
 DEFINE_PSNIP_SAFE_TESTS  (unsigned char,      uchar,           0, UCHAR_MAX)
 DEFINE_PSNIP_SAFE_TESTS_S(short,              short,    SHRT_MIN, SHRT_MAX)
 DEFINE_PSNIP_SAFE_TESTS  (unsigned short,     ushort,          0, USHRT_MAX)
@@ -162,7 +166,11 @@ DEFINE_PSNIP_SAFE_TESTS  (psnip_uint64_t,     uint64, 0,                        
 #endif /* !defined(PSNIP_SAFE_NO_FIXED) */
 
 static MunitTest psnip_safe_test_suite_tests[] = {
+#if CHAR_MIN < 0
   DEFINE_PSNIP_SAFE_TEST_ENTRIES_S(char),
+#else
+  DEFINE_PSNIP_SAFE_TEST_ENTRIES(char),
+#endif
   DEFINE_PSNIP_SAFE_TEST_ENTRIES(uchar),
   DEFINE_PSNIP_SAFE_TEST_ENTRIES_S(short),
   DEFINE_PSNIP_SAFE_TEST_ENTRIES(ushort),
