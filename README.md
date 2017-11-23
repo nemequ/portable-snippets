@@ -30,8 +30,8 @@ Currently ready-to-use modules include:
    common atomic synchronization operations
  * [safe-math](https://github.com/nemequ/portable-snippets/tree/master/safe-math) —
    overflow-safe integer functions
- * [exact-width](https://github.com/nemequ/portable-snippets/tree/master/exact-width) —
-   exact width types (think `<stdint.h>`)
+ * [exact-int](https://github.com/nemequ/portable-snippets/tree/master/exact-int) —
+   exact-width integer types (think `<stdint.h>`)
  * [clock](https://github.com/nemequ/portable-snippets/tree/master/clock) —
    cross-platform wall clock, CPU time, and monotonic time
 
