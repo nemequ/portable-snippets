@@ -11,7 +11,7 @@ is not, `psnip_dbg_assert(expr)` will be preprocessed to nothing
 `psnip_trap` if `expr` evaluates to false.
 
 Knowledge about how to do this portably basically comes from
-[scottt/debugbreak](https://github.com/scottt/debugbreak/ and GLib's
+[scottt/debugbreak](https://github.com/scottt/debugbreak/) and GLib's
 [G_BREAKPOINT](https://developer.gnome.org/glib/stable/glib-Warnings-and-Assertions.html#G-BREAKPOINT:CAPS)
 macro, plus some compiler documentation.
 
