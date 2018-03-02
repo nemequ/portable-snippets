@@ -44,6 +44,8 @@ would benefit greatly from testing:
    one-time initialization
  * [random](https://github.com/nemequ/portable-snippets/tree/master/random) —
    random number generation (3 flavors: cryptographic, reproducible, and fast)
+ * [debug-trap](https://github.com/nemequ/portable-snippets/tree/master/debug-trap) —
+   debugging traps and assertions
 
 Modules can be used in isolation, though some do work better together,
 so if you can keep the whole repository together instead of just
