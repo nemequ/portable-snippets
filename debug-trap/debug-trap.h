@@ -6,27 +6,6 @@
  *   copyright and related or neighboring rights to this code.  For
  *   details, see the Creative Commons Zero 1.0 Universal license at
  *   https://creativecommons.org/publicdomain/zero/1.0/
- *
- * This is an attempt to provide a fairly portable way to generate
- * traps in code. __builtin_trap is _Noreturn, so the compiler may
- * optimize away code found after it, which means you can't really
- * drop into a debugger and step through the code after the trap has
- * been hit.
- *
- * If PSNIP_NDEBUG is defined, or NDEBUG is defined and PSNIP_DEBUG is
- * not, psnip_dbg_assert(expr) will be preprocessed to nothing (i.e.,
- * expr will not be evaluated). Otherwise it will call psnip_trap if
- * expr evaluates to false.
- *
- * Knowledge about how to do this portably basically comes from
- * <https://github.com/scottt/debugbreak/> and GLib's G_BREAKPOINT
- * macro, plus some compiler documentation.
- *
- * On non-hosted platforms we *may* have to fall back on
- * __builtin_trap. On non-hosted non-GNU-compatible compilers on
- * relatively exotic architectures you may end up with an error about
- * stdlib.h being missing... if you have a good way to resolve that on
- * your platform please contact us.
  */
 
 #if !defined(PSNIP_DEBUG_TRAP_H)
@@ -51,8 +30,8 @@
 #define PSNIP_DBG__FUNCTION static PSNIP_DBG__ALWAYS_INLINE
 
 #if defined(__has_builtin)
-#  if __has_builtin(__builtin_debugbreak)
-#    define psnip_trap() __builtin_debugbreak()
+#  if __has_builtin(__builtin_debugtrap)
+#    define psnip_trap() __builtin_debugtrap()
 #  elif __has_builtin(__debugbreak)
 #    define psnip_trap() __debugbreak()
 #  endif
