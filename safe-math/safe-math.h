@@ -166,25 +166,25 @@ typedef psnip_safe_uint128_t psnip_safe_uint64_larger;
 #endif /* defined(PSNIP_SAFE_HAVE_128) */
 #endif /* !defined(PSNIP_SAFE_NO_FIXED) */
 
-#define PSNIP_SAFE_HAVE_LARGER_CHAR
-#if PSNIP_SAFE_IS_LARGER(CHAR_MAX, SHRT_MAX)
-typedef short psnip_safe_char_larger;
-#elif PSNIP_SAFE_IS_LARGER(CHAR_MAX, INT_MAX)
-typedef int psnip_safe_char_larger;
-#elif PSNIP_SAFE_IS_LARGER(CHAR_MAX, LONG_MAX)
-typedef long psnip_safe_char_larger;
-#elif PSNIP_SAFE_IS_LARGER(CHAR_MAX, LLONG_MAX)
-typedef long long psnip_safe_char_larger;
-#elif !defined(PSNIP_SAFE_NO_FIXED) && PSNIP_SAFE_IS_LARGER(CHAR_MAX, 0x7fff)
-typedef psnip_int16_t psnip_safe_char_larger;
-#elif !defined(PSNIP_SAFE_NO_FIXED) && PSNIP_SAFE_IS_LARGER(CHAR_MAX, 0x7fffffffLL)
-typedef psnip_int32_t psnip_safe_char_larger;
-#elif !defined(PSNIP_SAFE_NO_FIXED) && PSNIP_SAFE_IS_LARGER(CHAR_MAX, 0x7fffffffffffffffLL)
-typedef psnip_int64_t psnip_safe_char_larger;
-#elif !defined(PSNIP_SAFE_NO_FIXED) && defined(PSNIP_SAFE_HAVE_128) && (CHAR_MAX <= 0x7fffffffffffffffLL)
-typedef psnip_safe_int128_t psnip_safe_char_larger;
+#define PSNIP_SAFE_HAVE_LARGER_SCHAR
+#if PSNIP_SAFE_IS_LARGER(SCHAR_MAX, SHRT_MAX)
+typedef short psnip_safe_schar_larger;
+#elif PSNIP_SAFE_IS_LARGER(SCHAR_MAX, INT_MAX)
+typedef int psnip_safe_schar_larger;
+#elif PSNIP_SAFE_IS_LARGER(SCHAR_MAX, LONG_MAX)
+typedef long psnip_safe_schar_larger;
+#elif PSNIP_SAFE_IS_LARGER(SCHAR_MAX, LLONG_MAX)
+typedef long long psnip_safe_schar_larger;
+#elif !defined(PSNIP_SAFE_NO_FIXED) && PSNIP_SAFE_IS_LARGER(SCHAR_MAX, 0x7fff)
+typedef psnip_int16_t psnip_safe_schar_larger;
+#elif !defined(PSNIP_SAFE_NO_FIXED) && PSNIP_SAFE_IS_LARGER(SCHAR_MAX, 0x7fffffffLL)
+typedef psnip_int32_t psnip_safe_schar_larger;
+#elif !defined(PSNIP_SAFE_NO_FIXED) && PSNIP_SAFE_IS_LARGER(SCHAR_MAX, 0x7fffffffffffffffLL)
+typedef psnip_int64_t psnip_safe_schar_larger;
+#elif !defined(PSNIP_SAFE_NO_FIXED) && defined(PSNIP_SAFE_HAVE_128) && (SCHAR_MAX <= 0x7fffffffffffffffLL)
+typedef psnip_safe_int128_t psnip_safe_schar_larger;
 #else
-#undef PSNIP_SAFE_HAVE_LARGER_CHAR
+#undef PSNIP_SAFE_HAVE_LARGER_SCHAR
 #endif
 
 #define PSNIP_SAFE_HAVE_LARGER_UCHAR
@@ -206,6 +206,14 @@ typedef psnip_uint64_t psnip_safe_uchar_larger;
 typedef psnip_safe_uint128_t psnip_safe_uchar_larger;
 #else
 #undef PSNIP_SAFE_HAVE_LARGER_UCHAR
+#endif
+
+#if CHAR_MIN == 0 && defined(PSNIP_SAFE_HAVE_LARGER_UCHAR)
+#define PSNIP_SAFE_HAVE_LARGER_CHAR
+typedef psnip_safe_uchar_larger psnip_safe_char_larger;
+#elif CHAR_MIN < 0 && defined(PSNIP_SAFE_HAVE_LARGER_SCHAR)
+#define PSNIP_SAFE_HAVE_LARGER_CHAR
+typedef psnip_safe_schar_larger psnip_safe_char_larger;
 #endif
 
 #define PSNIP_SAFE_HAVE_LARGER_SHRT
@@ -359,12 +367,20 @@ typedef psnip_safe_uint128_t psnip_safe_size_larger;
 #endif
 #endif
 
-#if defined(PSNIP_SAFE_HAVE_LARGER_CHAR)
-PSNIP_SAFE_DEFINE_LARGER_SIGNED_OPS(char, char)
+#if defined(PSNIP_SAFE_HAVE_LARGER_SCHAR)
+PSNIP_SAFE_DEFINE_LARGER_SIGNED_OPS(signed char, schar)
 #endif
 
 #if defined(PSNIP_SAFE_HAVE_LARGER_UCHAR)
 PSNIP_SAFE_DEFINE_LARGER_UNSIGNED_OPS(unsigned char, uchar)
+#endif
+
+#if defined(PSNIP_SAFE_HAVE_LARGER_CHAR)
+#if CHAR_MIN == 0
+PSNIP_SAFE_DEFINE_LARGER_UNSIGNED_OPS(char, char)
+#else
+PSNIP_SAFE_DEFINE_LARGER_SIGNED_OPS(char, char)
+#endif
 #endif
 
 #if defined(PSNIP_SAFE_HAVE_LARGER_SHORT)
@@ -579,6 +595,23 @@ PSNIP_SAFE_DEFINE_LARGER_UNSIGNED_OPS(psnip_uint64_t, uint64)
     return isf(a, b, res) == S_OK; \
   }
 
+#if CHAR_MIN == 0
+#if defined(PSNIP_SAFE_HAVE_BUILTIN_OVERFLOW)
+PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(char, char, add)
+PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(char, char, sub)
+PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(char, char, mul)
+#elif defined(PSNIP_SAFE_HAVE_LARGER_CHAR)
+PSNIP_SAFE_DEFINE_PROMOTED_UNSIGNED_BINARY_OP(char, char, add, CHAR_MAX)
+PSNIP_SAFE_DEFINE_PROMOTED_UNSIGNED_BINARY_OP(char, char, sub, CHAR_MAX)
+PSNIP_SAFE_DEFINE_PROMOTED_UNSIGNED_BINARY_OP(char, char, mul, CHAR_MAX)
+#else
+PSNIP_SAFE_DEFINE_UNSIGNED_ADD(char, char, CHAR_MAX)
+PSNIP_SAFE_DEFINE_UNSIGNED_SUB(char, char, CHAR_MAX)
+PSNIP_SAFE_DEFINE_UNSIGNED_MUL(char, char, CHAR_MAX)
+#endif
+PSNIP_SAFE_DEFINE_UNSIGNED_DIV(char, char, CHAR_MAX)
+PSNIP_SAFE_DEFINE_UNSIGNED_MOD(char, char, CHAR_MAX)
+#else /* CHAR_MIN != 0 */
 #if defined(PSNIP_SAFE_HAVE_BUILTIN_OVERFLOW)
 PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(char, char, add)
 PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(char, char, sub)
@@ -595,6 +628,24 @@ PSNIP_SAFE_DEFINE_SIGNED_MUL(char, char, CHAR_MIN, CHAR_MAX)
 PSNIP_SAFE_DEFINE_SIGNED_DIV(char, char, CHAR_MIN, CHAR_MAX)
 PSNIP_SAFE_DEFINE_SIGNED_MOD(char, char, CHAR_MIN, CHAR_MAX)
 PSNIP_SAFE_DEFINE_SIGNED_NEG(char, char, CHAR_MIN, CHAR_MAX)
+#endif
+
+#if defined(PSNIP_SAFE_HAVE_BUILTIN_OVERFLOW)
+PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(signed char, schar, add)
+PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(signed char, schar, sub)
+PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(signed char, schar, mul)
+#elif defined(PSNIP_SAFE_HAVE_LARGER_SCHAR)
+PSNIP_SAFE_DEFINE_PROMOTED_SIGNED_BINARY_OP(signed char, schar, add, SCHAR_MIN, SCHAR_MAX)
+PSNIP_SAFE_DEFINE_PROMOTED_SIGNED_BINARY_OP(signed char, schar, sub, SCHAR_MIN, SCHAR_MAX)
+PSNIP_SAFE_DEFINE_PROMOTED_SIGNED_BINARY_OP(signed char, schar, mul, SCHAR_MIN, SCHAR_MAX)
+#else
+PSNIP_SAFE_DEFINE_SIGNED_ADD(signed char, schar, SCHAR_MIN, SCHAR_MAX)
+PSNIP_SAFE_DEFINE_SIGNED_SUB(signed char, schar, SCHAR_MIN, SCHAR_MAX)
+PSNIP_SAFE_DEFINE_SIGNED_MUL(signed char, schar, SCHAR_MIN, SCHAR_MAX)
+#endif
+PSNIP_SAFE_DEFINE_SIGNED_DIV(signed char, schar, SCHAR_MIN, SCHAR_MAX)
+PSNIP_SAFE_DEFINE_SIGNED_MOD(signed char, schar, SCHAR_MIN, SCHAR_MAX)
+PSNIP_SAFE_DEFINE_SIGNED_NEG(signed char, schar, SCHAR_MIN, SCHAR_MAX)
 
 #if defined(PSNIP_SAFE_HAVE_BUILTIN_OVERFLOW)
 PSNIP_SAFE_DEFINE_BUILTIN_BINARY_OP(unsigned char, uchar, add)
