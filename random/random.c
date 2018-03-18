@@ -56,6 +56,7 @@ psnip_random__have_getrandom(void) {
 }
 
 #    if defined(__GLIBC__) && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 26))
+#      include <sys/random.h>
 #      define psnip_random__getrandom(buf, buflen, flags) getrandom(buf, buflen, flags)
 #    else
 static int
