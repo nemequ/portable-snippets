@@ -13,7 +13,7 @@
 
 #if !defined(PSNIP_SAFE_FORCE_PORTABLE)
 #  if defined(__has_builtin)
-#    if __has_builtin(__builtin_add_overflow)
+#    if __has_builtin(__builtin_add_overflow) && !defined(__ibmxl__)
 #      define PSNIP_SAFE_HAVE_BUILTIN_OVERFLOW
 #    endif
 #  elif defined(__GNUC__) && (__GNUC__ >= 5) && !defined(__INTEL_COMPILER)

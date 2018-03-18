@@ -29,7 +29,7 @@
 
 #define PSNIP_DBG__FUNCTION static PSNIP_DBG__ALWAYS_INLINE
 
-#if defined(__has_builtin)
+#if defined(__has_builtin) && !defined(__ibmxl__)
 #  if __has_builtin(__builtin_debugtrap)
 #    define psnip_trap() __builtin_debugtrap()
 #  elif __has_builtin(__debugbreak)
@@ -41,6 +41,9 @@
 #    define psnip_trap() __debugbreak()
 #  elif defined(__ARMCC_VERSION)
 #    define psnip_trap() __breakpoint(42)
+#  elif defined(__ibmxl__) || defined(__xlC__)
+#    include <builtins.h>
+#    define psnip_trap() __trap(42)
 #  elif defined(__DMC__) && defined(_M_IX86)
      PSNIP_DBG__FUNCTION void psnip_trap(void) { __asm int 3h; }
 #  elif defined(__i386__) || defined(__x86_64__)

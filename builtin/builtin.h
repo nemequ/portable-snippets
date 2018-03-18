@@ -838,7 +838,7 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
     return x;							\
   }
 
-#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_bitreverse64) && !defined(__EMSCRIPTEN__)
+#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_bitreverse64) && !defined(__EMSCRIPTEN__) && !defined(__ibmxl__)
 #  define psnip_builtin_bitreverse8(x)  __builtin_bitreverse8(x)
 #  define psnip_builtin_bitreverse16(x) __builtin_bitreverse16(x)
 #  define psnip_builtin_bitreverse32(x) __builtin_bitreverse32(x)
@@ -876,7 +876,7 @@ PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_uint64_t)
     return r;						\
   }
 
-#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_addc)
+#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_addc) && !defined(__ibmxl__)
 #  define psnip_builtin_addcb(x, y, ci, co)  __builtin_addcb(x, y, ci, co)
 #  define psnip_builtin_addcs(x, y, ci, co)  __builtin_addcs(x, y, ci, co)
 #  define psnip_builtin_addc(x, y, ci, co)   __builtin_addc(x, y, ci, co)
@@ -932,7 +932,7 @@ PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(addcll, unsigned long long)
     return r;						\
   }
 
-#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_subc)
+#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_subc) && !defined(__ibmxl__)
 #  define psnip_builtin_subcb(x, y, ci, co)  __builtin_subcb(x, y, ci, co)
 #  define psnip_builtin_subcs(x, y, ci, co)  __builtin_subcs(x, y, ci, co)
 #  define psnip_builtin_subc(x, y, ci, co)   __builtin_subc(x, y, ci, co)

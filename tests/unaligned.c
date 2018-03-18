@@ -89,11 +89,14 @@ dangerous_copy(size_t count, psnip_uint64_t* dest, const psnip_uint64_t* src) {
 }
 
 #if defined(__GNUC__)
-#  if !defined(__clang__)
-__attribute__((__optimize__(0),__noinline__))
-#  else
-__attribute__((__optnone__,__noinline__))
+#  if defined(__has_attribute) && !defined(__ibmxl__)
+#    if __has_attribute(optnone)
+       __attribute__((__optnone__))
+#    endif
+#  elif !defined(__clang__)
+     __attribute__((__optimize__(0)))
 #  endif
+   __attribute__((__noinline__))
 #endif
 static MunitResult
 test_unaligned_uint64_tempt(const MunitParameter params[], void* data) {
