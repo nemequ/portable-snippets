@@ -80,6 +80,11 @@
 #    define PSNIP_ENDIAN_ORDER PSNIP_ENDIAN_BIG
 #  elif defined(__BYTE_ORDER__) && defined(__ORDER_PDP_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_PDP_ENDIAN__)
 #    define PSNIP_ENDIAN_ORDER PSNIP_ENDIAN_PDP
+/* TI defines _BIG_ENDIAN or _LITTLE_ENDIAN */
+#  elif defined(_BIG_ENDIAN)
+#    define PSNIP_ENDIAN_ORDER PSNIP_ENDIAN_BIG
+#  elif defined(_LITTLE_ENDIAN)
+#    define PSNIP_ENDIAN_ORDER PSNIP_ENDIAN_LITTLE
 /* We know the endianness of some common architectures.  Common
  * architectures not listed (ARM, POWER, MIPS, etc.) here are
  * bi-endian. */

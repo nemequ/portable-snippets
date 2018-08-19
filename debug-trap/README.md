@@ -10,10 +10,12 @@ is not, `psnip_dbg_assert(expr)` will be preprocessed to nothing
 (i.e., `expr` will not be evaluated). Otherwise it will call
 `psnip_trap` if `expr` evaluates to false.
 
-Knowledge about how to do this portably basically comes from
-[scottt/debugbreak](https://github.com/scottt/debugbreak/) and GLib's
-[G_BREAKPOINT](https://developer.gnome.org/glib/stable/glib-Warnings-and-Assertions.html#G-BREAKPOINT:CAPS)
-macro, plus some compiler documentation.
+Knowledge about how to do this portably basically comes from:
+
+ * [scottt/debugbreak](https://github.com/scottt/debugbreak/).
+ * GLib's [G_BREAKPOINT](https://developer.gnome.org/glib/stable/glib-Warnings-and-Assertions.html#G-BREAKPOINT:CAPS) macro.
+ * [TI's Wiki](http://processors.wiki.ti.com/index.php/Software_Breakpoints_in_the_IDE)
+ * Assorted compiler documentation.
 
 On non-hosted platforms we *may* have to fall back on
 `__builtin_trap`. On non-hosted non-GNU-compatible compilers on

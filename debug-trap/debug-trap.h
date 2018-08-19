@@ -15,20 +15,6 @@
 #  define PSNIP_NDEBUG 1
 #endif
 
-#if defined(HEDLEY_ALWAYS_INLINE)
-#  define PSNIP_DBG__ALWAYS_INLINE HEDLEY_ALWAYS_INLINE
-#elif defined(__GNUC__) && (__GNUC__ >= 4)
-#  define PSNIP_DBG__ALWAYS_INLINE __attribute__((__always_inline__))
-#elif defined(_MSC_VER) && (_MSC_VER >= 1200)
-#  define  PSNIP_DBG__ALWAYS_INLINE __forceinline
-#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#  define PSNIP_DBG__ALWAYS_INLINE inline
-#else
-#  define PSNIP_DBG__ALWAYS_INLINE
-#endif
-
-#define PSNIP_DBG__FUNCTION static PSNIP_DBG__ALWAYS_INLINE
-
 #if defined(__has_builtin) && !defined(__ibmxl__)
 #  if __has_builtin(__builtin_debugtrap)
 #    define psnip_trap() __builtin_debugtrap()
@@ -45,17 +31,25 @@
 #    include <builtins.h>
 #    define psnip_trap() __trap(42)
 #  elif defined(__DMC__) && defined(_M_IX86)
-     PSNIP_DBG__FUNCTION void psnip_trap(void) { __asm int 3h; }
+     static inline void psnip_trap(void) { __asm int 3h; }
 #  elif defined(__i386__) || defined(__x86_64__)
-     PSNIP_DBG__FUNCTION void psnip_trap(void) { __asm__ __volatile__("int $03"); }
+     static inline void psnip_trap(void) { __asm__ __volatile__("int $03"); }
 #  elif defined(__thumb__)
-     PSNIP_DBG__FUNCTION void psnip_trap(void) { __asm__ __volatile__(".inst 0xde01"); }
+     static inline void psnip_trap(void) { __asm__ __volatile__(".inst 0xde01"); }
 #  elif defined(__aarch64__)
-     PSNIP_DBG__FUNCTION void psnip_trap(void) { __asm__ __volatile__(".inst 0xd4200000"); }
+     static inline void psnip_trap(void) { __asm__ __volatile__(".inst 0xd4200000"); }
 #  elif defined(__arm__)
-     PSNIP_DBG__FUNCTION void psnip_trap(void) { __asm__ __volatile__(".inst 0xe7f001f0"); }
+     static inline void psnip_trap(void) { __asm__ __volatile__(".inst 0xe7f001f0"); }
 #  elif defined (__alpha__) && !defined(__osf__)
-     PSNIP_DBG__FUNCTION void psnip_trap(void) { __asm__ __volatile__("bpt"); }
+     static inline void psnip_trap(void) { __asm__ __volatile__("bpt"); }
+#  elif defined(_54_)
+     static inline void psnip_trap(void) { __asm__ __volatile__("ESTOP"); }
+#  elif defined(_55_)
+     static inline void psnip_trap(void) { __asm__ __volatile__(";\n .if (.MNEMONIC)\n ESTOP_1\n .else\n ESTOP_1()\n .endif\n NOP"); }
+#  elif defined(_64P_)
+     static inline void psnip_trap(void) { __asm__ __volatile__("SWBP 0"); }
+#  elif defined(_6x_)
+     static inline void psnip_trap(void) { __asm__ __volatile__("NOP\n .word 0x10000000"); }
 #  elif defined(__STDC_HOSTED__) && (__STDC_HOSTED__ == 0) && defined(__GNUC__)
 #    define psnip_trap() __builtin_trap()
 #  else
