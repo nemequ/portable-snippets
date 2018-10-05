@@ -33,7 +33,7 @@
    first check doesn't work. */
 #    else
 #      include <threads.h>
-#      define PSNIP_ONCE_BACKEND PSNIP_ONCE_BACKEND_C11
+#      define PSNIP_ONCE_BACKEND PSNIP_ONCE__BACKEND_C11
 #    endif
 #  endif
 #endif
