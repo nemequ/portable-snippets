@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 199309L
+
 #include "../clock/clock.h"
 #include "munit/munit.h"
 

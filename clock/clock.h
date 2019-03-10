@@ -75,21 +75,25 @@ struct PsnipClockTimespec {
 
 /* We want to be able to detect the libc implementation, so we include
    <limits.h> (<features.h> isn't available everywhere). */
-
 #if defined(__unix__) || defined(__unix) || defined(__linux__)
 #  include <limits.h>
 #  include <unistd.h>
 #endif
 
 #if defined(_POSIX_TIMERS) && (_POSIX_TIMERS > 0)
-/* These are known to work without librt.  If you know of others
- * please let us know so we can add them. */
+/* glibc 2.17+ and FreeBSD are known to work without librt.  If you
+ * know of others please let us know so we can add them. */
 #  if \
   (defined(__GLIBC__) && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 17))) || \
-  (defined(__FreeBSD__))
-#    define PSNIP_CLOCK_HAVE_CLOCK_GETTIME
-#  elif !defined(PSNIP_CLOCK_NO_LIBRT)
-#    define PSNIP_CLOCK_HAVE_CLOCK_GETTIME
+  (defined(__FreeBSD__)) || \
+  !defined(PSNIP_CLOCK_NO_LIBRT)
+/* Even though glibc unconditionally sets _POSIX_TIMERS, it doesn't
+   actually declare the relevant APIs unless _POSIX_C_SOURCE >=
+   199309L, and if you compile in standard C mode (e.g., c11 instead
+   of gnu11) _POSIX_C_SOURCE will be unset by default. */
+#    if _POSIX_C_SOURCE >= 199309L
+#      define PSNIP_CLOCK_HAVE_CLOCK_GETTIME
+#    endif
 #  endif
 #endif
 
