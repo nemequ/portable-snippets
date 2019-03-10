@@ -17,20 +17,21 @@
 #define PSNIP_ONCE__BACKEND_C11     11
 #define PSNIP_ONCE__BACKEND_WIN32   32
 
+#include <limits.h>
+
 #if !defined(PSNIP_ONCE_BACKEND)
 #  if defined(__STDC_NO_THREADS__) && __STDC_NO_THREADS__
 #  elif defined(__EMSCRIPTEN__)
 #  elif defined(__has_include)
 #    if __has_include(<threads.h>)
-#      include <threads.h>
-#      define PSNIP_ONCE_BACKEND PSNIP_ONCE_BACKEND_C11
+#      if !defined(__GLIBC__) || (defined(__GLIBC__) && defined(PSNIP_ENABLE_PTHREADS))
+#        include <threads.h>
+#        define PSNIP_ONCE_BACKEND PSNIP_ONCE__BACKEND_C11
+#      endif
 #    endif
 #  elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201102L) && !defined(__STDC_NO_THREADS__)
-#    include <limits.h>
-#    if defined(__STDC_NO_THREADS__) || (defined(__GNUC__) && (__GLIBC__ < 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ < 16)))
-/* stdc-predef.h didn't include __STDC_NO_THREADS__ until 2.16.  icc
-   doesn't include stdc-predef.h until we pull in limits.h, so the
-   first check doesn't work. */
+#    if (defined(__GLIBC__) && (__GLIBC__ < 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ < 16)))
+/* stdc-predef.h didn't include __STDC_NO_THREADS__ until 2.16. */
 #    else
 #      include <threads.h>
 #      define PSNIP_ONCE_BACKEND PSNIP_ONCE__BACKEND_C11
