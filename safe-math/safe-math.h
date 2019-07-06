@@ -65,13 +65,39 @@
 #endif
 
 #if !defined(PSNIP_SAFE_NO_FIXED)
+/* For maximum portability include the exact-int module from
+   portable snippets. */
 #  if \
-  !defined(psnip_uint8_t)  || !defined(psnip_int8_t)  || \
-  !defined(psnip_uint16_t) || !defined(psnip_int16_t) || \
-  !defined(psnip_uint32_t) || !defined(psnip_int32_t) || \
-  !defined(psnip_uint64_t) || !defined(psnip_int64_t)
-#    include "../exact-int/exact-int.h"
-#endif
+    !defined(psnip_int64_t) || !defined(psnip_uint64_t) || \
+    !defined(psnip_int32_t) || !defined(psnip_uint32_t) || \
+    !defined(psnip_int16_t) || !defined(psnip_uint16_t) || \
+    !defined(psnip_int8_t)  || !defined(psnip_uint8_t)
+#    include <stdint.h>
+#    if !defined(psnip_int64_t)
+#      define psnip_int64_t int64_t
+#    endif
+#    if !defined(psnip_uint64_t)
+#      define psnip_uint64_t uint64_t
+#    endif
+#    if !defined(psnip_int32_t)
+#      define psnip_int32_t int32_t
+#    endif
+#    if !defined(psnip_uint32_t)
+#      define psnip_uint32_t uint32_t
+#    endif
+#    if !defined(psnip_int16_t)
+#      define psnip_int16_t int16_t
+#    endif
+#    if !defined(psnip_uint16_t)
+#      define psnip_uint16_t uint16_t
+#    endif
+#    if !defined(psnip_int8_t)
+#      define psnip_int8_t int8_t
+#    endif
+#    if !defined(psnip_uint8_t)
+#      define psnip_uint8_t uint8_t
+#    endif
+#  endif
 #endif /* !defined(PSNIP_SAFE_NO_FIXED) */
 #include <limits.h>
 #include <stdlib.h>

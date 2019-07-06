@@ -11,8 +11,23 @@
 #if !defined(PSNIP_CLOCK_H)
 #define PSNIP_CLOCK_H
 
-#if !defined(psnip_uint64_t)
-#  include "../exact-int/exact-int.h"
+/* For maximum portability include the exact-int module from
+   portable snippets. */
+#if !defined(psnip_uint64_t) || !defined(psnip_int32_t) || \
+  !defined(psnip_uint32_t) || !defined(psnip_int32_t)
+#  include <stdint.h>
+#  if !defined(psnip_int64_t)
+#    define psnip_int64_t int64_t
+#  endif
+#  if !defined(psnip_uint64_t)
+#    define psnip_uint64_t uint64_t
+#  endif
+#  if !defined(psnip_int32_t)
+#    define psnip_int32_t int32_t
+#  endif
+#  if !defined(psnip_uint32_t)
+#    define psnip_uint32_t uint32_t
+#  endif
 #endif
 
 #if !defined(PSNIP_CLOCK_STATIC_INLINE)

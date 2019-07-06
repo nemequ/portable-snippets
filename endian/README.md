@@ -37,3 +37,17 @@ If you need (or prefer) to fall back on run-time detection,
 `PSNIP_ENDIAN_ORDER_RT` will evaluate to the same values
 (`PSNIP_ENDIAN_LITTLE` or `PSNIP_ENDIAN_BIG`).  Note that the
 "run-time" detection will likely be optimized away by the compiler.
+
+## Dependencies
+
+To maximize portability you should #include the exact-int module
+before including endian.h, but if you don't want to add the extra
+file to your project you can omit it and this module will simply rely
+on <stdint.h>.  As an alternative you may define `psnip_uint16_t`,
+`psnip_uint32_t`, and `psnip_uint64_t` to appropriate values yourself
+before including endian.h.
+
+This module requires the builtin portable-snippet module.  If you do
+not include builtin.h before endian.h, endian.h will automatically
+include "../builtin/builtin.h".  If you include builtin.h manually you
+are free to use whatever directory structure you like.

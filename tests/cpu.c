@@ -1,3 +1,4 @@
+#include "../exact-int/exact-int.h"
 #include "../cpu/cpu.h"
 #include "munit/munit.h"
 

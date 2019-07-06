@@ -48,8 +48,18 @@
 #if !defined(PSNIP_ATOMIC_H)
 #define PSNIP_ATOMIC_H
 
-#if !defined(psnip_int64_t) || !defined(psnip_int32_t)
-#  include "../exact-int/exact-int.h"
+/* For maximum portability include the exact-int module from
+   portable snippets. */
+#if \
+  !defined(psnip_int64_t) || \
+  !defined(psnip_int32_t)
+#  include <stdint.h>
+#  if !defined(psnip_int64_t)
+#    define psnip_int64_t int64_t
+#  endif
+#  if !defined(psnip_int32_t)
+#    define psnip_int32_t int32_t
+#  endif
 #endif
 
 #if !defined(PSNIP_ATOMIC_STATIC_INLINE)

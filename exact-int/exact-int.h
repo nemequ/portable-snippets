@@ -9,16 +9,38 @@
  *
  * This header tries to define psnip_(u)int(8|16|32|64)_t to
  * appropriate types given your system.  For most systems this means
- * including <stdint.h> and adding a few preprocessor definitions.
- *
- * If you prefer, you can define any necessary types yourself.
- * Snippets in this repository which rely on these types will not
- * attempt to include this header if you have already defined the
- * types it uses.
+ * including <stdint.h> and adding a few preprocessor definitions, but
+ * when that isn't an option things get a bit more complicated.
  */
 
 #if !defined(PSNIP_EXACT_INT_H)
 #  define PSNIP_EXACT_INT_H
+
+#  if defined(psnip_int8_t)
+#    undef psnip_int8_t
+#  endif
+#  if defined(psnip_uint8_t)
+#    undef psnip_uint8_t
+#  endif
+#  if defined(psnip_int16_t)
+#    undef psnip_int16_t
+#  endif
+#  if defined(psnip_uint16_t)
+#    undef psnip_uint16_t
+#  endif
+#  if defined(psnip_int32_t)
+#    undef psnip_int32_t
+#  endif
+#  if defined(psnip_uint32_t)
+#    undef psnip_uint32_t
+#  endif
+#  if defined(psnip_int64_t)
+#    undef psnip_int64_t
+#  endif
+#  if defined(psnip_uint64_t)
+#    undef psnip_uint64_t
+#  endif
+
 #  if !defined(PSNIP_EXACT_INT_HAVE_STDINT)
 #    if defined(_STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)
 #      define PSNIP_EXACT_INT_HAVE_STDINT

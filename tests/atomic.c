@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "../exact-int/exact-int.h"
 #include "../atomic/atomic.h"
 #include "munit/munit.h"
 

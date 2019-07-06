@@ -1,3 +1,4 @@
+#include "../exact-int/exact-int.h"
 #include "../random/random.h"
 #include "munit/munit.h"
 

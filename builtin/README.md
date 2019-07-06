@@ -19,10 +19,13 @@ which compiler is actually in use (*i.e.*, you can use `__builtin_ffs`
 directly in MSVC, or any other compiler, including GCC < 3.3).
 
 If the compiler already has the builtin, the psnip function will
-simply be defined to that builtin.  If the compiler does not have an
-implementation one will be provided using either a built-in/intrinsic
-the compiler *does* support (i.e., using an MSVC intrinsic to
-implement a GCC built-in), or a fully-portable pure C implementation.
+simply be defined to that builtin (*e.g.*,
+`#define psnip_builtin_clz __builtin_clz`).  If the compiler does not
+have an implementation one will be provided using either a
+built-in/intrinsic the compiler *does* support (*e.g.*, using an MSVC
+intrinsic to implement a GCC built-in), inline assembly,
+architecture-specific functions, or a fully-portable pure C
+implementation.
 
 For example, for GCC's `__builtin_ffs` builtin, we provide
 implementations which work everywhere (including versions of GCC prior
@@ -48,6 +51,23 @@ int __builtin_ffsll(long long);
 
 Note that these are often provided as macros, the prototypes are for
 documentation only.
+
+## Dependencies
+
+To maximize portability you should #include the exact-int module
+before including builtin.h, but if you don't want to add the extra
+file to your project you can omit it and this module will simply rely
+on <stdint.h>.  As an alternative you may define the following macros
+to appropriate values yourself:
+
+ * `psnip_int8_t`
+ * `psnip_uint8_t`
+ * `psnip_int16_t`
+ * `psnip_uint16_t`
+ * `psnip_int32_t`
+ * `psnip_uint32_t`
+ * `psnip_int64_t`
+ * `psnip_uint64_t`
 
 ## Implementation Status
 
@@ -101,8 +121,9 @@ For overflow-safe integer operations (i.e., `__builtin_*_overflow`),
 use [safe-math.h](../safe-math).
 
 For bswap/byteswap functions, you should really use
-[endian.h](../endian) which also handles endianness detection as well
-as providing easier to use APIs.
+[endian.h](../endian), which depends on this module and handles
+endianness detection as well as providing easier to use APIs which
+integrate endianness detection logic.
 
 For SIMD intrinsics (SSE, AVX, NEON, etc.), take a look at the
 [SIMDe](https://github.com/nemequ/simde/) project.

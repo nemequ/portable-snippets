@@ -1,4 +1,6 @@
 #include <stdlib.h>
+
+#include "../exact-int/exact-int.h"
 #include "../endian/endian.h"
 #include "munit/munit.h"
 

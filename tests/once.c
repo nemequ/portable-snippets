@@ -1,6 +1,7 @@
 #if defined(PSNIP_ENABLE_PTHREADS)
 #  include <pthread.h>
 #endif
+#include "../exact-int/exact-int.h"
 #include "../once/once.h"
 #include "munit/munit.h"
 

@@ -68,3 +68,17 @@ faster than the reproducible PRNG, we'll use it.
 Note that, even if the fast source is implemented using the same
 algorithm as the reproducible source (i.e., PGC with a 32-bit state),
 the fast source will *not* alter the state of the reproducible PRNG.
+
+## Dependencies
+
+This module requires the following portable-snippet modules:
+
+ * exact-int
+ * atomic — for thread-safety
+ * clock — for seeding
+ * once — for thread-safety
+ * cpu — to detect CPU-based PRNGs (*i.e.*, RdRand on Intel)
+
+The code currently assumes the same directory structure as is used in
+the portable-snippets repository.  Patches to allow other structures
+will be seriously considered.

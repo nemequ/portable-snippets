@@ -49,3 +49,12 @@ you may be interested in
 [TinyCThread](https://github.com/tinycthread/tinycthread/)), or you
 could try the [atomic_ops](https://github.com/ivmai/libatomic_ops/)
 package.
+
+## Dependencies
+
+To maximize portability you should #include the exact-int module
+before including atomic.h, but if you don't want to add the extra
+file to your project you can omit it and this module will simply rely
+on <stdint.h>.  As an alternative you may define `psnip_int32_t`, and
+`psnip_int64_t` to appropriate values yourself before including
+atomic.h.

@@ -1,3 +1,4 @@
+#include "../exact-int/exact-int.h"
 #define PSNIP_BUILTIN_EMULATE_NATIVE
 #include "../safe-math/safe-math.h"
 

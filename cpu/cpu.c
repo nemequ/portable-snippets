@@ -10,7 +10,9 @@
 
 #include "cpu.h"
 
-#include "../once/once.h"
+#if !defined(PSNIP_ONCE__H)
+#  include "../once/once.h"
+#endif
 
 #include <assert.h>
 

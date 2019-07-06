@@ -11,14 +11,25 @@
 #if !defined(PSNIP_ENDIAN_H)
 #define PSNIP_ENDIAN_H
 
-#if !defined(psnip_uint16_t) || !defined(psnip_uint32_t) || !defined(psnip_uint64_t)
-#  include "../exact-int/exact-int.h"
+/* For maximum portability include the exact-int module from
+   portable snippets. */
+#if \
+  !defined(psnip_uint64_t) || \
+  !defined(psnip_uint32_t) || \
+  !defined(psnip_uint16_t)
+#  include <stdint.h>
+#  if !defined(psnip_uint64_t)
+#    define psnip_uint64_t uint64_t
+#  endif
+#  if !defined(psnip_uint32_t)
+#    define psnip_uint32_t uint32_t
+#  endif
+#  if !defined(psnip_uint16_t)
+#    define psnip_uint16_t uint16_t
+#  endif
 #endif
 
-#if \
-  !defined(psnip_builtin_bswap16) || \
-  !defined(psnip_builtin_bswap32) || \
-  !defined(psnip_builtin_bswap64)
+#if !defined(PSNIP_BUILTIN_H)
 #  include "../builtin/builtin.h"
 #endif
 

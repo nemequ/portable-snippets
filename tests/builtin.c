@@ -3,6 +3,8 @@
 
 #include "munit/munit.h"
 
+#include "../exact-int/exact-int.h"
+
 #define PSNIP_BUILTIN_EMULATE_NATIVE
 #include "../builtin/builtin.h"
 

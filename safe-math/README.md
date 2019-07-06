@@ -140,6 +140,23 @@ mode since there was no standard way to implement them until C11.
 Even if you request emulation of the GCC builtins, we cannot provide
 the `__builtin_*_overflow_p` functions.
 
+## Dependencies
+
+To maximize portability you should #include the exact-int module
+before including safe-math.h, but if you don't want to add the extra
+file to your project you can omit it and this module will simply rely
+on <stdint.h>.  As an alternative you may define the following macros
+to appropriate values yourself:
+
+ * `psnip_int8_t`
+ * `psnip_uint8_t`
+ * `psnip_int16_t`
+ * `psnip_uint16_t`
+ * `psnip_int32_t`
+ * `psnip_uint32_t`
+ * `psnip_int64_t`
+ * `psnip_uint64_t`
+
 # Alternatives
 
 ## C

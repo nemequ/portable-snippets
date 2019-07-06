@@ -33,3 +33,12 @@ extensions will not be enabled by default so you won't get to use the
 `clock_gettime` implementation; to avoid this, you can define
 `_POSIX_C_SOURCE` to `199309L` or greater prior to including
 `clock.h`, or just define `_GNU_SOURCE`.
+
+## Dependencies
+
+To maximize portability you should #include the exact-int module
+before including clock.h, but if you don't want to add the extra
+file to your project you can omit it and this module will simply rely
+on <stdint.h>.  As an alternative you may define `psnip_uint64_t`,
+`psnip_uint32_t`, `psnip_int64_t`, `psnip_int32_t` to an appropriate
+value yourself before including clock.h.
