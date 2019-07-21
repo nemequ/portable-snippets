@@ -35,7 +35,7 @@ Currently ready-to-use modules include:
  * [clock](https://github.com/nemequ/portable-snippets/tree/master/clock) —
    cross-platform wall clock, CPU time, and monotonic time
 
-There are also modules which are not yet ready for widespread use, but
+There are also modules which may not yet be ready for widespread use, but
 would benefit greatly from testing:
 
  * [unaligned](https://github.com/nemequ/portable-snippets/tree/master/unaligned) —
@@ -46,6 +46,8 @@ would benefit greatly from testing:
    random number generation (3 flavors: cryptographic, reproducible, and fast)
  * [debug-trap](https://github.com/nemequ/portable-snippets/tree/master/debug-trap) —
    debugging traps and assertions
+ * [check](https://github.com/nemequ/portable-snippets/tree/master/check) —
+   assertion checking
 
 Modules can be used in isolation, though some do work better together,
 so if you can keep the whole repository together instead of just
