@@ -12,9 +12,9 @@ applies to this module's macros, just substitute the `munit_` namespace
 with `psnip_`.
 
 Additionally, unless you define `PSNIP_CHECK_FAIL_DEFINED`, a failing
-assertion will considered undefined behavior even when `NDEBUG` is
-defined.  This allows the compiler to perform optimizations which
-would not otherwise be possible.
+assertion should be considered undefined behavior when `NDEBUG` and/or
+`PSNIP_NDEBUG` is defined.  This allows the compiler to perform
+optimizations which would not otherwise be possible.
 
 ## Dependencies
 
