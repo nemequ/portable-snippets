@@ -849,42 +849,6 @@ PSNIP_BUILTIN__CLRSB_DEFINE_PORTABLE(clrsbll, clzll, long long)
 #  define psnip_builtin_clrsb64(x) PSNIP_BUILTIN__VARIANT_INT64(psnip,clrsb)(x)
 #endif
 
-/*** __builtin_bitreverse ***/
-
-#define PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(f_n, T)	\
-  PSNIP_BUILTIN__FUNCTION					\
-  T psnip_builtin_##f_n(T x) {					\
-    size_t s = sizeof(x) * CHAR_BIT;				\
-    T mask = (T) 0U;						\
-    mask = ~mask;						\
-    while ((s >>= 1) > 0) {					\
-      mask ^= (mask << s);					\
-      x = ((x >> s) & mask) | ((x << s) & ~mask);		\
-    }								\
-    return x;							\
-  }
-
-#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_bitreverse64) && !defined(__EMSCRIPTEN__) && !defined(__ibmxl__)
-#  define psnip_builtin_bitreverse8(x)  __builtin_bitreverse8(x)
-#  define psnip_builtin_bitreverse16(x) __builtin_bitreverse16(x)
-#  define psnip_builtin_bitreverse32(x) __builtin_bitreverse32(x)
-#  define psnip_builtin_bitreverse64(x) __builtin_bitreverse64(x)
-#else
-PSNIP_BUILTIN__FUNCTION
-psnip_uint8_t psnip_builtin_bitreverse8(psnip_uint8_t v) {
-  return (psnip_uint8_t) ((v * 0x0202020202ULL & 0x010884422010ULL) % 1023);
-}
-PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse16, psnip_uint16_t)
-PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse32, psnip_uint32_t)
-PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse64, psnip_uint64_t)
-#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
-#    define __builtin_bitreverse8(x)  psnip_builtin_bitreverse8(x)
-#    define __builtin_bitreverse16(x) psnip_builtin_bitreverse16(x)
-#    define __builtin_bitreverse32(x) psnip_builtin_bitreverse32(x)
-#    define __builtin_bitreverse64(x) psnip_builtin_bitreverse64(x)
-#  endif
-#endif
-
 /*** __builtin_addc ***/
 
 #define PSNIP_BUILTIN__ADDC_DEFINE_PORTABLE(f_n, T)	\
@@ -1055,6 +1019,48 @@ psnip_builtin_bswap64(psnip_uint64_t v) {
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
 #    define __builtin_bswap32(x) psnip_builtin_bswap32(x)
 #    define __builtin_bswap64(x) psnip_builtin_bswap64(x)
+#  endif
+#endif
+
+/*** __builtin_bitreverse ***/
+
+#define PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(f_n, b_l, T)	\
+  PSNIP_BUILTIN__FUNCTION					\
+  T psnip_builtin_##f_n##b_l(T v) {				\
+    v = ((v & ((T) 0xf0f0f0f0f0f0f0f0ULL)) >> 4) |		\
+        ((v & ((T) 0x0f0f0f0f0f0f0f0fULL)) << 4);		\
+    v = ((v & ((T) 0xccccccccccccccccULL)) >> 2) |		\
+        ((v & ((T) 0x3333333333333333ULL)) << 2);		\
+    v = ((v & ((T) 0xaaaaaaaaaaaaaaaaULL)) >> 1) |		\
+        ((v & ((T) 0x5555555555555555ULL)) << 1);		\
+    return psnip_builtin_bswap##b_l(v);				\
+  }
+
+#if PSNIP_BUILTIN_CLANG_HAS_BUILTIN(__builtin_bitreverse64) && !defined(__EMSCRIPTEN__) && !defined(__ibmxl__)
+#  define psnip_builtin_bitreverse8(x)  __builtin_bitreverse8(x)
+#  define psnip_builtin_bitreverse16(x) __builtin_bitreverse16(x)
+#  define psnip_builtin_bitreverse32(x) __builtin_bitreverse32(x)
+#  define psnip_builtin_bitreverse64(x) __builtin_bitreverse64(x)
+#else
+PSNIP_BUILTIN__FUNCTION
+psnip_uint8_t psnip_builtin_bitreverse8(psnip_uint8_t v) {
+  return (psnip_uint8_t) ((v * 0x0202020202ULL & 0x010884422010ULL) % 1023);
+}
+#if defined(_MSC_VER)
+#  pragma warning(push)
+#  pragma warning(disable:4310)
+#endif
+PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse, 16, psnip_uint16_t)
+PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse, 32, psnip_uint32_t)
+PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(bitreverse, 64, psnip_uint64_t)
+#if defined(_MSC_VER)
+#  pragma warning(pop)
+#endif
+#  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
+#    define __builtin_bitreverse8(x)  psnip_builtin_bitreverse8(x)
+#    define __builtin_bitreverse16(x) psnip_builtin_bitreverse16(x)
+#    define __builtin_bitreverse32(x) psnip_builtin_bitreverse32(x)
+#    define __builtin_bitreverse64(x) psnip_builtin_bitreverse64(x)
 #  endif
 #endif
 
