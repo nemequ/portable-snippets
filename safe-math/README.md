@@ -80,10 +80,14 @@ things to watch out for if you choose this:
  * The type-generic functions (`__builtin_add_overflow`,
    `__builtin_sub_overflow`, and `__builtin_mul_overflow`) will only
    be available in C11 mode.
- * The argument order is slightly different, with the result coming
-   last instead of first.  We prefer the result to come first so the
-   call looks a bit more like an assignment operation, but GCC made a
-   different choice.
+ * The argument order in GCC's API is slightly different, with the
+   result coming last instead of first.  We prefer the result to come
+   first so the call looks a bit more like an assignment operation,
+   but GCC made a different choice.
+
+   In other words, `__builtin_*_overflow(a, b, res)` are macros
+   defined to `psnip_safe_*(res, a, b)` so existing code needn't
+   be altered.
 
 ## The `safe_larger_*` API
 
