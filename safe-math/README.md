@@ -25,6 +25,10 @@ same.  For each type and operation, we define:
 psnip_safe_bool psnip_safe_{type_identifier}_{operation} ({T}* result, {T} a, {T} b);
 ```
 
+which returns true if the operation succeeded, or false if it resulted
+in an overflow (which is the opposite of how e.g.
+`__builtin_*_overflow` builtins work).
+
 For example, for addition on signed integers, there is
 
 ```c
@@ -86,7 +90,7 @@ things to watch out for if you choose this:
    but GCC made a different choice.
 
    In other words, `__builtin_*_overflow(a, b, res)` are macros
-   defined to `psnip_safe_*(res, a, b)` so existing code needn't
+   defined to `(!psnip_safe_*(res, a, b))` so existing code needn't
    be altered.
 
 ## The `safe_larger_*` API
