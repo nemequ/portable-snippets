@@ -142,7 +142,7 @@ different compilers or architectures.
 
 Creating implementations of one compiler's builtins using builtins
 from another is probably your best bet to improve performance.
-Another useful possibility is using architecure-specific builtins, or
+Another useful possibility is using architecture-specific builtins, or
 even embedded assembly, when they are available.
 
 ### Architecture-specific builtins
