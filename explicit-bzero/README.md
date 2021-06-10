@@ -7,13 +7,13 @@ the application. However, most compilers optimize away the `memset` call as
 they interpret the call as dead code because the memory being written to is not
 being used afterwards.
 
-`psnip_memset_explicit` function is used to securely write a value to the buffer to be erased.
+`psnip_explicit_bzero` function could be used to securely zero out a buffer
+containing sensitive data.
 
 ```c
-void *psnip_memset_explicit(void *s, int c, size_t n);
+void psnip_explicit_bzero(void *str, size_t n);
 ```
 
-The memset_explicit function copies the value of `c` (converted to an
-`unsigned char`) into each of the first `n` characters of the object pointed
-to by `s`. It returns the value of `s`.
+The `psnip_explicit_bzero` function writes `n` zero bytes to the string `str`.
+If len is zero, bzero() does nothing.
 
