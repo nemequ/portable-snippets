@@ -56,5 +56,7 @@ void psnip_explicit_bzero(void *str, size_t n) {
   (void)SecureZeroMemory(str, n);
 #elif defined(HAVE_EXPLICIT_BZERO)
   explicit_bzero(str, n);
+#else
+# error No suitable function found for securely clearing a buffer.
 #endif
 }
