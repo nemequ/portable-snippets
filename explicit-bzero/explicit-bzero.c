@@ -41,7 +41,7 @@
  */
 #if (defined(__GLIBC__) && __GLIBC_PREREQ(2, 25)) ||                           \
     (defined(__FreeBSD__) && __FreeBSD_version >= 1100037) ||                  \
-    defined(__OpenBSD__)
+    (defined(__OpenBSD__) && OpenBSD >= 201405)
 #define HAVE_EXPLICIT_BZERO 1
 #endif
 
@@ -59,6 +59,6 @@ void psnip_explicit_bzero(void *str, size_t n) {
 #elif defined(HAVE_EXPLICIT_BZERO)
   explicit_bzero(str, n);
 #else
-# error No suitable function found for securely clearing a buffer.
+#error No suitable function found for securely clearing a buffer.
 #endif
 }
