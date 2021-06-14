@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "explicit-bzero.h"
+
 #if defined(__FreeBSD__) || defined(__OpenBSD__)
 #include <sys/param.h>
 #endif

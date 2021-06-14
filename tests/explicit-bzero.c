@@ -7,7 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "../explicit-bzero/explicit_bzero.h"
+#include "../explicit-bzero/explicit-bzero.h"
 #include "munit/munit.h"
 
 #ifndef __GLIBC__
