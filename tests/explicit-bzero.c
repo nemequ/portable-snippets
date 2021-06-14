@@ -1,3 +1,14 @@
+/*
+ * Portable Snippets - https://github.com/nemequ/portable-snippets
+ * Created by arnavyc <arnavyc@outlook.com>
+ *
+ *   To the extent possible under law, the authors have waived all
+ *   copyright and related or neighboring rights to this code.  For
+ *   details, see the Creative Commons Zero 1.0 Universal license at
+ *   https://creativecommons.org/publicdomain/zero/1.0/
+ *
+ */
+
 #define _GNU_SOURCE
 
 #include <assert.h>
