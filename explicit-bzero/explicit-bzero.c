@@ -49,6 +49,10 @@
 #define HAVE_EXPLICIT_MEMSET 1
 #endif
 
+#if !defined(HAVE_EXPLICIT_BZERO) && !defined(HAVE_MEMSET_S) && !defined(HAVE_EXPLICIT_MEMSET) && !defined(_WIN32)
+static void * (* const volatile memset_ptr)(void *, int, size_t) = memset;
+#endif
+
 void psnip_explicit_bzero(void *str, size_t n) {
 #if defined(HAVE_EXPLICIT_MEMSET)
   (void)explicit_memset(str, 0, n);
@@ -59,6 +63,12 @@ void psnip_explicit_bzero(void *str, size_t n) {
 #elif defined(HAVE_EXPLICIT_BZERO)
   explicit_bzero(str, n);
 #else
-#error No suitable function found for securely clearing a buffer.
+  /*
+   * Use a volatile pointer to memset as used by OpenSSL for securely clearing
+   * memory.
+   *
+   * https://github.com/openssl/openssl/blob/f77208693ec3bda99618e6f76c0f8d279c0077bb/crypto/mem_clr.c
+   */
+  (void)(memset_ptr)(str, 0, n);
 #endif
 }
