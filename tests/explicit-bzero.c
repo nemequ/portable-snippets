@@ -178,8 +178,8 @@ static void do_test_with_bzero(int signo) {
   secrets_count.with_bzero = count_secrets(buf);
 }
 
-MunitResult without_bzero_test(const MunitParameter params[],
-                               void *user_data_or_fixture) {
+static MunitResult without_bzero_test(const MunitParameter params[],
+                                      void *user_data_or_fixture) {
   /*
    * First, test that if we *don't* call explicit_bzero, that we
    * *are* able to find at least one instance of the secret data still
@@ -194,8 +194,8 @@ MunitResult without_bzero_test(const MunitParameter params[],
   return MUNIT_OK;
 }
 
-MunitResult with_bzero_test(const MunitParameter params[],
-                            void *user_data_or_fixture) {
+static MunitResult with_bzero_test(const MunitParameter params[],
+                                   void *user_data_or_fixture) {
   /*
    * Now test with a call to explicit_bzero() and check that we
    * *don't* find any instances of the secret data.
@@ -206,6 +206,21 @@ MunitResult with_bzero_test(const MunitParameter params[],
   munit_assert_int(secrets_count.with_bzero, ==, 0);
   return MUNIT_OK;
 }
+
+static MunitTest tests[] = {
+    {"/without-bzero", without_bzero_test, NULL, NULL, MUNIT_TEST_OPTION_NONE,
+     NULL},
+    {"/with-bzero", with_bzero_test, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+    {NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+};
+
+static const MunitSuite suite = {
+    "/explicit-bzero",       /* name */
+    tests,                   /* tests */
+    NULL,                    /* suites */
+    1,                       /* iterations */
+    MUNIT_SUITE_OPTION_NONE, /* options */
+};
 
 int main(int argc, char *const argv[MUNIT_ARRAY_PARAM(argc + 1)]) {
   setup_stack();
@@ -221,20 +236,6 @@ int main(int argc, char *const argv[MUNIT_ARRAY_PARAM(argc + 1)]) {
    * and returning that address.  Then we can simply memcmp() repeatedly
    * to count how many instances of secret we found.
    */
-
-  MunitTest tests[] = {{"/without-bzero", without_bzero_test, NULL, NULL,
-                        MUNIT_TEST_OPTION_NONE, NULL},
-                       {"/with-bzero", with_bzero_test, NULL, NULL,
-                        MUNIT_TEST_OPTION_NONE, NULL},
-                       {NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL}};
-
-  MunitSuite suite = {
-      "/explicit-bzero",      /* name */
-      tests,                  /* tests */
-      NULL,                   /* suites */
-      1,                      /* iterations */
-      MUNIT_SUITE_OPTION_NONE /* options */
-  };
 
   return munit_suite_main(&suite, NULL, argc, argv);
 }
