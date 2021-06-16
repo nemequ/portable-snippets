@@ -146,7 +146,7 @@ static int count_secrets(const char *buf) {
   return (res);
 }
 
-static char *test_without_bzero() {
+static char *test_without_bzero(void) {
   char buf[SECRETBYTES];
   assert_on_stack();
   populate_secret(buf, sizeof(buf));
@@ -156,7 +156,7 @@ static char *test_without_bzero() {
   return (res);
 }
 
-static char *test_with_bzero() {
+static char *test_with_bzero(void) {
   char buf[SECRETBYTES];
   assert_on_stack();
   populate_secret(buf, sizeof(buf));
