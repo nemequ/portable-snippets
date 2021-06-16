@@ -102,20 +102,20 @@ static void call_on_stack(void (*fn)(int)) {
       .sa_flags = SA_ONSTACK,
   };
   struct sigaction oldsigact;
-  sigset_t sigset, oldsigset;
+  sigset_t sigset0, oldsigset;
 
   /* First, block all signals. */
-  munit_assert_int(sigemptyset(&sigset), ==, 0);
-  munit_assert_int(sigfillset(&sigset), ==, 0);
-  munit_assert_int(sigprocmask(SIG_BLOCK, &sigset, &oldsigset), ==, 0);
+  munit_assert_int(sigemptyset(&sigset0), ==, 0);
+  munit_assert_int(sigfillset(&sigset0), ==, 0);
+  munit_assert_int(sigprocmask(SIG_BLOCK, &sigset0, &oldsigset), ==, 0);
 
   /* Next setup the signal handler for SIGUSR1. */
   munit_assert_int(sigaction(SIGUSR1, &sigact, &oldsigact), ==, 0);
 
   /* Raise SIGUSR1 and momentarily unblock it to run the handler. */
   munit_assert_int(raise(SIGUSR1), ==, 0);
-  munit_assert_int(sigdelset(&sigset, SIGUSR1), ==, 0);
-  munit_assert_int(sigsuspend(&sigset), ==, -1);
+  munit_assert_int(sigdelset(&sigset0, SIGUSR1), ==, 0);
+  munit_assert_int(sigsuspend(&sigset0), ==, -1);
   munit_assert_int(errno, ==, EINTR);
 
   /* Restore the original signal action, stack, and mask. */
