@@ -208,18 +208,18 @@ static MunitResult with_bzero_test(const MunitParameter params[],
 }
 
 static MunitTest tests[] = {
-    {"/without-bzero", without_bzero_test, NULL, NULL, MUNIT_TEST_OPTION_NONE,
+    {(char *)"/without-bzero", without_bzero_test, NULL, NULL, MUNIT_TEST_OPTION_NONE,
      NULL},
-    {"/with-bzero", with_bzero_test, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
+    {(char *)"/with-bzero", with_bzero_test, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
     {NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL},
 };
 
 static const MunitSuite suite = {
-    "/explicit-bzero",       /* name */
-    tests,                   /* tests */
-    NULL,                    /* suites */
-    1,                       /* iterations */
-    MUNIT_SUITE_OPTION_NONE, /* options */
+    (char *)"/explicit-bzero", /* name */
+    tests,                     /* tests */
+    NULL,                      /* suites */
+    1,                         /* iterations */
+    MUNIT_SUITE_OPTION_NONE,   /* options */
 };
 
 int main(int argc, char *const argv[MUNIT_ARRAY_PARAM(argc + 1)]) {
