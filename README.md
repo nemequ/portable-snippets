@@ -48,6 +48,8 @@ would benefit greatly from testing:
    debugging traps and assertions
  * [check](https://github.com/nemequ/portable-snippets/tree/master/check) —
    assertion checking
+ * [explicit-bzero](https://github.com/nemequ/portable-snippets/tree/master/explicit-bzero) —
+   secure clearing of sensitive data in a buffer
 
 Modules can be used in isolation, though some do work better together,
 so if you can keep the whole repository together instead of just
