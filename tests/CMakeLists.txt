@@ -178,7 +178,7 @@ psnip_add_tests(TARGET cpu            SOURCES cpu.c ../cpu/cpu.c)
 psnip_add_tests(TARGET random         SOURCES random.c ../random/random.c ../cpu/cpu.c)
 
 if (UNIX)
-  psnip_add_tests(TARGET explicit-bzero SOURCES explicit-bzero.c ../explicit-bzero/explicit-bzero.c)
+  psnip_add_tests(TARGET explicit-bzero SOURCES explicit-bzero.c)
 endif ()
 
 if(ENABLE_PTHREADS)
