@@ -1027,12 +1027,12 @@ psnip_builtin_bswap64(psnip_uint64_t v) {
 #define PSNIP_BUILTIN__BITREVERSE_DEFINE_PORTABLE(f_n, b_l, T)	\
   PSNIP_BUILTIN__FUNCTION					\
   T psnip_builtin_##f_n##b_l(T v) {				\
-    v = ((v & ((T) 0xf0f0f0f0f0f0f0f0ULL)) >> 4) |		\
-        ((v & ((T) 0x0f0f0f0f0f0f0f0fULL)) << 4);		\
-    v = ((v & ((T) 0xccccccccccccccccULL)) >> 2) |		\
-        ((v & ((T) 0x3333333333333333ULL)) << 2);		\
-    v = ((v & ((T) 0xaaaaaaaaaaaaaaaaULL)) >> 1) |		\
-        ((v & ((T) 0x5555555555555555ULL)) << 1);		\
+    v = ((T) ((v & ((T) 0xf0f0f0f0f0f0f0f0ULL)) >> 4)) |	\
+        ((T) ((v & ((T) 0x0f0f0f0f0f0f0f0fULL)) << 4));		\
+    v = ((T) ((v & ((T) 0xccccccccccccccccULL)) >> 2)) |	\
+        ((T) ((v & ((T) 0x3333333333333333ULL)) << 2));		\
+    v = ((T) ((v & ((T) 0xaaaaaaaaaaaaaaaaULL)) >> 1)) |	\
+        ((T) ((v & ((T) 0x5555555555555555ULL)) << 1));		\
     return psnip_builtin_bswap##b_l(v);				\
   }
 
@@ -1236,7 +1236,7 @@ unsigned char psnip_intrin_BitScanForward(unsigned long* Index, psnip_uint32_t M
 #else
 PSNIP_BUILTIN__FUNCTION
 unsigned char psnip_intrin_BitScanForward(unsigned long* Index, psnip_uint32_t Mask) {
-  return PSNIP_BUILTIN_UNLIKELY(Mask == 0) ? 0 : ((*Index = psnip_builtin_ctz32 (Mask)), 1);
+  return PSNIP_BUILTIN_UNLIKELY(Mask == 0) ? (unsigned char)0 : ((*Index = psnip_builtin_ctz32 (Mask)), (unsigned char)1);
 }
 
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
@@ -1250,7 +1250,7 @@ unsigned char psnip_intrin_BitScanForward(unsigned long* Index, psnip_uint32_t M
 #else
 PSNIP_BUILTIN__FUNCTION
 unsigned char psnip_intrin_BitScanForward64(unsigned long* Index, psnip_uint64_t Mask) {
-  return PSNIP_BUILTIN_UNLIKELY(Mask == 0) ? 0 : ((*Index = psnip_builtin_ctz64 (Mask)), 1);
+  return PSNIP_BUILTIN_UNLIKELY(Mask == 0) ? (unsigned char)0 : ((*Index = psnip_builtin_ctz64 (Mask)), (unsigned char)1);
 }
 
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
@@ -1270,7 +1270,7 @@ unsigned char psnip_intrin_BitScanReverse(unsigned long* Index, psnip_uint32_t M
 #else
 PSNIP_BUILTIN__FUNCTION
 unsigned char psnip_intrin_BitScanReverse(unsigned long* Index, psnip_uint32_t Mask) {
-  return (PSNIP_BUILTIN_UNLIKELY(Mask == 0)) ? 0 : ((*Index = ((sizeof(Mask) * CHAR_BIT) - 1) - psnip_builtin_clz32 (Mask)), 1);
+  return (PSNIP_BUILTIN_UNLIKELY(Mask == 0)) ? (unsigned char)0 : ((*Index = ((sizeof(Mask) * CHAR_BIT) - 1) - psnip_builtin_clz32 (Mask)), (unsigned char)1);
 }
 
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
@@ -1284,7 +1284,7 @@ unsigned char psnip_intrin_BitScanReverse(unsigned long* Index, psnip_uint32_t M
 #else
 PSNIP_BUILTIN__FUNCTION
 unsigned char psnip_intrin_BitScanReverse64(unsigned long* Index, psnip_uint64_t Mask) {
-  return (PSNIP_BUILTIN_UNLIKELY(Mask == 0)) ? 0 : ((*Index = ((sizeof(Mask) * CHAR_BIT) - 1) - psnip_builtin_clz64 (Mask)), 1);
+  return (PSNIP_BUILTIN_UNLIKELY(Mask == 0)) ? (unsigned char)0 : ((*Index = ((sizeof(Mask) * CHAR_BIT) - 1) - psnip_builtin_clz64 (Mask)), (unsigned char)1);
 }
 
 #  if defined(PSNIP_BUILTIN_EMULATE_NATIVE)
