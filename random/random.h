@@ -9,7 +9,7 @@
 
 #if defined(HEDLEY_ARRAY_PARAM)
 #  define PSNIP_RANDOM_ARRAY_PARAM(expr) HEDLEY_ARRAY_PARAM(expr)
-#elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) && !defined(__cplusplus) && !defined(__PGI)
+#elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) && (!defined(__STDC_NO_VLA__) || !__STDC_NO_VLA__) && !defined(__cplusplus) && !defined(__PGI)
 #  define PSNIP_RANDOM_ARRAY_PARAM(expr) (expr)
 #else
 #  define PSNIP_RANDOM_ARRAY_PARAM(expr)
